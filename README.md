@@ -74,3 +74,6 @@ grievancegrid/
 Vision
 
 GrievanceGrid aims to modernize public grievance handling through automation, real-time visibility, and data-driven governance, ultimately improving citizen trust in public services.
+
+
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/kaiz2006/GrievanceGrid?utm_source=oss&utm_medium=github&utm_campaign=kaiz2006%2FGrievanceGrid&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
