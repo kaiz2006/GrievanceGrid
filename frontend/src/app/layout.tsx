@@ -1,0 +1,41 @@
+import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "GrievanceGrid — Smart Public Service CRM",
+  description:
+    "An intelligent command center that captures, routes, and resolves citizen complaints with real-time transparency and AI-powered automation.",
+  keywords: [
+    "grievance management",
+    "public service",
+    "CRM",
+    "citizen complaints",
+    "smart city",
+    "government",
+  ],
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+      <body className="noise-overlay">{children}</body>
+    </html>
+  );
+}
