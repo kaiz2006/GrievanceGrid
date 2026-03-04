@@ -1,7 +1,7 @@
 # 📖 GrievanceGrid — Codebase Documentation
 
-> **Last Updated:** March 3, 2026  
-> **Status:** Frontend Landing Page — Complete (WIP bug fixes) · Backend — Architecture Planned (Not Yet Implemented)
+> **Last Updated:** March 4, 2026  
+> **Status:** Frontend Landing Page — Refined (Advanced animations & components) · Backend — Architecture Planned (Not Yet Implemented)
 
 ---
 
@@ -28,15 +28,11 @@
 
 **Current state of development:**
 
-| Area            | Status                                            |
-| --------------- | ------------------------------------------------- |
-| Landing Page    | ✅ All 7 sections built (has some frontend errors) |
-| 3D Animations   | ✅ React Three Fiber hero scene implemented        |
-| Scroll Effects  | ✅ GSAP ScrollTrigger animations on all sections   |
-| Design System   | ✅ Dark theme, glassmorphism, gradients, glows     |
-| Backend         | 📋 Architecture documented, code not started       |
-| Authentication  | 📋 Planned (Firebase Auth)                         |
-| Database        | 📋 Schema designed, not implemented                |
+| Landing Page | ✅ All 7 sections built (High-end aesthetics) |
+| 3D Animations | ✅ Interactive Three Fiber & Video backgrounds |
+| Scroll Effects | ✅ Lenis + GSAP ScrollTrigger on all sections |
+| Design System | ✅ Glassmorphism, Playfair Display (Serif), Glows |
+| Backend | 📋 Architecture documented, code not started |
 
 ---
 
@@ -72,10 +68,12 @@ Grievance Grid/
         │   ├── globals.css         # Full design system (~330 lines)
         │   └── favicon.ico
         └── components/
-            ├── Navbar.tsx          # Fixed navbar with scroll effect
-            ├── HeroSection.tsx     # Hero content + 3D background
-            ├── HeroScene.tsx       # React Three Fiber 3D scene
-            ├── FeaturesSection.tsx  # 6-card feature grid
+            ├── Navbar.tsx          # Card-based navigation wrapper
+            ├── CardNav.tsx         # GSAP-powered expandable card navigation
+            ├── TiltedCard.tsx      # Framer Motion 3D tilt effect component
+            ├── HeroSection.tsx     # Hero content + Video background (advanced)
+            ├── HeroScene.tsx       # Three.js scene (Alternative/Legacy)
+            ├── FeaturesSection.tsx  # TiltedCard-based feature grid
             ├── HowItWorks.tsx      # 4-step timeline workflow
             ├── StatsSection.tsx    # Animated stat counters
             ├── CTASection.tsx      # Call-to-action banner
@@ -88,27 +86,29 @@ Grievance Grid/
 
 ### Frontend (Implemented)
 
-| Technology              | Version   | Purpose                           |
-| ----------------------- | --------- | --------------------------------- |
-| **Next.js**             | `16.1.6`  | React framework (App Router)      |
-| **React**               | `19.2.3`  | UI library                        |
-| **TypeScript**          | `^5`      | Type safety                       |
-| **Tailwind CSS**        | `^4`      | Utility-first CSS framework       |
-| **React Three Fiber**   | `^9.5.0`  | React renderer for Three.js       |
-| **@react-three/drei**   | `^10.7.7` | Useful R3F helpers                |
-| **Three.js**            | `^0.183.2`| WebGL 3D library                  |
-| **GSAP**                | `^3.14.2` | Animation engine (ScrollTrigger)  |
-| **Lenis**               | `^1.0.42` | Smooth scroll library             |
-| **Inter (Google Font)** | —         | Primary typeface                  |
+| Technology            | Version    | Purpose                          |
+| --------------------- | ---------- | -------------------------------- |
+| **Next.js**           | `16.1.6`   | React framework (App Router)     |
+| **React**             | `19.2.3`   | UI library                       |
+| **TypeScript**        | `^5`       | Type safety                      |
+| **Tailwind CSS**      | `^4`       | Utility-first CSS framework      |
+| **React Three Fiber** | `^9.5.0`   | React renderer for Three.js      |
+| **@react-three/drei** | `^10.7.7`  | Useful R3F helpers               |
+| **Three.js**          | `^0.183.2` | WebGL 3D library                 |
+| **GSAP**              | `^3.14.2`  | Animation engine (ScrollTrigger) |
+| **Lenis**             | `^1.0.42`  | Smooth scroll library            |
+| **Inter** (Sans)      | —          | Primary typeface                 |
+| **Playfair Display**  | —          | Primary Heading typeface (Serif) |
+| **Framer Motion**     | `^12.4.7`  | UI animations (Tilt effects)     |
 
 ### Backend (Planned)
 
-| Technology        | Purpose                          |
-| ----------------- | -------------------------------- |
-| **FastAPI**       | Python web framework             |
-| **SQLite**        | Demo database (SQLAlchemy ORM)   |
-| **Firebase Auth** | Authentication (with mock mode)  |
-| **Uvicorn**       | ASGI server                      |
+| Technology        | Purpose                         |
+| ----------------- | ------------------------------- |
+| **FastAPI**       | Python web framework            |
+| **SQLite**        | Demo database (SQLAlchemy ORM)  |
+| **Firebase Auth** | Authentication (with mock mode) |
+| **Uvicorn**       | ASGI server                     |
 
 ---
 
@@ -117,20 +117,24 @@ Grievance Grid/
 ### 4.1 Configuration Files
 
 #### `package.json`
+
 - Project name: `frontend`, version `0.1.0`
 - Scripts: `dev`, `build`, `start`, `lint`
 - All dependencies listed in the Tech Stack table above
 
 #### `next.config.ts`
+
 - Default Next.js config with no custom options yet
 
 #### `tsconfig.json`
+
 - Target: ES2017, module: ESNext
 - Path alias: `@/*` → `./src/*`
 - Strict mode enabled
 - JSX: `react-jsx`
 
 #### `postcss.config.mjs`
+
 - Standard PostCSS config for Tailwind CSS v4
 
 ---
@@ -161,6 +165,8 @@ Text:           --text-primary: #f8fafc
 Glassmorphism:  --glass-bg: rgba(255,255,255,0.05)
                 --glass-border: rgba(255,255,255,0.08)
                 --glass-highlight: rgba(255,255,255,0.12)
+
+Typography:     --font-playfair: Playfair Display (Serif headings)
 ```
 
 #### Tailwind Theme Integration
@@ -169,25 +175,27 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 
 #### Utility Classes
 
-| Class               | Description                                              |
-| ------------------- | -------------------------------------------------------- |
-| `.glass`            | Glassmorphism panel (blur 20px, 5% white bg)             |
-| `.glass-strong`     | Heavier glass effect (blur 40px, 8% white bg)            |
-| `.glass-card`       | Card with glass effect + hover lift + shadow transition   |
-| `.gradient-text`    | White-to-gray gradient text                              |
-| `.gradient-text-accent` | Blue-to-cyan gradient text                           |
-| `.gradient-btn`     | Blue gradient button with hover overlay + lift           |
-| `.glow-blue`        | Blue box-shadow glow                                     |
-| `.glow-pulse`       | Animated pulsing glow (3s loop)                          |
-| `.section-padding`  | Consistent section vertical padding (120px / 80px mobile)|
-| `.container-custom` | Max-width 1280px centered container                      |
-| `.fade-in-up`       | GSAP animation start state (opacity 0, Y +40px)          |
-| `.stagger-item`     | GSAP stagger animation start state                       |
-| `.noise-overlay`    | SVG noise texture overlay (applied to `<body>`)          |
-| `.icon-glow`        | Drop-shadow filter for icons                             |
-| `.timeline-line`    | Vertical gradient line for the How It Works section      |
-| `.timeline-dot`     | Animated pulsing dot on the timeline                     |
-| `.stat-number`      | Tabular number font feature for stat counters            |
+| Class                   | Description                                               |
+| ----------------------- | --------------------------------------------------------- |
+| `.glass`                | Glassmorphism panel (blur 20px, 5% white bg)              |
+| `.glass-strong`         | Heavier glass effect (blur 40px, 8% white bg)             |
+| `.glass-card`           | Card with glass effect + hover lift + shadow transition   |
+| `.gradient-text`        | White-to-gray gradient text                               |
+| `.gradient-text-accent` | Blue-to-cyan gradient text                                |
+| `.gradient-btn`         | Blue gradient button with hover overlay + lift            |
+| `.glow-blue`            | Blue box-shadow glow                                      |
+| `.glow-pulse`           | Animated pulsing glow (3s loop)                           |
+| `.section-padding`      | Consistent section vertical padding (120px / 80px mobile) |
+| `.container-custom`     | Max-width 1280px centered container                       |
+| `.fade-in-up`           | GSAP animation start state (opacity 0, Y +40px)           |
+| `.stagger-item`         | GSAP stagger animation start state                        |
+| `.noise-overlay`        | SVG noise texture overlay (applied to `<body>`)           |
+| `.icon-glow`            | Drop-shadow filter for icons                              |
+| `.timeline-line`        | Vertical gradient line for the How It Works section       |
+| `.timeline-dot`         | Animated pulsing dot on the timeline                      |
+| `.stat-number`          | Tabular number font feature for stat counters             |
+| `.bg-mask-bottom`       | Linear gradient mask for video backgrounds                |
+| `.shimmer-effect`       | Hover shimmer animation for buttons                       |
 
 #### Other Base Styles
 
@@ -205,6 +213,7 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 **Purpose:** Wraps the entire application with the Inter font and global metadata.
 
 **Key details:**
+
 - Loads **Inter** from Google Fonts with `display: "swap"` for performance
 - Font applied via CSS variable `--font-inter`
 - SEO metadata: title = "GrievanceGrid — Smart Public Service CRM"
@@ -219,6 +228,7 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 **Purpose:** Assembles all 7 landing page sections and initializes smooth scrolling.
 
 **Architecture:**
+
 - Marked as `"use client"` (client component)
 - Uses `useEffect` to dynamically import and initialize **Lenis** smooth scrolling
   - Custom easing function: `1.001 - 2^(-10t)` (exponential ease-out)
@@ -230,86 +240,58 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 
 ### 4.5 Components
 
-#### 4.5.1 `Navbar.tsx` (124 lines)
+#### 4.5.1 `Navbar.tsx` & `CardNav.tsx`
 
-**Purpose:** Fixed-position navigation bar with scroll-aware styling and mobile responsiveness.
-
-**Features:**
-- **Scroll detection:** `scrolled` state toggles at 50px — applies glassmorphism background on scroll
-- **Logo:** Custom SVG grid icon + "Grievance**Grid**" wordmark
-- **Navigation links:** Features, How It Works, Stats, Contact — with animated underline on hover
-- **CTA buttons:** "Sign In" (text) + "Get Started" (gradient button)
-- **Mobile menu:** Hamburger toggle (X/bars icon) with glassmorphism dropdown panel
-- **Animations:** All transitions use CSS `transition-all duration-500`
-
-**State:**
-- `scrolled: boolean` — tracks scroll position
-- `mobileOpen: boolean` — toggles mobile menu
-
----
-
-#### 4.5.2 `HeroSection.tsx` (185 lines)
-
-**Purpose:** Full-screen hero section with 3D background, headline, CTAs, and mini stat cards.
+**Purpose:** Advanced expandable navigation system using `CardNav` to create a "card stack" interaction.
 
 **Features:**
-- **3D Background:** Dynamically imported `HeroScene` component (SSR disabled)
-- **Badge:** "Powering Smart Governance" with pulsing green dot
-- **Headline:** Two-line gradient text title — "Transforming Public Service. One Grievance at a Time."
-- **Subtitle:** Platform description
-- **CTA Buttons:** "Launch Command Center" (gradient) + "Watch Demo" (glass)
-- **Mini Stats:** 3 glass cards — "10K+ Complaints Resolved", "<30s Auto-Assign Time", "90%+ SLA Compliance"
-- **Scroll indicator:** Bouncing arrow at bottom
 
-**Animations (GSAP):**
-- Sequential entrance animations with staggered delays (0.2s → 1.0s)
-- Badge → Title → Subtitle → CTAs → Stats with `power3.out` and `back.out` easing
-- All animations scoped to the section ref via `gsap.context()`
+- **Card Interaction:** Nav items expand into color-coded cards on click/hover.
+- **GSAP Animations:** Uses `gsap.timeline` for smooth height expansion and card staggering.
+- **Responsive:** Recalculates height dynamically on mobile resize.
+- **Customizable:** Props for base color, logo, and nav items.
 
 ---
 
-#### 4.5.3 `HeroScene.tsx` (171 lines)
+#### 4.5.2 `HeroSection.tsx`
 
-**Purpose:** WebGL 3D scene rendered behind the hero section using React Three Fiber.
+**Purpose:** Redesigned premium hero section with cinematic background.
 
-**Sub-components:**
+**Features:**
 
-| Component            | Description                                                          |
-| -------------------- | -------------------------------------------------------------------- |
-| `GridPlane`          | Wireframe plane (40×40 grid) tilted and slowly rotating              |
-| `FloatingParticles`  | 600 point particles scattered in 3D space, slowly rotating           |
-| `GlowOrbs`          | 3 semi-transparent spheres floating with sinusoidal motion           |
-| `DataLines`          | 12 random line segments suggesting data flow connections             |
+- **Video Background:** Uses `Background.mp4` with a CSS mask fade (`bg-mask-bottom`).
+- **Serif Typography:** Headings use `Playfair Display` for an elegant, professional look.
+- **Enhanced CTAs:** "Launch Command Center" button with shimmer, rotation, and glow effects.
+- **Advanced Layout:** Centered content with stats pushed to the bottom over the video fade.
 
-**Technical details:**
-- Canvas: Camera at `[0, 0, 8]`, FOV 60°, DPR capped at 1.5
-- Performance: `frustumCulled={false}` on particles, alpha enabled
-- All objects animated via `useFrame` hooks
-- CSS gradient overlays on top for depth/fade effect
+**Animations:** Uses GSAP for entry sequences and hover micro-interactions.
 
 ---
 
-#### 4.5.4 `FeaturesSection.tsx` (176 lines)
+#### 4.5.3 `TiltedCard.tsx`
 
-**Purpose:** 6-card feature grid showcasing platform capabilities.
+**Purpose:** Reusable UI component providing a 3D magnetic tilt effect on mouse hover.
 
-**Features (6 cards):**
+**Technical Details:**
 
-| Feature           | Color        | Description                                        |
-| ----------------- | ------------ | -------------------------------------------------- |
-| Smart Routing     | Blue         | AI-powered keyword categorization & routing        |
-| Real-Time Tracking| Cyan         | Live status updates & notifications                |
-| SLA Engine        | Red          | Configurable SLA timers with auto-escalation       |
-| Geo-Mapping       | Amber        | Heatmap-based complaint visualization              |
-| Command Center    | Green        | Mission-control dashboard with live KPIs           |
-| Smart Assignment  | Light Blue   | Workload-aware officer assignment                  |
+- Powered by **Framer Motion** (`useMotionValue`, `useSpring`).
+- Supports interactive captions, image overlays, and custom children.
+- Configurable amplitude, scale, and spring physics.
 
-**Each card contains:** Color-coded icon (SVG), title, description, expanding underline on hover.
+---
 
-**Animations (GSAP + ScrollTrigger):**
-- Header fades in at 85% viewport trigger
-- Cards stagger in (opacity, Y, rotateX, scale) at 80% trigger
-- Subtle background glow orb behind the section
+#### 4.5.4 `HeroScene.tsx` (Legacy)
+
+**Note:** This component (a React Three Fiber particle/grid scene) is currently replaced by the video background in the main branch but remains in the codebase as an alternative.
+
+---
+
+#### 4.5.5 `FeaturesSection.tsx`
+
+**Refinements:**
+
+- Now wraps feature cards in the `TiltedCard` component for high-end interactivity.
+- Updated styling with stronger glassmorphism and animated bottom underlines.
 
 ---
 
@@ -319,19 +301,21 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 
 **Steps:**
 
-| Step | Title                 | Color  | Description                                    |
-| ---- | --------------------- | ------ | ---------------------------------------------- |
-| 01   | Citizen Reports       | Cyan   | Submit grievance, get Grid ID instantly         |
-| 02   | AI Routes Intelligently| Blue  | Auto-categorize, prioritize, enforce SLA        |
-| 03   | Officer Takes Action  | Amber  | Task queue with SLA countdown, status updates   |
-| 04   | Resolution Tracked    | Green  | Full lifecycle tracking, citizen feedback       |
+| Step | Title                   | Color | Description                                   |
+| ---- | ----------------------- | ----- | --------------------------------------------- |
+| 01   | Citizen Reports         | Cyan  | Submit grievance, get Grid ID instantly       |
+| 02   | AI Routes Intelligently | Blue  | Auto-categorize, prioritize, enforce SLA      |
+| 03   | Officer Takes Action    | Amber | Task queue with SLA countdown, status updates |
+| 04   | Resolution Tracked      | Green | Full lifecycle tracking, citizen feedback     |
 
 **Layout:**
+
 - Desktop: Vertical timeline with icon squares on the left, glass cards on the right
 - Mobile: Stacked cards with inline icons (timeline hidden)
 - Animated progress line (gradient: blue → green) fills on scroll via `scrub: 1`
 
 **Animations (GSAP + ScrollTrigger):**
+
 - Header fades in at 85%
 - Steps slide in from left (`x: -60`) with 0.2s stagger
 - Timeline progress bar scales via scroll-linked scrub animation
@@ -344,14 +328,15 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 
 **Stats:**
 
-| Metric               | Value    | Description              |
-| -------------------- | -------- | ------------------------ |
-| Complaints Resolved  | 10,000+  | And counting             |
-| Auto-Assign Time     | <30s     | Average routing speed    |
-| SLA Compliance       | 90%+     | On-time resolution rate  |
-| Departments          | 50+      | Connected and active     |
+| Metric              | Value   | Description             |
+| ------------------- | ------- | ----------------------- |
+| Complaints Resolved | 10,000+ | And counting            |
+| Auto-Assign Time    | <30s    | Average routing speed   |
+| SLA Compliance      | 90%+    | On-time resolution rate |
+| Departments         | 50+     | Connected and active    |
 
 **`AnimatedCounter` sub-component:**
+
 - Takes `target`, `prefix`, `suffix`, and `triggered` props
 - Uses `requestAnimationFrame` for smooth counting animation
 - Easing: cubic ease-out (`1 - (1 - progress)³`)
@@ -359,6 +344,7 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 - Only triggers when the section scrolls into view (70% viewport)
 
 **Animations (GSAP + ScrollTrigger):**
+
 - `ScrollTrigger.create` triggers the counter animation
 - Header and stat items animate in with stagger and `back.out` easing
 - Expanding bottom accent line on hover (12px → 100% width, color change)
@@ -370,12 +356,14 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 **Purpose:** Final call-to-action banner encouraging users to get started.
 
 **Features:**
+
 - Large glass card with corner accent borders (top-left, bottom-right)
 - Headline: "Start Building a Better Public Service Today"
 - Two CTAs: "Get Started Free" (gradient button with glow pulse) + "Contact Sales →"
 - Large background glow orb (800×400px)
 
 **Animations (GSAP + ScrollTrigger):**
+
 - Content scales in from 95% with 50px Y offset at 80% viewport
 
 ---
@@ -385,6 +373,7 @@ Colors are bridged into Tailwind via the `@theme inline` directive, enabling usa
 **Purpose:** Site footer with brand info, navigation links, and social media.
 
 **Structure:**
+
 - **Brand column** (2-col span): Logo, tagline, social icons (Twitter/X, GitHub, LinkedIn)
 - **Link columns** (3 columns): Product, Resources, Company — each with 4 links
 - **Bottom bar:** Copyright (dynamic year) + Terms, Privacy, Security links
@@ -410,14 +399,14 @@ The backend directory is currently **empty**. A detailed architecture plan exist
 
 ## 6. Existing Documentation
 
-| File                       | Description                                                    |
-| -------------------------- | -------------------------------------------------------------- |
-| `docs/prd.md`              | Product Requirements Document — features, user stories, scope  |
-| `docs/design.md`           | UI/UX Design Specification — visual identity, layout, sections |
-| `docs/tech_stack.md`       | Technology choices and justifications                          |
-| `docs/backend_architecture.md` | Full backend architecture plan with API, schema, logic     |
-| `docs/todo.md`             | Project task checklist with priorities                          |
-| `README.md`                | Repository overview, features, tech stack, roadmap             |
+| File                           | Description                                                    |
+| ------------------------------ | -------------------------------------------------------------- |
+| `docs/prd.md`                  | Product Requirements Document — features, user stories, scope  |
+| `docs/design.md`               | UI/UX Design Specification — visual identity, layout, sections |
+| `docs/tech_stack.md`           | Technology choices and justifications                          |
+| `docs/backend_architecture.md` | Full backend architecture plan with API, schema, logic         |
+| `docs/todo.md`                 | Project task checklist with priorities                         |
+| `README.md`                    | Repository overview, features, tech stack, roadmap             |
 
 ---
 
@@ -427,4 +416,4 @@ The frontend landing page currently has **multiple errors** that need to be addr
 
 ---
 
-*This document covers all code written for the GrievanceGrid project as of March 3, 2026.*
+_This document covers all code written for the GrievanceGrid project as of March 3, 2026._
