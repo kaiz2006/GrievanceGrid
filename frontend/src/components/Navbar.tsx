@@ -1,50 +1,55 @@
 "use client";
 
-import CardNav from "./CardNav";
+import CardNav, { CardNavItem } from "./CardNav";
+
+const navItems: CardNavItem[] = [
+  {
+    label: "Smart Routing",
+    bgColor: "#0f172a", // Deep navy
+    textColor: "#f8fafc",
+    links: [
+      { label: "AI Categorisation", href: "#features", ariaLabel: "AI Categorisation Features" },
+      { label: "Priority Tagging", href: "#features", ariaLabel: "Priority Tagging" },
+      { label: "Dept. Assignment", href: "#features", ariaLabel: "Department Assignment" },
+      { label: "Keyword Engine", href: "#features", ariaLabel: "Keyword Engine" },
+    ],
+  },
+  {
+    label: "Command Center",
+    bgColor: "#1e3a8a", // Dark blue
+    textColor: "#f8fafc",
+    links: [
+      { label: "Live Dashboard", href: "#features", ariaLabel: "Live Dashboard" },
+      { label: "SLA Engine", href: "#features", ariaLabel: "SLA Engine" },
+      { label: "Escalation Alerts", href: "#features", ariaLabel: "Escalation Alerts" },
+      { label: "Geo Heatmaps", href: "#features", ariaLabel: "Geo Heatmaps" },
+    ],
+  },
+  {
+    label: "Citizen Portal",
+    bgColor: "#111827", // Almost black
+    textColor: "#f8fafc",
+    links: [
+      { label: "Grievance Submission", href: "#how-it-works", ariaLabel: "Grievance Submission" },
+      { label: "Real-Time Tracking", href: "#how-it-works", ariaLabel: "Real-Time Tracking" },
+      { label: "Status Notifications", href: "#how-it-works", ariaLabel: "Status Notifications" },
+      { label: "Feedback & Rating", href: "#how-it-works", ariaLabel: "Feedback and Rating" },
+    ],
+  },
+];
 
 export default function Navbar() {
-  const navItems = [
-    {
-      label: "Features",
-      bgColor: "#1a1a1a",
-      textColor: "#ffffff",
-      links: [
-        { label: "View All Features", href: "#features", ariaLabel: "View all features" },
-        { label: "Documentation", href: "#docs", ariaLabel: "View documentation" },
-      ],
-    },
-    {
-      label: "How It Works",
-      bgColor: "#2a2a2a",
-      textColor: "#ffffff",
-      links: [
-        { label: "Get Started", href: "#how-it-works", ariaLabel: "Get started guide" },
-        { label: "Learn More", href: "#learn", ariaLabel: "Learn more" },
-      ],
-    },
-    {
-      label: "Resources",
-      bgColor: "#1f1f1f",
-      textColor: "#ffffff",
-      links: [
-        { label: "Blog", href: "#blog", ariaLabel: "Read our blog" },
-        { label: "Contact", href: "#contact", ariaLabel: "Contact us" },
-      ],
-    },
-  ];
-
   return (
     <CardNav
-      logo="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Crect x='2' y='2' width='6' height='6' rx='1' fill='white' opacity='0.9'/%3E%3Crect x='12' y='2' width='6' height='6' rx='1' fill='white' opacity='0.6'/%3E%3Crect x='2' y='12' width='6' height='6' rx='1' fill='white' opacity='0.6'/%3E%3Crect x='12' y='12' width='6' height='6' rx='1' fill='white' opacity='0.9'/%3E%3C/svg%3E"
-      logoAlt="Grievance Grid Logo"
+      logo="" // We bypassed this by building the logo markup directly into CardNav.tsx as requested by GrievanceGrid styling
+      logoAlt="GrievanceGrid Logo"
       items={navItems}
-      // use dark background from theme for navbar
-      baseColor="var(--bg-secondary)"
-      // menu icon should contrast with navbar background
-      menuColor="var(--text-primary)"
-      // button uses accent color for visibility
-      buttonBgColor="var(--accent)"
-      buttonTextColor="var(--text-primary)"
+      className="mix-blend-normal"
+      baseColor="rgba(15, 23, 42, 0.85)"
+      menuColor="#ffffff"
+      buttonBgColor="#2563eb"
+      buttonTextColor="#ffffff"
+      ease="power3.out"
     />
   );
 }

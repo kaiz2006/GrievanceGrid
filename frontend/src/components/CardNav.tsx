@@ -172,8 +172,36 @@ const CardNav: React.FC<CardNavProps> = ({
             <div className="hamburger-line" />
           </div>
 
-          <div className="logo-container">
-            <img src={logo} alt={logoAlt} className="logo" />
+          <div className="logo-container text-white font-bold tracking-tight text-xl flex items-center gap-2">
+            {logo ? (
+              <img src={logo} alt={logoAlt} className="logo" />
+            ) : (
+              <>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 6,
+                    background: "linear-gradient(135deg, #1e40af, #3b82f6)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                    {/* Top Left: Bright */}
+                    <rect x="2" y="2" width="6" height="6" rx="1" fill="white" opacity="0.95" />
+                    {/* Top Right: Dull */}
+                    <rect x="12" y="2" width="6" height="6" rx="1" fill="white" opacity="0.4" />
+                    {/* Bottom Left: Dull */}
+                    <rect x="2" y="12" width="6" height="6" rx="1" fill="white" opacity="0.4" />
+                    {/* Bottom Right: Bright */}
+                    <rect x="12" y="12" width="6" height="6" rx="1" fill="white" opacity="0.95" />
+                  </svg>
+                </div>
+                GrievanceGrid
+              </>
+            )}
           </div>
 
           <button

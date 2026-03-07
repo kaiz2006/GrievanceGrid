@@ -65,8 +65,8 @@
    ======================================== */
 
 .bg-mask-bottom {
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
 }
 
 html {
@@ -416,6 +416,99 @@ body {
 }
 
 /* ========================================
+   Hero Stat Card — Animated Border Light
+   ======================================== */
+
+@keyframes borderLight {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Wrapper that clips the glowing pseudo-element */
+.stat-card-glow {
+  position: relative;
+  border-radius: 16px;
+  padding: 1px; /* gap that shows the glowing border */
+  background: conic-gradient(
+    from var(--angle),
+    transparent 75%,
+    rgba(255, 255, 255, 0.9) 85%,
+    rgba(255, 255, 255, 1) 90%,
+    rgba(255, 255, 255, 0.9) 95%,
+    transparent 100%
+  );
+  animation: borderLight 2.5s linear infinite;
+}
+
+/* The actual card sits on top, masking the padding gap */
+.stat-card-inner {
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: 100%;
+  height: 100%;
+}
+
+/* ========================================
+   Hero Launch Button
+   ======================================== */
+
+.hero-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.12));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  white-space: nowrap;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.95),
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.hero-launch-btn:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.10));
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 32px rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.hero-launch-btn .btn-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.8s ease;
+}
+
+.hero-launch-btn:hover .btn-shimmer {
+  transform: translateX(100%);
+}
+
+/* ========================================
    Responsive
    ======================================== */
 
@@ -432,3 +525,53 @@ body {
     left: 24px;
   }
 }
+
+/* ========================================
+   Platform Features — Dot Grid Background
+   ======================================== */
+
+.features-dot-grid {
+  /* 1. Base navy */
+  background-color: #0b1120;
+
+  /* 2. Dot grid + radial bloom layered on top */
+  background-image:
+    /* Central electric-blue radial bloom */
+    radial-gradient(
+      ellipse 80% 60% at 50% 50%,
+      rgba(30, 64, 175, 0.18) 0%,
+      rgba(6, 182, 212, 0.06) 45%,
+      transparent 70%
+    ),
+    /* Fine dot grid */
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.18) 1px,
+      transparent 1px
+    );
+
+  /* Grid spacing — 28px × 28px cells */
+  background-size: 100% 100%, 28px 28px;
+  background-position: center center, center center;
+}
+
+/* Animate the bloom gently */
+@keyframes bloomPulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1;    }
+}
+
+.features-dot-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 55% at 50% 50%,
+    rgba(30, 64, 175, 0.12) 0%,
+    transparent 65%
+  );
+  animation: bloomPulse 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+

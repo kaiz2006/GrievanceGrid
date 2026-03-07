@@ -1,114 +1,193 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+/* ─────────────────────────────────────────────
+   CTASection — clean professional rewrite
+   No GSAP
+───────────────────────────────────────────────── */
 
 export default function CTASection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const loadGSAP = async () => {
-      const gsapModule = await import("gsap");
-      const gsap = gsapModule.default;
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      gsap.registerPlugin(ScrollTrigger);
-
-      const ctx = gsap.context(() => {
-        gsap.from(".cta-content", {
-          scrollTrigger: { trigger: ".cta-content", start: "top 80%" },
-          opacity: 0,
-          y: 50,
-          scale: 0.95,
-          duration: 1,
-          ease: "power3.out",
-        });
-      }, sectionRef);
-
-      return () => ctx.revert();
-    };
-
-    loadGSAP();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="section-padding relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-accent/8 blur-[150px]" />
-      </div>
+    <section
+      id="cta"
+      className="relative overflow-hidden"
+      style={{
+        zIndex: 10,
+        background: "var(--bg-primary)",
+        padding: "120px 0 140px",
+      }}
+    >
+      <div style={{ maxWidth: 880, margin: "0 auto", padding: "0 32px" }}>
+        <div
+          style={{
+            background: "rgba(15, 23, 42, 0.7)",
+            border: "1px solid rgba(255, 255, 255, 0.07)",
+            borderRadius: 24,
+            padding: "80px 40px",
+            textAlign: "center",
+            position: "relative",
+            backdropFilter: "blur(24px)",
+            overflow: "hidden",
+            boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
+          }}
+        >
+          {/* Subtle background glow inside the card */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "80%",
+              height: "80%",
+              background: "radial-gradient(ellipse, rgba(59,130,246,0.15) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }}
+          />
 
-      <div className="container-custom relative z-10">
-        <div className="cta-content glass-card p-12 sm:p-16 text-center max-w-4xl mx-auto relative overflow-hidden">
-          {/* Corner accents */}
-          <div className="absolute top-0 left-0 w-24 h-24 border-t border-l border-accent/20 rounded-tl-2xl" />
-          <div className="absolute bottom-0 right-0 w-24 h-24 border-b border-r border-accent/20 rounded-br-2xl" />
+          {/* Corner accents (top-left & bottom-right) */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: 80,
+              height: 80,
+              borderTop: "1px solid rgba(59,130,246,0.3)",
+              borderLeft: "1px solid rgba(59,130,246,0.3)",
+              borderTopLeftRadius: 24,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 80,
+              height: 80,
+              borderBottom: "1px solid rgba(59,130,246,0.3)",
+              borderRight: "1px solid rgba(59,130,246,0.3)",
+              borderBottomRightRadius: 24,
+            }}
+          />
 
-          <span className="inline-block text-sm font-semibold text-accent-light tracking-wider uppercase mb-4">
-            Ready to Transform?
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-bold gradient-text mb-6 leading-tight">
-            Start Building a Better
-            <br />
-            Public Service Today
-          </h2>
-          <p className="text-lg text-text-secondary max-w-xl mx-auto mb-10">
-            Join the movement to modernize governance. Deploy GrievanceGrid and
-            give citizens the transparency they deserve.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a
-              href="#"
-              className="group relative inline-flex items-center gap-3 gradient-btn text-white font-semibold px-12 py-5 rounded-2xl text-lg glow-pulse overflow-hidden"
+          {/* ── Content ── */}
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <span
+              style={{
+                display: "inline-block",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "#60a5fa",
+                marginBottom: 20,
+              }}
             >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-              </div>
-              
-              <span className="relative z-10 flex items-center gap-3">
-                {/* Icon container */}
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                
-                Get Started Free
-                
-                {/* Arrow */}
+              Ready to Transform?
+            </span>
+            
+            <h2
+              style={{
+                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                fontWeight: 800,
+                lineHeight: 1.1,
+                color: "#f8fafc",
+                margin: 0,
+                marginBottom: 24,
+              }}
+            >
+              Start Building a Better<br />Public Service Today
+            </h2>
+            
+            <p
+              style={{
+                fontSize: "1.125rem",
+                lineHeight: 1.6,
+                color: "rgba(255,255,255,0.6)",
+                maxWidth: 480,
+                margin: "0 auto 48px",
+              }}
+            >
+              Join the movement to modernize governance. Deploy GrievanceGrid and
+              give citizens the transparency they deserve.
+            </p>
+
+            {/* ── Buttons ── */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 20,
+                flexWrap: "wrap",
+              }}
+            >
+              <a href="#" className="hero-launch-btn">
+                <span className="btn-shimmer" aria-hidden="true" />
+                <span
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: "#10b981",
+                    boxShadow: "0 0 8px #10b981",
+                    flexShrink: 0,
+                  }}
+                />
+                <span style={{ position: "relative", zIndex: 1 }}>Get Started Free</span>
                 <svg
-                  className="w-5 h-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110"
+                  width="16"
+                  height="16"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  style={{ flexShrink: 0, position: "relative", zIndex: 1 }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </span>
-              
-              {/* Enhanced glow */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-accent/30 to-accent-light/30 rounded-2xl blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500" />
-            </a>
-            
-            <a
-              href="#contact"
-              className="group relative inline-flex items-center gap-2 text-text-secondary hover:text-text-primary font-medium text-lg transition-all duration-300 px-6 py-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10"
-            >
-              Contact Sales
-              <svg
-                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              </a>
+
+              <a
+                href="#contact"
+                className="group relative"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: "1rem",
+                  fontWeight: 500,
+                  color: "rgba(255,255,255,0.7)",
+                  textDecoration: "none",
+                  padding: "16px 24px",
+                  borderRadius: 16,
+                  transition: "all 0.2s ease",
+                  border: "1px solid transparent",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "#fff";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.7)";
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  (e.currentTarget as HTMLElement).style.borderColor = "transparent";
+                }}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
+                Contact Sales
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style={{ transition: "transform 0.2s ease" }}
+                  className="group-hover:translate-x-1"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>
