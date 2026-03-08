@@ -5,8 +5,8 @@ import CardNav, { CardNavItem } from "./CardNav";
 const navItems: CardNavItem[] = [
   {
     label: "Smart Routing",
-    bgColor: "#0f172a", // Deep navy
-    textColor: "#f8fafc",
+    bgColor: "#1e4d8c",   // Light cobalt blue
+    textColor: "#f0f8ff",
     links: [
       { label: "AI Categorisation", href: "#features", ariaLabel: "AI Categorisation Features" },
       { label: "Priority Tagging", href: "#features", ariaLabel: "Priority Tagging" },
@@ -16,8 +16,8 @@ const navItems: CardNavItem[] = [
   },
   {
     label: "Command Center",
-    bgColor: "#1e3a8a", // Dark blue
-    textColor: "#f8fafc",
+    bgColor: "#1a6fa8",   // Sky / cerulean blue
+    textColor: "#f0f8ff",
     links: [
       { label: "Live Dashboard", href: "#features", ariaLabel: "Live Dashboard" },
       { label: "SLA Engine", href: "#features", ariaLabel: "SLA Engine" },
@@ -27,8 +27,8 @@ const navItems: CardNavItem[] = [
   },
   {
     label: "Citizen Portal",
-    bgColor: "#111827", // Almost black
-    textColor: "#f8fafc",
+    bgColor: "#1b5e8e",   // Muted steel blue
+    textColor: "#f0f8ff",
     links: [
       { label: "Grievance Submission", href: "#how-it-works", ariaLabel: "Grievance Submission" },
       { label: "Real-Time Tracking", href: "#how-it-works", ariaLabel: "Real-Time Tracking" },
@@ -45,7 +45,7 @@ export default function Navbar() {
       logoAlt="GrievanceGrid Logo"
       items={navItems}
       className="mix-blend-normal"
-      baseColor="rgba(15, 23, 42, 0.85)"
+      baseColor="transparent"
       menuColor="#ffffff"
       buttonBgColor="#2563eb"
       buttonTextColor="#ffffff"
@@ -53,3 +53,4 @@ export default function Navbar() {
     />
   );
 }
+

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Navbar from "../components/Navbar";
+import PillNav from "../components/PillNav";
 import HeroSection from "../components/HeroSection";
 import FeaturesSection from "../components/FeaturesSection";
 import HowItWorks from "../components/HowItWorks";
@@ -51,14 +51,16 @@ export default function Home() {
   }, []);
 
   return (
-    <main>
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <HowItWorks />
-      <StatsSection />
-      <CTASection />
-      <Footer />
-    </main>
+    <>
+      <PillNav />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <HowItWorks />
+        <StatsSection />
+        <CTASection />
+        <Footer />
+      </main>
+    </>
   );
 }
