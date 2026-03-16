@@ -1,6 +1,7 @@
 "use client";
 
 import CardNav, { CardNavItem } from "./CardNav";
+import { useAuth } from "../lib/auth-context";
 
 const navItems: CardNavItem[] = [
   {
@@ -39,6 +40,8 @@ const navItems: CardNavItem[] = [
 ];
 
 export default function Navbar() {
+  const { signIn } = useAuth();
+
   return (
     <CardNav
       logo="" // We bypassed this by building the logo markup directly into CardNav.tsx as requested by GrievanceGrid styling
@@ -50,6 +53,7 @@ export default function Navbar() {
       buttonBgColor="#2563eb"
       buttonTextColor="#ffffff"
       ease="power3.out"
+      onGetStarted={signIn}
     />
   );
 }

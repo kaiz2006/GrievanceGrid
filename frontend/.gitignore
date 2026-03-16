@@ -33,6 +33,20 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Firebase credentials and sensitive files
+firebase-credentials.json
+service-account-key.json
+google-credentials.json
+config/secrets.json
+config/local.json
+config/production.json
+
+# API keys and secrets (additional patterns)
+*.key
+*.pem
+*.p12
+*.pfx
+
 # vercel
 .vercel
 
