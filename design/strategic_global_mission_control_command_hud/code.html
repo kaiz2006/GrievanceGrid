@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Global Mission Control Command HUD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "plum": "#381D2A",
+                        "sage": "#C4D6B0",
+                        "light-slate": "#E2E8F0",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "mono": ["Space Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "6px", "lg": "6px", "xl": "6px", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .reduced-industrial {
+            border: 1px solid #381D2A;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(56, 29, 42, 0.1), 0 2px 4px -1px rgba(56, 29, 42, 0.06);
+            background-color: white;
+        }
+        .grid-bg {
+            background-image: linear-gradient(to right, rgba(56, 29, 42, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(56, 29, 42, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+    </style>
+</head>
+<body class="bg-[#F8F9FA] font-display text-plum overflow-hidden h-screen flex flex-col">
+<header class="flex flex-wrap gap-4 p-6 z-10 w-full shrink-0">
+<div class="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 class="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Total Active</h2>
+<div class="flex justify-between items-end">
+<span class="text-3xl font-bold font-mono text-plum">14,285</span>
+<span class="text-sage font-bold text-sm">+12%</span>
+</div>
+</div>
+<div class="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 class="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">SLA Compliance</h2>
+<div class="flex justify-between items-end">
+<span class="text-3xl font-bold font-mono text-plum">87.4%</span>
+<span class="text-red-400 font-bold text-sm">-2.1%</span>
+</div>
+</div>
+<div class="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 class="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Critical Clusters</h2>
+<div class="flex justify-between items-end">
+<span class="text-3xl font-bold font-mono text-plum">24</span>
+<span class="text-sage font-bold text-sm">+4</span>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden relative">
+<div class="absolute inset-0 z-0 bg-white grid-bg" data-alt="High-contrast light grey/white interactive map" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkbeKEdriTCooN5ES2dwMLlrgitmBb_Qcfdt4I2rfj8loWjN3WHrHKa9K1Par4YJsCBai_1RXnoxJL3FWK7yRdA4tY8D5bw1ZacfeN_IhLbZEhYKHCgp-7sfVu1JfV7YjKm20qo3OAB3p2jfep2QHL2tioilWB4hTQnvNX6Wcn3EZkBfxM8ABeCqLHCMpMnJhQ8tIllWH4UDkuEgtRxVJtHjERmmBX9opI-WPAKjKIjLVoSEPxxbSqNzyOl3L7F8dPD0UAgZExxcbo'); background-size: cover; background-position: center; mix-blend-mode: luminosity; opacity: 0.7;">
+<div class="absolute top-1/4 left-1/3 w-32 h-32 bg-plum/10 rounded-full blur-sm border border-plum/20"></div>
+<div class="absolute bottom-1/3 right-1/4 w-48 h-48 bg-plum/5 rounded-full blur-md border border-plum/20"></div>
+<div class="absolute top-1/2 left-1/2 w-16 h-16 bg-red-100/50 border border-plum rounded-full flex items-center justify-center" style="box-shadow: 0 0 15px 2px rgba(56, 29, 42, 0.1);">
+<span class="material-symbols-outlined text-plum font-light">warning</span>
+</div>
+<div class="absolute top-1/3 right-1/3 w-4 h-4 bg-sage border border-plum rotate-45 flex items-center justify-center shadow-sm">
+<div class="w-1 h-1 bg-white rounded-full"></div>
+</div>
+<div class="absolute bottom-1/4 left-1/4 w-4 h-4 bg-sage border border-plum rotate-45 flex items-center justify-center shadow-sm">
+<div class="w-1 h-1 bg-white rounded-full"></div>
+</div>
+</div>
+<aside class="w-80 h-[calc(100vh-140px)] ml-6 flex flex-col z-10 reduced-industrial bg-white/95 backdrop-blur-sm relative">
+<div class="p-4 border-b border-plum/20 flex items-center justify-between">
+<h1 class="text-lg font-medium uppercase tracking-wider text-plum">Sector Status</h1>
+<span class="material-symbols-outlined text-plum text-2xl font-light">radar</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-3">
+<div class="p-3 bg-[#F8F9FA] rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium uppercase text-plum">Sector Alpha</span>
+<span class="material-symbols-outlined text-plum text-sm">error</span>
+</div>
+<div class="flex gap-1 h-1.5">
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+<div class="p-3 bg-[#F8F9FA] rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium uppercase text-plum">Sector Beta</span>
+<span class="material-symbols-outlined text-sage text-sm">check_circle</span>
+</div>
+<div class="flex gap-1 h-1.5">
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+<div class="p-3 bg-[#F8F9FA] rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium uppercase text-plum">Sector Gamma</span>
+<span class="material-symbols-outlined text-yellow-600 text-sm">warning</span>
+</div>
+<div class="flex gap-1 h-1.5">
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+<div class="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-plum/20 bg-white rounded-b">
+<button class="w-full bg-plum text-white text-sm font-medium py-2.5 uppercase tracking-wider rounded border border-transparent hover:bg-plum/90 transition-colors shadow-sm">
+                    Deploy Crew
+                </button>
+</div>
+</aside>
+<div class="absolute top-6 right-6 z-10 flex flex-col gap-2">
+<div class="reduced-industrial flex flex-col overflow-hidden">
+<button class="p-2 border-b border-plum/20 hover:bg-[#F8F9FA] flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-plum font-light">add</span>
+</button>
+<button class="p-2 hover:bg-[#F8F9FA] flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-plum font-light">remove</span>
+</button>
+</div>
+<button class="reduced-industrial p-2 hover:bg-[#F8F9FA] flex items-center justify-center mt-2 transition-colors">
+<span class="material-symbols-outlined text-plum font-light">my_location</span>
+</button>
+</div>
+<div class="absolute bottom-6 right-6 z-10 w-96 reduced-industrial overflow-hidden bg-light-slate">
+<div class="bg-white px-3 py-2 flex justify-between items-center border-b border-plum/20">
+<span class="text-plum font-medium uppercase text-xs tracking-wider">AI Audit Stream</span>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full border border-plum bg-transparent"></div>
+<div class="w-2.5 h-2.5 rounded-full border border-plum bg-transparent"></div>
+</div>
+</div>
+<div class="p-4 h-48 overflow-y-auto font-mono text-plum text-xs flex flex-col gap-2 bg-light-slate/50">
+<p class="opacity-80">&gt; [SYSTEM] Processing cluster analysis...</p>
+<p class="opacity-80">&gt; [AI] Routing field crew to Gamma-7.</p>
+<p class="text-yellow-700">&gt; [WARNING] Anomaly detected in Grid 4A.</p>
+<p class="text-red-700 font-bold">&gt; [ALERT] Hotspot critical in Sector Zeta.</p>
+<p class="opacity-80">&gt; [SYSTEM] Re-routing backup protocols.</p>
+<p>&gt; _</p>
+</div>
+</div>
+</main>
+</body></html>

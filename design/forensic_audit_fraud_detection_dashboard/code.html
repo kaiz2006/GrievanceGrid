@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Forensic Audit &amp; Fraud Detection Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "bg-light": "#F8FAFC",
+                        "card-fraud": "rgba(186, 86, 36, 0.1)",
+                        "card-fraud-border": "#BA5624",
+                        "card-dispute": "rgba(255, 165, 82, 0.1)",
+                        "card-dispute-border": "#FFA552",
+                        "card-trust": "rgba(196, 214, 176, 0.2)",
+                        "card-trust-border": "#C4D6B0",
+                        "plum": "#381D2A",
+                        "muted-grey": "#CBD5E1",
+                        "peach-hover": "#FFF0E5"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["Fira Code", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "6px",
+                        "md": "6px",
+                        "lg": "6px"
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'button': '0 2px 4px rgba(56, 29, 42, 0.2)'
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .grid-bg {
+            background-color: #F8FAFC;
+            background-size: 20px 20px;
+            background-image:
+                linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+        }
+        .scrolling-ticker {
+            animation: ticker 30s linear infinite;
+            white-space: nowrap;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .toner-map {
+            filter: grayscale(100%) contrast(1.2) opacity(0.8);
+        }
+    </style>
+</head>
+<body class="grid-bg min-h-screen text-slate-800 font-display">
+<div class="bg-plum text-white font-mono text-xs py-1 overflow-hidden border-b border-slate-300 flex opacity-90">
+<div class="scrolling-ticker flex-shrink-0 w-full tracking-wider">
+            CRITICAL ALERT: MULTIPLE DISCREPANCIES DETECTED IN SECTOR 7G /// [FRAUD_PROB_99%] /// AWAITING MANUAL VERIFICATION /// AUDIT LOG CORRUPTION IN REGION BETA ///
+        </div>
+<div aria-hidden="true" class="scrolling-ticker flex-shrink-0 w-full tracking-wider">
+            CRITICAL ALERT: MULTIPLE DISCREPANCIES DETECTED IN SECTOR 7G /// [FRAUD_PROB_99%] /// AWAITING MANUAL VERIFICATION /// AUDIT LOG CORRUPTION IN REGION BETA ///
+        </div>
+</div>
+<div class="layout-container flex h-full grow flex-col px-6 py-8 max-w-[1400px] mx-auto">
+<header class="flex items-center justify-between whitespace-nowrap bg-white p-5 rounded-md border border-slate-200 shadow-soft mb-8">
+<div class="flex items-center gap-3 text-plum">
+<span class="material-symbols-outlined text-3xl opacity-80">analytics</span>
+<h2 class="text-2xl font-bold tracking-tight">GrievanceGrid Audit</h2>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<nav class="flex items-center gap-6 font-medium text-sm text-slate-600">
+<a class="hover:text-plum transition-colors" href="#">Dashboard</a>
+<a class="hover:text-plum transition-colors" href="#">Hotspots</a>
+<a class="hover:text-plum transition-colors" href="#">Evidence Log</a>
+</nav>
+<button class="flex items-center justify-center bg-plum text-white text-sm font-medium h-10 px-6 rounded-md shadow-button hover:bg-opacity-90 transition-all">
+                    New Audit
+                </button>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="flex flex-col gap-3 p-6 bg-card-fraud border border-slate-200 rounded-md shadow-soft">
+<div class="flex justify-between items-start text-card-fraud-border">
+<p class="text-sm font-semibold uppercase tracking-wider w-2/3">High-Probability Fraud</p>
+<span class="material-symbols-outlined text-2xl">gavel</span>
+</div>
+<p class="text-slate-800 text-5xl font-light mt-2 font-mono">07</p>
+</div>
+<div class="flex flex-col gap-3 p-6 bg-card-dispute border border-slate-200 rounded-md shadow-soft">
+<div class="flex justify-between items-start text-card-dispute-border">
+<p class="text-sm font-semibold uppercase tracking-wider w-2/3">Citizen Disputes</p>
+<span class="material-symbols-outlined text-2xl">groups</span>
+</div>
+<p class="text-slate-800 text-5xl font-light mt-2 font-mono">24</p>
+</div>
+<div class="flex flex-col gap-3 p-6 bg-card-trust border border-slate-200 rounded-md shadow-soft">
+<div class="flex justify-between items-start text-[#8B9A7D]">
+<p class="text-sm font-semibold uppercase tracking-wider w-2/3">Integrity Score</p>
+<span class="material-symbols-outlined text-2xl">health_and_safety</span>
+</div>
+<p class="text-slate-800 text-5xl font-light mt-2 font-mono">94%</p>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-6 mb-8">
+<div class="flex-1 lg:w-3/5 bg-white border border-slate-200 rounded-md shadow-soft p-6 flex flex-col">
+<div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+<h3 class="text-lg font-semibold text-slate-800">Reported vs Verified Audits</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-plum rounded-sm"></div><span class="text-xs text-slate-500 font-medium uppercase tracking-wider">Reported</span></div>
+<div class="flex items-center gap-2"><div class="w-3 h-3 bg-muted-grey rounded-sm"></div><span class="text-xs text-slate-500 font-medium uppercase tracking-wider">Verified</span></div>
+</div>
+</div>
+<div class="flex-1 grid min-h-[250px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center">
+<div class="w-full flex justify-center gap-1 items-end h-[80%]">
+<div class="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+<div class="w-1/2 bg-muted-grey rounded-t-sm h-[60%] opacity-80 hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="text-slate-500 text-xs font-medium mt-3">M</p>
+<div class="w-full flex justify-center gap-1 items-end h-[60%]">
+<div class="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+<div class="w-1/2 bg-muted-grey rounded-t-sm h-[90%] opacity-80 hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="text-slate-500 text-xs font-medium mt-3">T</p>
+<div class="w-full flex justify-center gap-1 items-end h-[90%]">
+<div class="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+<div class="w-1/2 bg-muted-grey rounded-t-sm h-[40%] opacity-80 hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="text-slate-500 text-xs font-medium mt-3">W</p>
+<div class="w-full flex justify-center gap-1 items-end h-[40%]">
+<div class="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+<div class="w-1/2 bg-muted-grey rounded-t-sm h-[30%] opacity-80 hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="text-slate-500 text-xs font-medium mt-3">T</p>
+<div class="w-full flex justify-center gap-1 items-end h-[100%]">
+<div class="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+<div class="w-1/2 bg-muted-grey rounded-t-sm h-[80%] opacity-80 hover:opacity-100 transition-opacity"></div>
+</div>
+<p class="text-slate-500 text-xs font-medium mt-3">F</p>
+</div>
+</div>
+<div class="flex-none lg:w-2/5 bg-white border border-slate-200 rounded-md shadow-soft p-6 flex flex-col">
+<h3 class="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-6">Hotspot Audit Map</h3>
+<div class="flex-1 rounded-sm border border-slate-200 relative bg-slate-100 overflow-hidden min-h-[250px] bg-center bg-cover toner-map" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCGHv0GMIw2T-uJ8pPQUHQF3fMHAoTjmjIcb7hqoXvYWRXI5c4GUzVIdFwVmFnmHbHjx-1p5nQqCu35stLvNh6kJUngk2LRdfRPA1zByiTlyuZeHXJeJmmn5uJQXQBnl3W0HdADjawuhEw-ZooRdVjf1eIWSZzpdHu4_dEqsAfTWwajUqBX48eGpULBKyIW1hpqVy1LnqFpDQjCv2pTnVpIq3Q6u-Ms6oaokwxmkHrjgHOKcp6TRPhda2ei2wBaKqsfk29yE6udWHT5");'>
+<div class="absolute top-1/4 left-1/4 w-8 h-8 bg-plum opacity-40 rounded-full flex items-center justify-center">
+<div class="w-2 h-2 bg-plum rounded-full"></div>
+</div>
+<div class="absolute top-1/2 right-1/3 w-12 h-12 bg-plum opacity-30 rounded-full flex items-center justify-center">
+<div class="w-3 h-3 bg-plum rounded-full"></div>
+</div>
+<div class="absolute bottom-1/4 right-1/4 w-6 h-6 bg-plum opacity-50 rounded-full flex items-center justify-center">
+<div class="w-1.5 h-1.5 bg-plum rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-md shadow-soft p-6 mb-8">
+<h3 class="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-4">Audit Evidence Log</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-slate-500 font-display text-xs uppercase tracking-wider border-b border-slate-200">
+<th class="p-3 font-medium">ID</th>
+<th class="p-3 font-medium">Date</th>
+<th class="p-3 font-medium">Location</th>
+<th class="p-3 font-medium">Status Tag</th>
+<th class="p-3 font-medium text-right">Action</th>
+</tr>
+</thead>
+<tbody class="text-sm font-mono text-slate-700">
+<tr class="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+<td class="p-3">#GG-4921</td>
+<td class="p-3">2023-10-24</td>
+<td class="p-3 font-display">Sector 7G</td>
+<td class="p-3">
+<span class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs">[GPS_FAIL]</span>
+</td>
+<td class="p-3 text-right">
+<button class="text-plum font-display font-medium text-xs hover:underline underline-offset-2">Review</button>
+</td>
+</tr>
+<tr class="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+<td class="p-3">#GG-4922</td>
+<td class="p-3">2023-10-24</td>
+<td class="p-3 font-display">Region Beta</td>
+<td class="p-3">
+<span class="bg-orange-50 text-orange-600 border border-orange-200 px-2 py-0.5 rounded text-xs">[IMG_CORRUPT]</span>
+</td>
+<td class="p-3 text-right">
+<button class="text-plum font-display font-medium text-xs hover:underline underline-offset-2">Review</button>
+</td>
+</tr>
+<tr class="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+<td class="p-3">#GG-4923</td>
+<td class="p-3">2023-10-23</td>
+<td class="p-3 font-display">Zone Alpha</td>
+<td class="p-3">
+<span class="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded text-xs">[VERIFIED]</span>
+</td>
+<td class="p-3 text-right">
+<button class="text-slate-500 font-display font-medium text-xs hover:underline underline-offset-2">View Log</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</body></html>

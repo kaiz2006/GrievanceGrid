@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Citizen Trust Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#381D2A",
+                        "secondary": "#C4D6B0",
+                        "background": "#FFFFFF",
+                        "text-main": "#381D2A",
+                        "text-light": "#6b7280",
+                        "border-light": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF;
+            color: #381D2A;
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .pill-resolved {
+            background-color: #e8f0e1;
+            color: #4a6b2c;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen font-sans">
+<div class="layout-container flex h-full grow flex-col max-w-[1440px] mx-auto bg-background">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-border-light bg-white px-10 py-6">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 bg-secondary rounded-md flex items-center justify-center text-primary">
+<span class="material-symbols-outlined font-semibold">grid_view</span>
+</div>
+<h2 class="text-primary text-2xl font-semibold leading-tight tracking-tight">Citizen Trust</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<a class="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="#">Submit</a>
+<a class="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="#">About</a>
+</div>
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center rounded-md border border-border-light h-10 px-6 bg-white text-primary text-base font-semibold hover:bg-gray-50 transition-colors">
+<span>Log In</span>
+</button>
+</div>
+</header>
+<div class="flex flex-col lg:flex-row p-8 gap-12 max-w-[1200px] mx-auto w-full">
+<div class="flex-1 flex flex-col gap-10">
+<div class="relative py-4">
+<h1 class="text-primary text-4xl md:text-5xl font-semibold leading-tight tracking-tight">Public Transparency<br/>Dashboard</h1>
+<div class="inline-block mt-4 bg-secondary/20 text-primary text-sm font-semibold px-3 py-1 rounded-full">
+                        Trustworthy &amp; Open
+                    </div>
+</div>
+<div class="flex flex-col md:flex-row gap-6">
+<div class="flex-1 bg-white border border-border-light rounded-lg p-6 soft-shadow flex flex-col justify-between min-h-[180px]">
+<p class="text-text-light text-sm font-semibold uppercase tracking-wider mb-2">Overall Transparency</p>
+<p class="text-primary text-6xl font-semibold leading-none tracking-tight mt-auto">4.2</p>
+</div>
+<div class="flex-1 bg-white border border-border-light rounded-lg p-6 soft-shadow flex flex-col justify-between min-h-[180px]">
+<p class="text-text-light text-sm font-semibold uppercase tracking-wider mb-2">City Resolution Score</p>
+<p class="text-primary text-6xl font-semibold leading-none tracking-tight mt-auto">4.8 <span class="text-2xl text-text-light">/ 5</span></p>
+</div>
+</div>
+<div class="bg-white border border-border-light rounded-lg p-8 soft-shadow mt-4">
+<div class="flex justify-between items-start mb-10 border-b border-border-light pb-6">
+<div>
+<p class="text-primary text-xl font-semibold">Resolved vs Pending</p>
+<p class="text-secondary text-4xl font-semibold leading-none tracking-tight mt-3 text-[#5a8033]">82% Resolved</p>
+</div>
+<div class="bg-secondary/10 text-primary px-3 py-1.5 rounded-full font-semibold text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +12% YTD
+                        </div>
+</div>
+<div class="flex gap-6 justify-end mb-8 font-semibold text-sm text-text-light">
+<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-secondary"></div> Resolved</div>
+<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-gray-200"></div> Pending</div>
+</div>
+<div class="grid min-h-[250px] grid-flow-col gap-8 grid-rows-[1fr_auto] items-end justify-items-center px-4">
+<div class="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div class="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style="height: 20%;"></div>
+<div class="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style="height: 60%;"></div>
+</div>
+<p class="text-text-light text-sm font-semibold mt-4 w-full text-center">Jan</p>
+<div class="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div class="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style="height: 30%;"></div>
+<div class="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style="height: 40%;"></div>
+</div>
+<p class="text-text-light text-sm font-semibold mt-4 w-full text-center">Feb</p>
+<div class="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div class="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style="height: 15%;"></div>
+<div class="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style="height: 75%;"></div>
+</div>
+<p class="text-text-light text-sm font-semibold mt-4 w-full text-center">Mar</p>
+<div class="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div class="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style="height: 10%;"></div>
+<div class="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style="height: 85%;"></div>
+</div>
+<p class="text-text-light text-sm font-semibold mt-4 w-full text-center">Apr</p>
+<div class="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div class="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style="height: 25%;"></div>
+<div class="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style="height: 65%;"></div>
+</div>
+<p class="text-text-light text-sm font-semibold mt-4 w-full text-center">May</p>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-[380px] flex flex-col gap-8">
+<button class="w-full bg-primary rounded-lg p-5 text-white text-lg font-semibold soft-shadow hover:bg-opacity-90 transition-colors flex items-center justify-center gap-3">
+<span class="material-symbols-outlined text-xl">campaign</span>
+                    Submit Grievance
+                </button>
+<div class="bg-white border border-border-light rounded-lg p-6 soft-shadow flex-1">
+<h2 class="text-primary text-xl font-semibold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">dynamic_feed</span>
+                        Impact Feed
+                    </h2>
+<div class="flex flex-col gap-6">
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="pill-resolved px-2.5 py-0.5 rounded-full font-semibold text-xs">Resolved</span>
+<span class="text-text-light text-xs font-semibold">2h ago</span>
+</div>
+<p class="font-semibold text-primary mb-3 text-base leading-snug">Pothole on 5th Ave filled</p>
+<div class="flex gap-3">
+<div class="relative flex-1 h-28 rounded-[6px] bg-gray-100 overflow-hidden" data-alt="Pothole on street before repair" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAza14EeI5IbmFxSNzGdKbAKQFDASCEW7oluiBRce3KQiaCEmRnVxVyT2CKtKILdvCKHYCXt97G8F5X1yCCs5o76lEyt6KNQfU_FviIfsXoLRDkzR08hwcGV6U-lGp6trLx4njqCXHHMGgddqAnMjeHTQzm9YxOqhN-FZqct7qct67NwV6Y6hTG2SUvEIaye3F8Ej9G_7FVdREQ2emrue4a3XQaBJNqyFrBfxwXycEGoUiaY6lUSmtawCy2L41YG0C8XI_i_WvXafD'); background-size: cover; background-position: center;">
+<span class="absolute bottom-2 left-2 bg-white/90 text-primary text-[10px] font-semibold px-1.5 py-0.5 rounded-sm shadow-sm backdrop-blur-sm">Before</span>
+</div>
+<div class="relative flex-1 h-28 rounded-[6px] bg-gray-100 overflow-hidden" data-alt="Repaired street surface" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9eFxwW6ZxS-_JaGaRi0Zeo4CY05H_tFIkMwN6g25Zi47R5z1M2OiBkc4fGPz000EsNx7YkvCFqIeRcprs0GEoaYBltsj5MkDgx5zt7HAJcdqI_jKeJFPgraMqOEYFind4q0ThVSSQdF50MKikJEOtXn-WfPwwhu7bpCs_6Qr2271XSU4_xjh-NIgcjtaA9gP2CIqQp1E1OnDmOXN0J-06CZy3Gp59jnLoQQ4pc9ZRv-DNtdCHqoPT2NhNxb6RHtmGIrvj4BT8wIAp'); background-size: cover; background-position: center;">
+<span class="absolute bottom-2 left-2 bg-secondary text-primary text-[10px] font-semibold px-1.5 py-0.5 rounded-sm shadow-sm">After</span>
+</div>
+</div>
+</div>
+<div class="h-px bg-border-light w-full"></div>
+<div class="group">
+<div class="flex justify-between items-center mb-2">
+<span class="pill-resolved px-2.5 py-0.5 rounded-full font-semibold text-xs">Resolved</span>
+<span class="text-text-light text-xs font-semibold">5h ago</span>
+</div>
+<p class="font-semibold text-primary mb-3 text-base leading-snug">Broken Streetlight fixed - Downtown</p>
+<div class="flex gap-3">
+<div class="relative flex-1 h-28 rounded-[6px] bg-gray-100 flex items-center justify-center font-semibold text-gray-400 text-sm">Image</div>
+<div class="relative flex-1 h-28 rounded-[6px] bg-gray-100 flex items-center justify-center font-semibold text-gray-400 text-sm">Image</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-4 mt-auto border-t border-border-light pt-6">
+<button class="flex-1 bg-white border border-border-light rounded-md py-2.5 text-text-light hover:text-primary hover:bg-gray-50 transition-colors flex justify-center items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-lg">share</span> Share
+                </button>
+<button class="flex-1 bg-white border border-border-light rounded-md py-2.5 text-text-light hover:text-primary hover:bg-gray-50 transition-colors flex justify-center items-center gap-2 text-sm font-semibold">
+<span class="material-symbols-outlined text-lg">forum</span> Discuss
+                </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

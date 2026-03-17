@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@grievancegrid/ui": ["packages/ui/src"],
+      "@grievancegrid/config": ["packages/config/src"],
+      "@grievancegrid/graphql": ["packages/graphql/src"],
+      "@grievancegrid/utils": ["packages/utils/src"],
+      "@grievancegrid/db": ["packages/database/src"],
+      "@/components/*": ["apps/web/src/components/*"],
+      "@/app/*": ["apps/web/src/app/*"],
+      "@/lib/*": ["apps/web/src/lib/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}

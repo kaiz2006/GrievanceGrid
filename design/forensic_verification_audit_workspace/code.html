@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Forensic Verification Audit Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Fira+Code:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#381D2A",
+                        "background-light": "#F8FAFC",
+                        "deep-plum": "#381D2A",
+                        "amber-flagged": "#FFA552",
+                        "burnt-orange": "#BA5624",
+                        "peach-hover": "#FFF5F0",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"],
+                        "mono": ["Fira Code", "monospace"],
+                    },
+                    boxShadow: {
+                        'ambient': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 10px 15px -3px rgba(0, 0, 0, 0.05)',
+                    },
+                    borderRadius: {"DEFAULT": "6px", "lg": "6px", "xl": "6px", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-slate-800 font-display min-h-screen flex flex-col overflow-hidden">
+<header class="bg-white flex items-center justify-between px-6 py-4 shrink-0 shadow-sm border-b border-slate-200">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-deep-plum">
+<div class="w-8 h-8 bg-deep-plum text-white flex items-center justify-center rounded-md shadow-ambient">
+<span class="material-symbols-outlined font-medium text-xl">policy</span>
+</div>
+<h1 class="text-xl font-bold uppercase tracking-wide">GrievanceGrid Audit</h1>
+</div>
+<div class="flex items-center bg-slate-50 border border-slate-200 rounded-md h-10 shadow-sm focus-within:border-deep-plum focus-within:ring-1 focus-within:ring-deep-plum transition-all overflow-hidden">
+<div class="flex items-center justify-center px-3 text-slate-400 bg-white border-r border-slate-200 h-full">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="border-none focus:ring-0 bg-transparent h-full px-4 w-64 font-mono text-sm placeholder-slate-400 text-slate-700" placeholder="Search LOG_ID..." type="text"/>
+</div>
+</div>
+<button class="bg-deep-plum text-white rounded-md shadow-ambient px-5 py-2.5 font-semibold text-sm tracking-wide hover:bg-opacity-90 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-deep-plum">
+            Run Integrity Check
+        </button>
+</header>
+<div class="flex flex-1 overflow-hidden p-6 gap-6">
+<main class="flex-1 flex flex-col min-w-0 bg-transparent overflow-hidden gap-4">
+<div class="flex gap-3 flex-wrap shrink-0">
+<button class="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+<span>Date Range</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-burnt-orange hover:bg-orange-50 transition-colors">
+<span>Variance &gt; 50m</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+<span>Status: Unverified</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+<div class="flex-1 bg-white border border-slate-200 rounded-md shadow-ambient overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-deep-plum text-white sticky top-0 z-10 shadow-sm">
+<tr>
+<th class="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">LOG_ID</th>
+<th class="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">TIMESTAMP</th>
+<th class="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">GPS_VARIANCE</th>
+<th class="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">STATUS</th>
+<th class="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap w-24 text-center">ACTION</th>
+</tr>
+</thead>
+<tbody class="font-mono text-sm text-slate-600">
+<tr class="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td class="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8831</td>
+<td class="p-4 border-r border-slate-100">2023-10-27T14:32:01Z</td>
+<td class="p-4 border-r border-slate-100 text-burnt-orange font-medium">89m</td>
+<td class="p-4 border-r border-slate-100">
+<span class="bg-amber-flagged/10 text-amber-flagged border border-amber-flagged/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">FLAGGED</span>
+</td>
+<td class="p-4 text-center">
+<button class="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined block text-[20px]">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td class="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8832</td>
+<td class="p-4 border-r border-slate-100">2023-10-27T14:35:12Z</td>
+<td class="p-4 border-r border-slate-100">12m</td>
+<td class="p-4 border-r border-slate-100">
+<span class="bg-slate-100 text-slate-600 border border-slate-200 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">VERIFIED</span>
+</td>
+<td class="p-4 text-center">
+<button class="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined block text-[20px]">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group bg-orange-50/30">
+<td class="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8833</td>
+<td class="p-4 border-r border-slate-100">2023-10-27T15:01:44Z</td>
+<td class="p-4 border-r border-slate-100 text-burnt-orange font-semibold">145m</td>
+<td class="p-4 border-r border-slate-100">
+<span class="bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">CRITICAL</span>
+</td>
+<td class="p-4 text-center">
+<button class="p-1.5 rounded-md text-burnt-orange hover:bg-burnt-orange/10 transition-colors">
+<span class="material-symbols-outlined block text-[20px]">gavel</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td class="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8834</td>
+<td class="p-4 border-r border-slate-100">2023-10-27T15:10:05Z</td>
+<td class="p-4 border-r border-slate-100">3m</td>
+<td class="p-4 border-r border-slate-100">
+<span class="bg-slate-100 text-slate-600 border border-slate-200 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">VERIFIED</span>
+</td>
+<td class="p-4 text-center">
+<button class="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined block text-[20px]">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td class="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8835</td>
+<td class="p-4 border-r border-slate-100">2023-10-27T15:22:30Z</td>
+<td class="p-4 border-r border-slate-100 text-amber-flagged font-medium">55m</td>
+<td class="p-4 border-r border-slate-100">
+<span class="bg-amber-flagged/10 text-amber-flagged border border-amber-flagged/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">FLAGGED</span>
+</td>
+<td class="p-4 text-center">
+<button class="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span class="material-symbols-outlined block text-[20px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<aside class="w-[380px] shrink-0 bg-white border border-slate-200 rounded-md shadow-ambient flex flex-col overflow-y-auto">
+<div class="p-5 border-b border-slate-200 bg-slate-50 sticky top-0 z-10">
+<h2 class="text-lg font-bold text-deep-plum uppercase tracking-wide flex items-center gap-2">
+<span class="material-symbols-outlined text-[22px]">folder_open</span>
+                    Evidence File
+                </h2>
+<p class="font-mono text-xs mt-1.5 text-slate-500 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ACTIVE_LOG: LOG-8831
+                </p>
+</div>
+<div class="p-5 flex flex-col gap-6">
+<div class="space-y-3">
+<h3 class="font-semibold text-slate-700 uppercase tracking-wider text-xs border-b border-slate-200 pb-2">Visual Verification</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-1.5">
+<div class="bg-slate-100 aspect-square border border-deep-plum/30 rounded shadow-sm relative overflow-hidden group">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Citizen reported pothole issue" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDoghVjbZJI2wj6Ko7s0NUofZHWkdHD6syBIfjj3fvP3HPirwnBU8yXn5hR_ofZkxrtIcdnf23gOf7VPd02XR0NNvJ10ZAESjUxmGcHYgFhZ__nkgpoPSEzqHdluhGDEFXMgspns-K9uEUGPNt8QtkPahH1wiIHfyMcZbTEBrDU1rybBBSBmSxcVnHW5_tBta8Hw8ISjgUFzD0i351-hmApTaUVHW0nDp1ppES1eD35hxo5ZTye3J4r55n9GmF9OD85rP4c0aS7Pfje');"></div>
+<div class="absolute bottom-0 left-0 right-0 bg-deep-plum/90 text-white font-mono text-[9px] p-1.5 truncate">CITIZEN_UPLOAD.JPG</div>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="bg-slate-100 aspect-square border border-deep-plum/30 rounded shadow-sm relative overflow-hidden group">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Crew patched road surface" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDy_AK92ejbPF64NcSyZXJDmgdUhytbQfHMMfXlNnepuacnj78Yalu-i73uQP-tI7RRFwhMe0eEURalB74D1Kdo-M9zYpt6BDOis40YV_LxMES-314IyablHbEiEcy563J6Lsx_lwL7QYlziYPK0lWq6HknQ7AXKC3Ut5cm2A7W579SmIoDLEIWkqNiUH5HK734rqQqaMqJyGWNoASCPtfLwnVNLLJeltyEM_zi3I9gLnxTYnVcBEd-ETV6xSSBF8LlUnx24tCiOWYK');"></div>
+<div class="absolute bottom-0 left-0 right-0 bg-deep-plum/90 text-white font-mono text-[9px] p-1.5 truncate">CREW_VERIFY.JPG</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<h3 class="font-semibold text-slate-700 uppercase tracking-wider text-xs border-b border-slate-200 pb-2">Auditor Memo</h3>
+<div class="bg-amber-50 border border-amber-200 rounded shadow-sm p-4 relative min-h-[160px]">
+<textarea class="w-full h-full bg-transparent border-none focus:ring-0 resize-none font-mono text-sm p-0 text-slate-800 placeholder-slate-400" placeholder="Enter forensic notes here..."></textarea>
+</div>
+</div>
+<div class="space-y-3 mt-auto pt-4 border-t border-slate-100">
+<button class="w-full bg-deep-plum text-white rounded py-2.5 font-semibold text-sm tracking-wide hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">gavel</span>
+                        Issue Violation
+                    </button>
+<button class="w-full bg-white text-slate-700 border border-slate-300 rounded py-2.5 font-semibold text-sm tracking-wide hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                        Force Verify
+                    </button>
+</div>
+</div>
+</aside>
+</div>
+<footer class="bg-deep-plum text-slate-300 font-mono text-xs px-6 py-3 flex justify-between shrink-0 border-t border-deep-plum/20">
+<div class="flex gap-6">
+<span class="flex items-center gap-1.5">SYS.STATUS: <span class="text-emerald-400 font-medium flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>ONLINE</span></span>
+<span>NODE: <span class="text-white">US-EAST-G1</span></span>
+<span>DB_LATENCY: <span class="text-white">14ms</span></span>
+</div>
+<div class="flex gap-6">
+<span>UNVERIFIED: <span class="text-amber-flagged font-medium">1,204</span></span>
+<span>CRITICAL: <span class="text-burnt-orange font-medium">89</span></span>
+</div>
+</footer>
+</body></html>
