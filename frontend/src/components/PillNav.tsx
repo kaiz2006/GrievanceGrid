@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { GoArrowUpRight } from "react-icons/go";
+import { useAuth } from "../lib/auth-context";
 import "./PillNav.css";
 
 const NAV_LINKS = [
@@ -49,6 +50,7 @@ export default function PillNav() {
   const [panelOpen,  setPanelOpen]  = useState(false);
   const [scrolled,   setScrolled]   = useState(false);
   const wrapperRef = useRef<HTMLElement>(null);
+  const { signIn } = useAuth();
 
   // Close panel on outside click
   useEffect(() => {
@@ -100,18 +102,18 @@ export default function PillNav() {
         </button>
 
         {/* ── CTA pill ── */}
-        <a
-          href="#features"
+        <button
           className="pill-nav-cta"
           onMouseEnter={() => setCtaHovered(true)}
           onMouseLeave={() => setCtaHovered(false)}
+          onClick={signIn}
           aria-label="Get Started"
         >
           <span className={`pill-cta-text ${ctaHovered ? "hide" : "show"}`}>Get Started</span>
           <span className={`pill-cta-text pill-cta-hover ${ctaHovered ? "show" : "hide"}`}>
             Launch Now →
           </span>
-        </a>
+        </button>
 
         {/* ── Mobile hamburger ── */}
         <button

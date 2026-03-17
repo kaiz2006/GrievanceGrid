@@ -13,6 +13,28 @@ import structlog
 logger = structlog.get_logger(__name__)
 router = APIRouter()
 
+@router.post("/login")
+async def login(
+    token_data: FirebaseToken,
+    db: Session = Depends(get_db)
+):
+    """Login with Firebase token and return user info"""
+    try:
+        # Token verification is handled by get_current_user dependency
+        user = await get_current_user(token_data.token)
+
+        return success_response({
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "role": user.role
+            }
+        })
+    except Exception as e:
+        logger.error("Login failed", error=str(e))
+        raise HTTPException(status_code=401, detail="Login failed")
+
 @router.post("/verify")
 async def verify_token(
     token_data: FirebaseToken,

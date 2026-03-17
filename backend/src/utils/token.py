@@ -1,6 +1,7 @@
 """
 Token Utilities
 """
+import os
 import firebase_admin
 from firebase_admin import auth, credentials
 from src.config.settings import settings
@@ -11,13 +12,8 @@ logger = structlog.get_logger(__name__)
 
 # Initialize Firebase Admin SDK
 try:
-    if settings.FIREBASE_PROJECT_ID and settings.FIREBASE_PRIVATE_KEY:
-        cred = credentials.Certificate({
-            "type": "service_account",
-            "project_id": settings.FIREBASE_PROJECT_ID,
-            "private_key": settings.FIREBASE_PRIVATE_KEY.replace('\\n', '\n'),
-            "client_email": settings.FIREBASE_CLIENT_EMAIL,
-        })
+    if settings.FIREBASE_CREDENTIALS_PATH and os.path.exists(settings.FIREBASE_CREDENTIALS_PATH):
+        cred = credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
         firebase_admin.initialize_app(cred)
         logger.info("Firebase Admin SDK initialized")
     else:
