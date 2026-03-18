@@ -1,5 +1,12 @@
 # ML Todo (ai-models/)
 
+## ✅ Integration Progress (implemented in apps/worker)
+- [x] Worker now orchestrates model-service HTTP calls for text classification, voice transcription, CV severity, and route prediction
+- [x] Worker now includes Qdrant integration client and upserts grievance embeddings directly from Celery tasks
+- [x] Worker now uses deterministic embedding/risk fallbacks to keep pipeline resilient when ML services are unavailable
+- [x] `Add FastAPI endpoint or use Qdrant client directly from Celery worker` completed via direct Qdrant client usage in worker
+- [ ] Move these integration helpers into `ai-models/` service implementations and align endpoint contracts end-to-end
+
 ## 🗂️ Project Setup
 - [ ] Set up `ai-models/` Dockerfiles for each model service (llm, cv, gnn, clustering)
 - [ ] Configure CUDA / GPU access in Docker containers
@@ -132,13 +139,13 @@
 
 ## 🔌 8. Vector Store — Qdrant Integration
 
-- [ ] Set up `VectorStore` class:
+- [x] Set up `VectorStore` class:
   - Create `grievances` Qdrant collection (768-dim BERT, cosine distance)
   - `index_grievance()` — generate BERT embedding and upsert to Qdrant with payload
-  - `find_similar()` — query top-5 similar resolved grievances by category
+  - [x] `find_similar()` — query top-5 similar resolved grievances by category
 - [ ] Integrate `sentence-transformers` / HuggingFace BERT for embedding generation
 - [ ] Write `vector_references` record to PostgreSQL after each Qdrant upsert
-- [ ] Add FastAPI endpoint or use Qdrant client directly from Celery worker
+- [x] Add FastAPI endpoint or use Qdrant client directly from Celery worker
 
 ---
 

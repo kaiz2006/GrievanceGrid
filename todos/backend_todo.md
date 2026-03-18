@@ -51,11 +51,11 @@
   - Persist to PostgreSQL
   - Dispatch `process_grievance_ai` Celery task
   - Return Grid ID + SLA deadlines
-- [ ] `GET /grievances/{id}` — Full grievance detail (officer+)
-- [ ] `PATCH /grievances/{id}/status` — Update status through lifecycle
-- [ ] `POST /grievances/{id}/feedback` — Citizen satisfaction rating (1–5)
-- [ ] `POST /grievances/{id}/contest` — Contest resolution, trigger AI audit
-- [ ] `GET /grievances` — List with filter (status, category, department, priority)
+- [x] `GET /grievances/{id}` — Full grievance detail (officer+)
+- [x] `PATCH /grievances/{id}/status` — Update status through lifecycle
+- [x] `POST /grievances/{id}/feedback` — Citizen satisfaction rating (1–5)
+- [x] `POST /grievances/{id}/contest` — Contest resolution, trigger AI audit
+- [x] `GET /grievances` — List with filter (status, category, department, priority)
 
 ---
 
@@ -164,7 +164,17 @@
   - `POST /api/v1/grievances` dispatches `process_grievance_ai`
   - `POST /api/v1/voice/process` dispatches `process_voice_grievance`
   - `POST /api/v1/clusters/recluster` dispatches `recluster_recent_grievances`
-- [ ] Replace placeholder task logic with real DB/ML/Qdrant/Redis integrations
+- [x] Added worker-side ML orchestration clients for LLM/CV/GNN + backend callback + Qdrant vector indexing
+- [x] Added deterministic fallback paths for embedding, clustering, and maintenance risk scoring when model services are unavailable
+- [x] Added Redis pub/sub publishing for tracking notifications (non-dry-run)
+- [x] Added API-side callback endpoint `POST /api/v1/grievances/{id}/ai-result` to persist worker AI results
+- [x] Added shared in-memory grievance repository and wired `GET /api/v1/grievances/{id}` + `GET /api/v1/track/{grid_id}` to persisted timeline/state
+- [x] Added `GET /api/v1/grievances` filter endpoint (status/category/priority/department)
+- [x] Added `PATCH /api/v1/grievances/{id}/status` endpoint with timeline updates
+- [x] Added voice callback flow: `POST /api/v1/voice/{id}/result` + worker `process_voice_grievance` backend sync
+- [x] Added grievance feedback and contestation endpoints with in-memory persistence and timeline updates
+- [x] Added worker contestation audit task `src.tasks.ai_processing.run_contestation_audit` and API dispatch wiring
+- [ ] Replace remaining placeholder task logic with full DB persistence and production notification providers
 
 ---
 

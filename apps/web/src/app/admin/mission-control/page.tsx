@@ -4,7 +4,7 @@ const auditLog = [
   { text: "[WARNING] Anomaly detected in Grid 4A.", type: "warn" },
   { text: "[ALERT] Hotspot critical in Sector Zeta.", type: "alert" },
   { text: "[SYSTEM] Re-routing backup protocols.", type: "normal" },
-  { text "> _", type: "blink" },
+  { text: "> _", type: "blink" },
 ];
 
 const sectors = [
@@ -25,7 +25,7 @@ export default function MissionControlPage() {
       {/* Top KPI strip */}
       <header className="flex flex-wrap shrink-0 gap-4 p-5 z-10">
         {hudStats.map((s) => (
-          <div key={s.label} className="flex-1 min-w-[200px] rounded-md border p-4 flex flex-col justify-between shadow-sm transition-all hover:translate-y-[-1px]"
+          <div key={s.label} className="flex-1 min-w-50 rounded-md border p-4 flex flex-col justify-between shadow-sm transition-all hover:-translate-y-px"
             style={{ background: "var(--card)", borderColor: "var(--border)" }}>
             <h2 className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</h2>
             <div className="flex items-end justify-between">
@@ -120,7 +120,7 @@ export default function MissionControlPage() {
         </div>
 
         {/* AI Audit Stream terminal */}
-        <div className="absolute bottom-6 right-6 z-10 w-[400px] overflow-hidden rounded-md border shadow-2xl"
+        <div className="absolute bottom-6 right-6 z-10 w-100 overflow-hidden rounded-md border shadow-2xl"
           style={{ background: "rgba(13, 8, 11, 0.96)", borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
             <span className="font-bold uppercase text-[11px] tracking-[0.2em] text-amber">AI Audit Stream</span>

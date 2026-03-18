@@ -4,7 +4,7 @@ import logging
 from typing import Any
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, PointStruct, VectorParams
+from qdrant_client.models import Distance, FieldCondition, Filter, MatchValue, PointStruct, VectorParams
 
 from src.config import settings
 
@@ -43,3 +43,35 @@ class VectorClient:
 
         logger.info("Indexed grievance embedding", extra={"grievance_id": grievance_id})
         return point_id
+
+    def find_similar(
+        self,
+        embedding: list[float],
+        category: str | None = None,
+        limit: int = 5,
+    ) -> list[dict[str, Any]]:
+        self.ensure_collection()
+
+        query_filter = None
+        if category:
+            query_filter = Filter(
+                must=[FieldCondition(key="category", match=MatchValue(value=category))]
+            )
+
+        hits = self.client.search(
+            collection_name=self.collection_name,
+            query_vector=embedding,
+            limit=limit,
+            query_filter=query_filter,
+        )
+
+        results: list[dict[str, Any]] = []
+        for hit in hits:
+            results.append(
+                {
+                    "id": str(hit.id),
+                    "score": float(hit.score),
+                    "payload": hit.payload or {},
+                }
+            )
+        return results

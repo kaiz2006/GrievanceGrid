@@ -1,6 +1,10 @@
 """Task modules loaded by Celery worker."""
 
-from src.tasks.ai_processing import process_grievance_ai, process_voice_grievance
+from src.tasks.ai_processing import (
+    process_grievance_ai,
+    process_voice_grievance,
+    run_contestation_audit,
+)
 from src.tasks.clustering import recluster_recent_grievances
 from src.tasks.maintenance import update_infrastructure_risk_scores
 from src.tasks.notifications import publish_tracking_event, send_status_notification
@@ -8,6 +12,7 @@ from src.tasks.notifications import publish_tracking_event, send_status_notifica
 __all__ = [
     "process_grievance_ai",
     "process_voice_grievance",
+    "run_contestation_audit",
     "recluster_recent_grievances",
     "update_infrastructure_risk_scores",
     "send_status_notification",

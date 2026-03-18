@@ -50,6 +50,7 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
     suggested_department = payload.get("hint_department", "PUBLIC_WORKS")
     vector_source = "fallback"
     callback_synced = False
+    similar_cases: list[dict[str, Any]] = []
 
     if settings.dry_run:
         logger.info("WORKER_DRY_RUN enabled, returning simulated AI enrichment")
@@ -58,9 +59,10 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
         embedding_indexed = True
     else:
         llm_result = llm_client.classify(text_input) or {}
-        llm_category = llm_result.get("category", llm_category)
-        llm_priority = llm_result.get("priority", llm_priority)
-        llm_summary = llm_result.get("summary", llm_summary)
+        llm_category = llm_result.get("category", llm_category) or llm_category
+        llm_priority = llm_result.get("priority", llm_priority) or llm_priority
+        llm_summary = llm_result.get("summary", llm_summary) or llm_summary
+        suggested_department = llm_result.get("department", suggested_department) or suggested_department
 
         if payload.get("before_photo_url"):
             cv_prediction = cv_client.estimate_severity(str(payload["before_photo_url"]))
@@ -92,8 +94,16 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
                     "category": llm_category,
                     "priority": llm_priority,
                     "department": suggested_department,
+                    "summary": llm_summary,
                 },
             )
+
+            # Suggest similar historical cases for downstream resolution support.
+            similar_cases = [
+                case
+                for case in vector_client.find_similar(embedding, category=llm_category, limit=5)
+                if case.get("id") != grievance_id
+            ]
             embedding_indexed = True
         except Exception as exc:
             logger.warning("Failed to index embedding in Qdrant", extra={"error": str(exc)})
@@ -109,6 +119,7 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
         "vector_source": vector_source,
         "embedding_dimension": len(embedding),
         "assigned_department": suggested_department,
+        "similar_cases": similar_cases,
         "processed_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -129,10 +140,14 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
 )
 def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str, Any]:
     """Process voice grievance pipeline (STT + summarization placeholder)."""
+    callback_synced = False
+
     if settings.dry_run:
         logger.info("WORKER_DRY_RUN enabled, returning simulated voice processing")
         transcription = "Transcription pipeline placeholder"
         summary = "Voice grievance summary placeholder"
+        ai_category = "INFRASTRUCTURE"
+        ai_priority = "MEDIUM"
     else:
         stt_result = llm_client.transcribe(audio_url) or {}
         transcription = stt_result.get("transcription", "")
@@ -143,13 +158,67 @@ def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str
         if not summary:
             summary = transcription[:280]
 
+        extracted = llm_client.classify(transcription) if transcription else None
+        ai_category = (extracted or {}).get("category") or "INFRASTRUCTURE"
+        ai_priority = (extracted or {}).get("priority") or "MEDIUM"
+
     result = {
         "grievance_id": grievance_id,
         "audio_url": audio_url,
         "transcription": transcription,
         "summary": summary,
+        "ai_category": ai_category,
+        "ai_priority": ai_priority,
         "processed_at": datetime.now(timezone.utc).isoformat(),
     }
 
+    if not settings.dry_run:
+        callback_synced = backend_client.post_voice_result(grievance_id, result)
+    result["backend_sync"] = callback_synced
+
     logger.info("Processed voice grievance", extra={"task": self.name, "result": result})
+    return result
+
+
+@shared_task(
+    bind=True,
+    name="src.tasks.ai_processing.run_contestation_audit",
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def run_contestation_audit(
+    self,
+    grievance_id: str,
+    reason: str,
+    evidence_photo: str | None = None,
+    audit_id: str | None = None,
+) -> dict[str, Any]:
+    """Run a lightweight AI audit workflow for contested grievances."""
+    audit_id = audit_id or f"audit_{grievance_id[:8]}"
+
+    if settings.dry_run:
+        logger.info("WORKER_DRY_RUN enabled, returning simulated contest audit")
+        risk_score = 0.5
+        recommendation = "Manual officer review required"
+        evidence_severity = None
+    else:
+        classification = llm_client.classify(reason) or {}
+        recommendation = classification.get("summary") or "Manual officer review required"
+        risk_score = 0.7 if classification.get("priority") == "HIGH" else 0.45
+        evidence_severity = cv_client.estimate_severity(evidence_photo) if evidence_photo else None
+
+    result = {
+        "audit_id": audit_id,
+        "grievance_id": grievance_id,
+        "reason": reason,
+        "evidence_photo": evidence_photo,
+        "risk_score": risk_score,
+        "evidence_severity": evidence_severity,
+        "recommendation": recommendation,
+        "status": "AUDIT_QUEUED",
+        "processed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    logger.info("Processed grievance contest audit", extra={"task": self.name, "result": result})
     return result
