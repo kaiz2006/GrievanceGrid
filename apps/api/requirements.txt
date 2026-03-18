@@ -11,3 +11,4 @@ redis==5.0.0
 httpx==0.24.1
 strawberry-graphql[fastapi]==0.209.0
 python-dotenv==1.0.0
+celery==5.4.0

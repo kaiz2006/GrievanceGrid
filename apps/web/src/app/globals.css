@@ -1,44 +1,211 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand colors — unchanged */
+  --color-primary: #381d2a;
+  --color-amber: #ffa552;
+  --color-sage: #c4d6b0;
+
+  /* Dark mode surface palette */
+  --color-dark-base: #0f0a0d;
+  --color-dark-surface: #1a1118;
+  --color-dark-card: #22162b;
+  --color-dark-elevated: #2c1e35;
+  --color-dark-border: #3d2b47;
+  --color-dark-border-subtle: #2a1e32;
+
+  /* Text on dark */
+  --color-dark-text: #f0eaf4;
+  --color-dark-text-secondary: #a08cb8;
+  --color-dark-text-muted: #6b5882;
+
+  /* Amber / sage tints on dark */
+  --color-amber-glow: rgba(255, 165, 82, 0.12);
+  --color-sage-glow: rgba(196, 214, 176, 0.1);
+
+  --font-display: var(--font-plus-jakarta), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  --radius-md: 6px;
+
+  --shadow-dark: 0 4px 24px -4px rgba(0, 0, 0, 0.5);
+  --shadow-dark-hover: 0 12px 40px -4px rgba(0, 0, 0, 0.7);
+  --shadow-glow-amber: 0 0 20px rgba(255, 165, 82, 0.15);
+  --shadow-glow-sage: 0 0 20px rgba(196, 214, 176, 0.12);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #381d2a;
+  --amber: #ffa552;
+  --sage: #c4d6b0;
+
+  /* Premium Dark Mode Palette */
+  --background: #0d080b;
+  --surface: #150e12;
+  --card: #1c1419;
+  --elevated: #261b21;
+  --border: rgba(56, 29, 42, 0.25);
+  --border-subtle: rgba(56, 29, 42, 0.15);
+  --text: #f0eaf4;
+  --text-secondary: #a08cb8;
+  --text-muted: #6b5882;
+
+  --shadow-dark: 0 4px 20px -4px rgba(0, 0, 0, 0.6);
+  --shadow-dark-hover: 0 12px 40px -4px rgba(0, 0, 0, 0.8);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+/* ──────────────────────────────────────────────
+   DARK CARD — base card style
+────────────────────────────────────────────── */
+@utility dark-card {
+  background-color: var(--card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  box-shadow: var(--shadow-dark);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-dark-hover);
+    border-color: var(--border);
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+/* ──────────────────────────────────────────────
+   DARK BTN
+────────────────────────────────────────────── */
+@utility dark-btn {
+  border-radius: 6px;
+  transition: all 0.2s ease;
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+  &:hover {
+    opacity: 0.92;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ──────────────────────────────────────────────
+   SCROLLING TICKER
+────────────────────────────────────────────── */
+@utility ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@utility ticker-content {
+  display: inline-block;
+  animation: ticker 40s linear infinite;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@utility stream-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+
+/* ──────────────────────────────────────────────
+   GAUGE RING
+────────────────────────────────────────────── */
+.gauge-ring {
+  transition: stroke-dashoffset 1s ease-out;
+}
+
+/* ──────────────────────────────────────────────
+   GLOW EFFECTS
+────────────────────────────────────────────── */
+@utility amber-glow {
+  box-shadow: var(--shadow-glow-amber);
+}
+
+@utility sage-glow {
+  box-shadow: var(--shadow-glow-sage);
+}
+
+/* ──────────────────────────────────────────────
+   NOISE TEXTURE overlay for depth
+────────────────────────────────────────────── */
+@utility noise-overlay {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}
+
+/* ──────────────────────────────────────────────
+   GRID PATTERN BG
+────────────────────────────────────────────── */
+@utility grid-bg {
+  background-image: linear-gradient(
+      rgba(196, 214, 176, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(196, 214, 176, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ──────────────────────────────────────────────
+   PULSE GLOW — for active nodes
+────────────────────────────────────────────── */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 165, 82, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 165, 82, 0);
+  }
+}
+
+@utility pulse-amber {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ──────────────────────────────────────────────
+   SCROLLBAR
+────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

@@ -1,0 +1,155 @@
+from __future__ import annotations
+
+import logging
+from datetime import datetime, timezone
+from typing import Any
+
+from celery import shared_task
+
+from src.clients import BackendClient, CvClient, GnnClient, LlmClient, VectorClient
+from src.config import settings
+from src.utils import deterministic_embedding
+
+logger = logging.getLogger(__name__)
+
+llm_client = LlmClient()
+cv_client = CvClient()
+gnn_client = GnnClient()
+vector_client = VectorClient()
+backend_client = BackendClient()
+
+
+@shared_task(
+    bind=True,
+    name="src.tasks.ai_processing.process_grievance_ai",
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Run AI enrichment for a grievance record.
+
+    The task shape follows backend_todo.md:
+    1) LLM category + priority
+    2) CV severity if image exists
+    3) Vector embedding index
+    4) GNN routing suggestion
+    """
+    payload = payload or {}
+    text_input = (
+        payload.get("raw_input")
+        or payload.get("description")
+        or payload.get("title")
+        or "No grievance description provided"
+    )
+
+    llm_category = payload.get("hint_category", "INFRASTRUCTURE")
+    llm_priority = payload.get("hint_priority", "MEDIUM")
+    llm_summary = payload.get("description") or ""
+    cv_severity = 0.82 if payload.get("before_photo_url") else None
+    suggested_department = payload.get("hint_department", "PUBLIC_WORKS")
+    vector_source = "fallback"
+    callback_synced = False
+
+    if settings.dry_run:
+        logger.info("WORKER_DRY_RUN enabled, returning simulated AI enrichment")
+
+        embedding = deterministic_embedding(text_input, settings.embedding_dimension)
+        embedding_indexed = True
+    else:
+        llm_result = llm_client.classify(text_input) or {}
+        llm_category = llm_result.get("category", llm_category)
+        llm_priority = llm_result.get("priority", llm_priority)
+        llm_summary = llm_result.get("summary", llm_summary)
+
+        if payload.get("before_photo_url"):
+            cv_prediction = cv_client.estimate_severity(str(payload["before_photo_url"]))
+            if cv_prediction is not None:
+                cv_severity = cv_prediction
+
+        embedding = llm_client.embed(text_input)
+        if embedding:
+            vector_source = "llm-service"
+        else:
+            embedding = deterministic_embedding(text_input, settings.embedding_dimension)
+
+        route = gnn_client.predict_route(
+            {
+                "grievance_id": grievance_id,
+                "description": text_input,
+                "category": llm_category,
+                "priority": llm_priority,
+            }
+        )
+        if route and isinstance(route.get("department"), str):
+            suggested_department = route["department"]
+
+        try:
+            vector_client.upsert_grievance_embedding(
+                grievance_id,
+                embedding,
+                {
+                    "category": llm_category,
+                    "priority": llm_priority,
+                    "department": suggested_department,
+                },
+            )
+            embedding_indexed = True
+        except Exception as exc:
+            logger.warning("Failed to index embedding in Qdrant", extra={"error": str(exc)})
+            embedding_indexed = False
+
+    result = {
+        "grievance_id": grievance_id,
+        "ai_category": llm_category,
+        "ai_priority": llm_priority,
+        "ai_summary": llm_summary,
+        "damage_severity": cv_severity,
+        "vector_indexed": embedding_indexed,
+        "vector_source": vector_source,
+        "embedding_dimension": len(embedding),
+        "assigned_department": suggested_department,
+        "processed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    if not settings.dry_run:
+        callback_synced = backend_client.post_ai_result(grievance_id, result)
+    result["backend_sync"] = callback_synced
+
+    logger.info("Processed grievance AI enrichment", extra={"task": self.name, "result": result})
+    return result
+
+
+@shared_task(
+    bind=True,
+    name="src.tasks.ai_processing.process_voice_grievance",
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str, Any]:
+    """Process voice grievance pipeline (STT + summarization placeholder)."""
+    if settings.dry_run:
+        logger.info("WORKER_DRY_RUN enabled, returning simulated voice processing")
+        transcription = "Transcription pipeline placeholder"
+        summary = "Voice grievance summary placeholder"
+    else:
+        stt_result = llm_client.transcribe(audio_url) or {}
+        transcription = stt_result.get("transcription", "")
+        summary = stt_result.get("summary", transcription[:280])
+
+        if not transcription:
+            transcription = "Unable to transcribe audio"
+        if not summary:
+            summary = transcription[:280]
+
+    result = {
+        "grievance_id": grievance_id,
+        "audio_url": audio_url,
+        "transcription": transcription,
+        "summary": summary,
+        "processed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    logger.info("Processed voice grievance", extra={"task": self.name, "result": result})
+    return result
