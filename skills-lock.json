@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "skills": {
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "computedHash": "0bb43483df0f9d8c072d3bc8589c37121946001455c6febc79c5010489fc3550"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
+    "machine-learning-engineer": {
+      "source": "404kidwiz/claude-supercode-skills",
+      "sourceType": "github",
+      "computedHash": "9ee82bcdf7af1efce0672befbf37187806dcd31f11a54284489b79b15b1265fb"
+    },
+    "next-best-practices": {
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github",
+      "computedHash": "c31ddd68ba5798a79a516c619b1e1fc4408cc4876ad600fefa4f5add4425719d"
+    },
+    "orchestrator": {
+      "source": "first-fluke/oh-my-ag",
+      "sourceType": "github",
+      "computedHash": "c3eccc1234584173b478196b6e901d83361c11537b85a6e6d6aff976069c498e"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "77faba608ea949351d1757e29e6cb726f6ec5937f7595be0593038a7d2d76bb9"
+    },
+    "systematic-debugging": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d"
+    },
+    "turborepo": {
+      "source": "vercel/turborepo",
+      "sourceType": "github",
+      "computedHash": "4c6e07f5619022ee29bdf86177baaf81bf5093cf87fdf9faa32af820f23b2768"
+    },
+    "typescript-patterns": {
+      "source": "duyet/claude-plugins",
+      "sourceType": "github",
+      "computedHash": "bd5810e091a0b88af71f52c52e3e94f2ecc570950c7f255ac3ea97ccf2f38857"
+    }
+  }
+}

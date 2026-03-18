@@ -13,3 +13,5 @@ __pycache__
 venv
 .venv
 .ds_store
+.agent
+.agents

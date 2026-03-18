@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #381D2A;
+  --color-amber: #FFA552;
+  --color-sage: #C4D6B0;
+  
+  --font-display: var(--font-plus-jakarta), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  
+  --radius-md: 6px;
+  
+  --shadow-saas: 0 4px 20px -4px rgba(56, 29, 42, 0.05);
+  --shadow-saas-hover: 0 12px 30px -4px rgba(56, 29, 42, 0.1);
+}
+
+:root {
+  --primary: #381D2A;
+  --amber: #FFA552;
+  --sage: #C4D6B0;
+  --background: #FFFFFF;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--primary);
+}
+
+@utility saas-card {
+  border: 1px solid var(--color-slate-200);
+  border-radius: 6px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow-saas);
+  
+  &:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: var(--shadow-saas-hover);
+  }
+}
+
+@utility saas-btn {
+  border-radius: 6px;
+  transition: all 0.2s;
+  
+  &:hover {
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(56, 29, 42, 0.15);
+  }
+}
+
+@utility ticker-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@utility ticker-content {
+  display: inline-block;
+  animation: ticker 40s linear infinite;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@utility stream-mask {
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
