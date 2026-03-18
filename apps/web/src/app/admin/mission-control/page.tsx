@@ -25,9 +25,9 @@ export default function MissionControlPage() {
       {/* Top KPI strip */}
       <header className="flex flex-wrap shrink-0 gap-4 p-5 z-10">
         {hudStats.map((s) => (
-          <div key={s.label} className="flex-1 min-w-[200px] rounded-md border p-4 flex flex-col justify-between"
+          <div key={s.label} className="flex-1 min-w-[200px] rounded-md border p-4 flex flex-col justify-between shadow-sm transition-all hover:translate-y-[-1px]"
             style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <h2 className="mb-2 text-sm font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</h2>
+            <h2 className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</h2>
             <div className="flex items-end justify-between">
               <span className="font-mono text-3xl font-bold" style={{ color: "var(--text)" }}>{s.value}</span>
               <span className="font-bold text-sm" style={{ color: s.trendColor }}>{s.trend}</span>
@@ -39,50 +39,55 @@ export default function MissionControlPage() {
       {/* Main area */}
       <main className="relative flex flex-1 overflow-hidden">
         {/* Background "map" */}
-        <div className="absolute inset-0 z-0" style={{ background: "var(--elevated)" }}>
-          <div className="absolute inset-0 opacity-5"
+        <div className="absolute inset-0 z-0 bg-surface grid-bg opacity-40" />
+        
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 opacity-10"
             style={{
-              backgroundImage: "linear-gradient(rgba(255,165,82,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,165,82,0.5) 1px, transparent 1px)",
-              backgroundSize: "50px 50px",
+              backgroundImage: "linear-gradient(rgba(255,165,82,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,165,82,0.1) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
             }} />
+          
           {/* Cluster blobs */}
-          <div className="absolute top-1/4 left-1/3 h-32 w-32 rounded-full blur-sm border"
-            style={{ background: "rgba(255,165,82,0.07)", borderColor: "rgba(255,165,82,0.15)" }} />
-          <div className="absolute bottom-1/3 right-1/4 h-48 w-48 rounded-full blur-md border"
-            style={{ background: "rgba(255,165,82,0.04)", borderColor: "rgba(255,165,82,0.1)" }} />
+          <div className="absolute top-1/4 left-1/3 h-48 w-48 rounded-full blur-3xl"
+            style={{ background: "rgba(56, 29, 42, 0.3)" }} />
+          <div className="absolute bottom-1/3 right-1/4 h-64 w-64 rounded-full blur-3xl"
+            style={{ background: "rgba(255, 165, 82, 0.05)" }} />
+          
           {/* Warning pin */}
-          <div className="absolute top-1/2 left-1/2 flex h-16 w-16 items-center justify-center rounded-full border"
-            style={{ background: "rgba(248,113,113,0.08)", borderColor: "rgba(248,113,113,0.3)", boxShadow: "0 0 20px rgba(248,113,113,0.1)" }}>
-            <span className="material-symbols-outlined" style={{ color: "#f87171" }}>warning</span>
+          <div className="absolute top-1/2 left-1/2 flex h-16 w-16 items-center justify-center rounded-full border pulse-amber"
+            style={{ background: "rgba(248,113,113,0.1)", borderColor: "rgba(248,113,113,0.4)", boxShadow: "0 0 30px rgba(248,113,113,0.2)" }}>
+            <span className="material-symbols-outlined text-red-400">warning</span>
           </div>
+
           {/* Diamonds */}
           {[[33, 65], [72, 22]].map(([t, l], i) => (
-            <div key={i} className="absolute flex h-4 w-4 rotate-45 items-center justify-center border shadow-sm"
-              style={{ top: `${t}%`, left: `${l}%`, background: "var(--sage)", borderColor: "rgba(255,255,255,0.2)" }}>
-              <div className="h-1 w-1 rounded-full" style={{ background: "white" }} />
+            <div key={i} className="absolute flex h-5 w-5 rotate-45 items-center justify-center border shadow-glow-sage"
+              style={{ top: `${t}%`, left: `${l}%`, background: "var(--sage)", borderColor: "rgba(255,255,255,0.3)" }}>
+              <div className="h-1.5 w-1.5 rounded-full bg-white shadow-sm" />
             </div>
           ))}
         </div>
 
         {/* Left sector panel */}
-        <aside className="relative z-10 ml-5 flex w-72 h-full flex-col rounded-md border mb-5"
-          style={{ background: "rgba(15,10,13,0.92)", backdropFilter: "blur(12px)", borderColor: "var(--border)" }}>
+        <aside className="relative z-10 ml-6 flex w-80 h-[calc(100%-40px)] my-5 flex-col rounded-md border backdrop-blur-xl shadow-2xl"
+          style={{ background: "rgba(13, 8, 11, 0.92)", borderColor: "var(--border)" }}>
           <div className="flex items-center justify-between border-b p-4" style={{ borderColor: "var(--border)" }}>
-            <h1 className="text-base font-medium uppercase tracking-wider" style={{ color: "var(--text)" }}>Sector Status</h1>
-            <span className="material-symbols-outlined text-2xl" style={{ color: "var(--amber)" }}>radar</span>
+            <h1 className="text-base font-semibold uppercase tracking-wider text-text">Sector Status</h1>
+            <span className="material-symbols-outlined text-2xl text-amber">radar</span>
           </div>
 
-          <div className="flex-1 space-y-3 overflow-y-auto p-4">
+          <div className="flex-1 space-y-3 overflow-y-auto p-4 custom-scrollbar">
             {sectors.map((s) => (
-              <div key={s.label} className="cursor-pointer rounded border p-3 transition-all hover:border-amber/40"
-                style={{ background: "rgba(255,165,82,0.04)", borderColor: "var(--border-subtle)" }}>
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-sm font-medium uppercase" style={{ color: "var(--text)" }}>{s.label}</span>
-                  <span className="material-symbols-outlined text-sm" style={{ color: s.iconColor }}>{s.icon}</span>
+              <div key={s.label} className="cursor-pointer rounded border p-4 transition-all hover:bg-white/5 group"
+                style={{ background: "rgba(255,165,82,0.03)", borderColor: "var(--border-subtle)" }}>
+                <div className="mb-2.5 flex items-center justify-between">
+                  <span className="text-sm font-semibold uppercase tracking-wide text-text-secondary group-hover:text-text transition-colors">{s.label}</span>
+                  <span className="material-symbols-outlined text-lg" style={{ color: s.iconColor }}>{s.icon}</span>
                 </div>
-                <div className="flex gap-1 h-1.5">
+                <div className="flex gap-1.5 h-1.5">
                   {s.bars.map((opacity, i) => (
-                    <div key={i} className="flex-1 rounded-full" style={{ background: `rgba(255,165,82,${opacity})` }} />
+                    <div key={i} className="flex-1 rounded-full transition-all" style={{ background: `rgba(255,165,82,${opacity * 0.8})` }} />
                   ))}
                 </div>
               </div>
@@ -90,50 +95,51 @@ export default function MissionControlPage() {
           </div>
 
           <div className="border-t p-4" style={{ borderColor: "var(--border)" }}>
-            <button className="w-full rounded-md border py-2.5 text-sm font-medium uppercase tracking-wider transition-all hover:opacity-90"
-              style={{ background: "var(--amber)", border: "none", color: "#1a0f0a" }}>
+            <button className="dark-btn w-full py-3 text-sm font-bold uppercase tracking-widest transition-all hover:shadow-glow-amber"
+              style={{ background: "var(--amber)", border: "none", color: "#0d080b" }}>
               Deploy Crew
             </button>
           </div>
         </aside>
 
-        {/* Map zoom controls (right side) */}
-        <div className="absolute right-5 top-5 z-10 flex flex-col gap-2">
-          <div className="flex flex-col overflow-hidden rounded-md border" style={{ background: "rgba(15,10,13,0.9)", borderColor: "var(--border)" }}>
-            {["+", "−"].map((icon) => (
-              <button key={icon} className="flex items-center justify-center border-b p-2 text-lg font-bold transition-colors hover:bg-amber/10"
+        {/* Map zoom controls */}
+        <div className="absolute right-6 top-6 z-10 flex flex-col gap-2">
+          <div className="flex flex-col overflow-hidden rounded-md border shadow-lg" 
+            style={{ background: "rgba(13, 8, 11, 0.9)", borderColor: "var(--border)" }}>
+            {["add", "remove"].map((icon) => (
+              <button key={icon} className="flex items-center justify-center border-b p-2.5 transition-colors hover:bg-white/10"
                 style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                {icon}
+                <span className="material-symbols-outlined text-[20px]">{icon}</span>
               </button>
             ))}
           </div>
-          <button className="flex items-center justify-center rounded-md border p-2 mt-1 transition-colors hover:bg-amber/10"
-            style={{ background: "rgba(15,10,13,0.9)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            <span className="material-symbols-outlined">my_location</span>
+          <button className="flex items-center justify-center rounded-md border p-2.5 shadow-lg transition-colors hover:bg-white/10"
+            style={{ background: "rgba(13, 8, 11, 0.9)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
+            <span className="material-symbols-outlined text-[20px]">my_location</span>
           </button>
         </div>
 
-        {/* AI Audit Stream terminal (bottom right) */}
-        <div className="absolute bottom-5 right-5 z-10 w-96 overflow-hidden rounded-md border"
-          style={{ background: "rgba(15,10,13,0.95)", borderColor: "var(--border)" }}>
-          <div className="flex items-center justify-between border-b px-3 py-2" style={{ borderColor: "var(--border)" }}>
-            <span className="font-medium uppercase text-xs tracking-wider" style={{ color: "var(--amber)" }}>AI Audit Stream</span>
-            <div className="flex gap-1.5">
+        {/* AI Audit Stream terminal */}
+        <div className="absolute bottom-6 right-6 z-10 w-[400px] overflow-hidden rounded-md border shadow-2xl"
+          style={{ background: "rgba(13, 8, 11, 0.96)", borderColor: "var(--border)" }}>
+          <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
+            <span className="font-bold uppercase text-[11px] tracking-[0.2em] text-amber">AI Audit Stream</span>
+            <div className="flex gap-2">
               {[0, 1].map((i) => (
-                <div key={i} className="h-2.5 w-2.5 rounded-full border" style={{ borderColor: "var(--border)" }} />
+                <div key={i} className="h-2 w-2 rounded-full border" style={{ borderColor: "var(--border)" }} />
               ))}
             </div>
           </div>
-          <div className="flex h-44 flex-col gap-2 overflow-y-auto p-4 font-mono text-xs">
+          <div className="flex h-52 flex-col gap-2.5 overflow-y-auto p-5 font-mono text-[11px] leading-relaxed custom-scrollbar">
             {auditLog.map((line, i) => (
-              <p key={i} className={line.type === "blink" ? "animate-pulse" : ""}
+              <p key={i} className={`${line.type === "blink" ? "animate-pulse" : ""} opacity-90`}
                 style={{
                   color: line.type === "alert" ? "#f87171"
                     : line.type === "warn" ? "var(--amber)"
-                      : "var(--text-muted)",
+                      : "var(--text-secondary)",
                   fontWeight: line.type === "alert" ? "bold" : "normal",
                 }}>
-                &gt; {line.text}
+                <span className="text-amber/50 mr-2">&gt;</span>{line.text}
               </p>
             ))}
           </div>
