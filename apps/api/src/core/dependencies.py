@@ -6,7 +6,8 @@ from typing import Callable, Any, Optional
 from functools import wraps
 
 from fastapi import HTTPException, Depends, status, Request
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer
+from starlette.authentication import AuthenticationError
 
 from src.core.auth import verify_token, decode_token
 from src.repositories.users import UserRepository
@@ -14,18 +15,15 @@ from src.core.database import get_db_session
 from src.schemas.auth import RoleEnum, JWTPayload
 
 
-security = HTTPBearer()
-
-
 async def get_current_user(
-    credentials: HTTPAuthCredentials = Depends(security),
+    request: Request,
     db_session=Depends(get_db_session),
 ) -> dict[str, Any]:
     """
     Dependency to extract and validate current user from JWT token.
     
     Args:
-        credentials: HTTP Bearer token from request
+        request: HTTP request
         db_session: Database session
         
     Returns:
@@ -34,7 +32,15 @@ async def get_current_user(
     Raises:
         HTTPException 401/403 if token invalid or user not found
     """
-    token = credentials.credentials
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = auth_header.split(" ")[1]
     
     # Verify token signature
     payload = verify_token(token)
@@ -70,49 +76,43 @@ async def get_current_user(
     return user
 
 
-async def require_role(
-    required_roles: list[RoleEnum] | RoleEnum,
-    user: dict[str, Any] = Depends(get_current_user),
-) -> dict[str, Any]:
-    """
-    Dependency to enforce role-based access control.
-    
-    Args:
-        required_roles: Single role or list of allowed roles
-        user: Current user from get_current_user dependency
-        
-    Returns:
-        User if authorized
-        
-    Raises:
-        HTTPException 403 if user role not in required_roles
-    """
-    if not isinstance(required_roles, list):
-        required_roles = [required_roles]
-    
+def check_admin_role(user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
+    """Check user is admin."""
     user_role = user.get("role")
-    if user_role not in required_roles:
+    if user_role != RoleEnum.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"User role '{user_role}' not authorized. Required: {[r.value for r in required_roles]}",
+            detail=f"User role '{user_role}' not authorized. Required: ADMIN",
         )
-    
     return user
 
 
-def require_admin(user: dict[str, Any] = Depends(require_role([RoleEnum.ADMIN]))) -> dict[str, Any]:
-    """Dependency for admin-only endpoints."""
+def check_officer_role(user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
+    """Check user is officer or admin."""
+    user_role = user.get("role")
+    if user_role not in [RoleEnum.OFFICER, RoleEnum.ADMIN]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User role '{user_role}' not authorized. Required: OFFICER or ADMIN",
+        )
     return user
 
 
-def require_officer(user: dict[str, Any] = Depends(require_role([RoleEnum.OFFICER, RoleEnum.ADMIN]))) -> dict[str, Any]:
-    """Dependency for officer+ endpoints."""
+def check_auditor_role(user: dict[str, Any] = Depends(get_current_user)) -> dict[str, Any]:
+    """Check user is auditor or admin."""
+    user_role = user.get("role")
+    if user_role not in [RoleEnum.AUDITOR, RoleEnum.ADMIN]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User role '{user_role}' not authorized. Required: AUDITOR or ADMIN",
+        )
     return user
 
 
-def require_auditor(user: dict[str, Any] = Depends(require_role([RoleEnum.AUDITOR, RoleEnum.ADMIN]))) -> dict[str, Any]:
-    """Dependency for auditor+ endpoints."""
-    return user
+# Aliases for convenience
+require_admin = check_admin_role
+require_officer = check_officer_role
+require_auditor = check_auditor_role
 
 
 async def optional_auth(
