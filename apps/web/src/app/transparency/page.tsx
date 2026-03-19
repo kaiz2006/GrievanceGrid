@@ -1,128 +1,145 @@
-import Navigation from "../../components/Navigation";
+import Link from "next/link";
+import React from "react";
 
-const bars = [
-  { label: "Jan", resolved: 60, pending: 20 },
-  { label: "Feb", resolved: 40, pending: 30 },
-  { label: "Mar", resolved: 75, pending: 15 },
-  { label: "Apr", resolved: 85, pending: 10 },
-  { label: "May", resolved: 65, pending: 25 },
-];
-
-export default function TransparencyPage() {
+export default function GeneratedPage() {
   return (
-    <main className="min-h-screen font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      <Navigation />
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 p-8 lg:flex-row">
-        {/* Left column */}
-        <section className="flex flex-1 flex-col gap-8">
-          {/* Hero */}
-          <div className="flex flex-col gap-3">
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl" style={{ color: "var(--text)" }}>
-              Public Transparency<br />Dashboard
-            </h1>
-            <span className="inline-flex w-fit items-center rounded-full border px-3 py-1 text-sm font-semibold"
-              style={{ background: "rgba(196,214,176,0.1)", borderColor: "rgba(196,214,176,0.25)", color: "var(--sage)" }}>
-              Trustworthy &amp; Open
-            </span>
-          </div>
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { label: "Overall Transparency", value: "4.2" },
-              { label: "City Resolution Score", value: "4.8", sub: " / 5" },
-            ].map((s) => (
-              <div key={s.label} className="flex flex-col justify-between rounded-md border p-6"
-                style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</p>
-                <p className="mt-auto font-mono text-5xl font-semibold leading-none tracking-tight" style={{ color: "var(--amber)" }}>
-                  {s.value}
-                  {s.sub && <span className="text-2xl font-normal" style={{ color: "var(--text-muted)" }}>{s.sub}</span>}
-                </p>
-              </div>
-            ))}
-          </div>
+<div className="layout-container flex h-full grow flex-col max-w-[1440px] mx-auto bg-background">
+<header className="flex items-center justify-between whitespace-nowrap border-b border-border-light bg-white px-10 py-6">
+<div className="flex items-center gap-4 text-primary">
+<div className="size-8 bg-secondary rounded-md flex items-center justify-center text-primary">
+<span className="material-symbols-outlined font-semibold">grid_view</span>
+</div>
+<h2 className="text-primary text-2xl font-semibold leading-tight tracking-tight">Citizen Trust</h2>
+</div>
+<div className="flex flex-1 justify-end gap-8">
+<div className="flex items-center gap-9">
+<Link className="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="#">Submit</Link>
+<Link className="text-text-light text-base font-semibold leading-normal hover:text-primary transition-colors" href="#">About</Link>
+</div>
+<Link href="/admin/mission-control" className="flex min-w-[120px] cursor-pointer items-center justify-center rounded-md border border-border-light h-10 px-6 bg-white text-primary text-base font-semibold hover:bg-gray-50 transition-colors">
+<span>Log In</span>
+</Link>
+</div>
+</header>
+<div className="flex flex-col lg:flex-row p-8 gap-12 max-w-[1200px] mx-auto w-full">
+<div className="flex-1 flex flex-col gap-10">
+<div className="relative py-4">
+<h1 className="text-primary text-4xl md:text-5xl font-semibold leading-tight tracking-tight">Public Transparency<br/>Dashboard</h1>
+<div className="inline-block mt-4 bg-secondary/20 text-primary text-sm font-semibold px-3 py-1 rounded-full">
+                        Trustworthy &amp; Open
+                    </div>
+</div>
+<div className="flex flex-col md:flex-row gap-6">
+<div className="flex-1 bg-white border border-border-light rounded-lg p-6 soft-shadow flex flex-col justify-between min-h-[180px]">
+<p className="text-text-light text-sm font-semibold uppercase tracking-wider mb-2">Overall Transparency</p>
+<p className="text-primary text-6xl font-semibold leading-none tracking-tight mt-auto">4.2</p>
+</div>
+<div className="flex-1 bg-white border border-border-light rounded-lg p-6 soft-shadow flex flex-col justify-between min-h-[180px]">
+<p className="text-text-light text-sm font-semibold uppercase tracking-wider mb-2">City Resolution Score</p>
+<p className="text-primary text-6xl font-semibold leading-none tracking-tight mt-auto">4.8 <span className="text-2xl text-text-light">/ 5</span></p>
+</div>
+</div>
+<div className="bg-white border border-border-light rounded-lg p-8 soft-shadow mt-4">
+<div className="flex justify-between items-start mb-10 border-b border-border-light pb-6">
+<div>
+<p className="text-primary text-xl font-semibold">Resolved vs Pending</p>
+<p className="text-secondary text-4xl font-semibold leading-none tracking-tight mt-3 text-custom-9">82% Resolved</p>
+</div>
+<div className="bg-secondary/10 text-primary px-3 py-1.5 rounded-full font-semibold text-sm flex items-center gap-1">
+<span className="material-symbols-outlined text-sm">trending_up</span>
+                            +12% YTD
+                        </div>
+</div>
+<div className="flex gap-6 justify-end mb-8 font-semibold text-sm text-text-light">
+<div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-secondary"></div> Resolved</div>
+<div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-gray-200"></div> Pending</div>
+</div>
+<div className="grid min-h-[250px] grid-flow-col gap-8 grid-rows-[1fr_auto] items-end justify-items-center px-4">
+<div className="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div className="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style={{ height: '20%' }}></div>
+<div className="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style={{ height: '60%' }}></div>
+</div>
+<p className="text-text-light text-sm font-semibold mt-4 w-full text-center">Jan</p>
+<div className="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div className="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style={{ height: '30%' }}></div>
+<div className="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style={{ height: '40%' }}></div>
+</div>
+<p className="text-text-light text-sm font-semibold mt-4 w-full text-center">Feb</p>
+<div className="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div className="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style={{ height: '15%' }}></div>
+<div className="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style={{ height: '75%' }}></div>
+</div>
+<p className="text-text-light text-sm font-semibold mt-4 w-full text-center">Mar</p>
+<div className="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div className="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style={{ height: '10%' }}></div>
+<div className="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style={{ height: '85%' }}></div>
+</div>
+<p className="text-text-light text-sm font-semibold mt-4 w-full text-center">Apr</p>
+<div className="w-full flex flex-col justify-end items-center gap-1.5 h-full">
+<div className="bg-gray-200 rounded-t-sm w-full max-w-[40px] transition-all hover:bg-gray-300" style={{ height: '25%' }}></div>
+<div className="bg-secondary rounded-t-sm w-full max-w-[40px] transition-all hover:brightness-95" style={{ height: '65%' }}></div>
+</div>
+<p className="text-text-light text-sm font-semibold mt-4 w-full text-center">May</p>
+</div>
+</div>
+</div>
+<div className="w-full lg:w-[380px] flex flex-col gap-8">
+<Link href="/admin/grievances" className="w-full bg-primary rounded-lg p-5 text-white text-lg font-semibold soft-shadow hover:bg-opacity-90 transition-colors flex items-center justify-center gap-3">
+<span className="material-symbols-outlined text-xl">campaign</span>
+                    Submit Grievance
+                </Link>
+<div className="bg-white border border-border-light rounded-lg p-6 soft-shadow flex-1">
+<h2 className="text-primary text-xl font-semibold mb-6 flex items-center gap-2">
+<span className="material-symbols-outlined text-secondary">dynamic_feed</span>
+                        Impact Feed
+                    </h2>
+<div className="flex flex-col gap-6">
+<div className="group">
+<div className="flex justify-between items-center mb-2">
+<span className="pill-resolved px-2.5 py-0.5 rounded-full font-semibold text-xs">Resolved</span>
+<span className="text-text-light text-xs font-semibold">2h ago</span>
+</div>
+<p className="font-semibold text-primary mb-3 text-base leading-snug">Pothole on 5th Ave filled</p>
+<div className="flex gap-3">
+<div className="relative flex-1 h-28 rounded-[6px] bg-gray-100 overflow-hidden" data-alt="Pothole on street before repair" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuCAza14EeI5IbmFxSNzGdKbAKQFDASCEW7oluiBRce3KQiaCEmRnVxVyT2CKtKILdvCKHYCXt97G8F5X1yCCs5o76lEyt6KNQfU_FviIfsXoLRDkzR08hwcGV6U-lGp6trLx4njqCXHHMGgddqAnMjeHTQzm9YxOqhN-FZqct7qct67NwV6Y6hTG2SUvEIaye3F8Ej9G_7FVdREQ2emrue4a3XQaBJNqyFrBfxwXycEGoUiaY6lUSmtawCy2L41YG0C8XI_i_WvXafD\')', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+<span className="absolute bottom-2 left-2 bg-white/90 text-primary text-[10px] font-semibold px-1.5 py-0.5 rounded-sm shadow-sm backdrop-blur-sm">Before</span>
+</div>
+<div className="relative flex-1 h-28 rounded-[6px] bg-gray-100 overflow-hidden" data-alt="Repaired street surface" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuC9eFxwW6ZxS-_JaGaRi0Zeo4CY05H_tFIkMwN6g25Zi47R5z1M2OiBkc4fGPz000EsNx7YkvCFqIeRcprs0GEoaYBltsj5MkDgx5zt7HAJcdqI_jKeJFPgraMqOEYFind4q0ThVSSQdF50MKikJEOtXn-WfPwwhu7bpCs_6Qr2271XSU4_xjh-NIgcjtaA9gP2CIqQp1E1OnDmOXN0J-06CZy3Gp59jnLoQQ4pc9ZRv-DNtdCHqoPT2NhNxb6RHtmGIrvj4BT8wIAp\')', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+<span className="absolute bottom-2 left-2 bg-secondary text-primary text-[10px] font-semibold px-1.5 py-0.5 rounded-sm shadow-sm">After</span>
+</div>
+</div>
+</div>
+<div className="h-px bg-border-light w-full"></div>
+<div className="group">
+<div className="flex justify-between items-center mb-2">
+<span className="pill-resolved px-2.5 py-0.5 rounded-full font-semibold text-xs">Resolved</span>
+<span className="text-text-light text-xs font-semibold">5h ago</span>
+</div>
+<p className="font-semibold text-primary mb-3 text-base leading-snug">Broken Streetlight fixed - Downtown</p>
+<div className="flex gap-3">
+<div className="relative flex-1 h-28 rounded-[6px] bg-gray-100 flex items-center justify-center font-semibold text-gray-400 text-sm">Image</div>
+<div className="relative flex-1 h-28 rounded-[6px] bg-gray-100 flex items-center justify-center font-semibold text-gray-400 text-sm">Image</div>
+</div>
+</div>
+</div>
+</div>
+<div className="flex gap-4 mt-auto border-t border-border-light pt-6">
+<Link href="/admin/mission-control" className="flex-1 bg-white border border-border-light rounded-md py-2.5 text-text-light hover:text-primary hover:bg-gray-50 transition-colors flex justify-center items-center gap-2 text-sm font-semibold">
+<span className="material-symbols-outlined text-lg">share</span> Share
+                </Link>
+<Link href="/admin/mission-control" className="flex-1 bg-white border border-border-light rounded-md py-2.5 text-text-light hover:text-primary hover:bg-gray-50 transition-colors flex justify-center items-center gap-2 text-sm font-semibold">
+<span className="material-symbols-outlined text-lg">forum</span> Discuss
+                </Link>
+</div>
+</div>
+</div>
+</div>
 
-          {/* Chart */}
-          <div className="rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <div className="mb-4 flex items-start justify-between border-b pb-4" style={{ borderColor: "var(--border-subtle)" }}>
-              <div>
-                <p className="text-lg font-semibold" style={{ color: "var(--text)" }}>Resolved vs Pending</p>
-                <p className="mt-1 text-3xl font-bold" style={{ color: "var(--sage)" }}>82% Resolved</p>
-              </div>
-              <div className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm font-semibold"
-                style={{ background: "rgba(196,214,176,0.1)", borderColor: "rgba(196,214,176,0.2)", color: "var(--sage)" }}>
-                <span className="material-symbols-outlined text-sm">trending_up</span>+12% YTD
-              </div>
-            </div>
-            <div className="mb-4 flex gap-6 justify-end text-xs font-semibold" style={{ color: "var(--text-muted)" }}>
-              <span className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm" style={{ background: "var(--sage)" }} /> Resolved</span>
-              <span className="flex items-center gap-2"><span className="h-3 w-3 rounded-sm" style={{ background: "var(--border)" }} /> Pending</span>
-            </div>
-            <div className="flex items-end justify-between gap-4 border-b border-l pb-2 pl-2" style={{ borderColor: "var(--border-subtle)", minHeight: 200 }}>
-              {bars.map((b) => (
-                <div key={b.label} className="flex flex-1 flex-col items-center gap-1">
-                  <div className="flex w-full max-w-[40px] flex-col justify-end gap-1" style={{ height: 180 }}>
-                    <div className="w-full rounded-t-sm transition-all" style={{ height: `${b.pending}%`, background: "var(--border)" }} />
-                    <div className="w-full rounded-t-sm transition-all" style={{ height: `${b.resolved}%`, background: "var(--sage)" }} />
-                  </div>
-                  <p className="mt-2 text-xs font-semibold" style={{ color: "var(--text-muted)" }}>{b.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Right column */}
-        <aside className="flex w-full flex-col gap-4 lg:w-[340px]">
-          <a href="/submit" className="flex w-full items-center justify-center gap-3 rounded-md py-4 text-base font-bold transition-all hover:opacity-90"
-            style={{ background: "var(--amber)", color: "#1a0f0a" }}>
-            <span className="material-symbols-outlined">campaign</span>Submit Grievance
-          </a>
-
-          <div className="flex-1 rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <h2 className="mb-6 flex items-center gap-2 text-lg font-semibold" style={{ color: "var(--text)" }}>
-              <span className="material-symbols-outlined" style={{ color: "var(--sage)" }}>dynamic_feed</span>Impact Feed
-            </h2>
-            <div className="flex flex-col gap-6">
-              {[
-                { title: "Pothole on 5th Ave filled", time: "2h ago" },
-                { title: "Broken Streetlight fixed — Downtown", time: "5h ago" },
-              ].map((item) => (
-                <div key={item.title}>
-                  <div className="mb-2 flex justify-between items-center">
-                    <span className="rounded-full border px-2.5 py-0.5 text-xs font-semibold"
-                      style={{ background: "rgba(196,214,176,0.1)", borderColor: "rgba(196,214,176,0.25)", color: "var(--sage)" }}>Resolved</span>
-                    <span className="text-xs font-semibold" style={{ color: "var(--text-muted)" }}>{item.time}</span>
-                  </div>
-                  <p className="mb-3 font-semibold" style={{ color: "var(--text)" }}>{item.title}</p>
-                  <div className="flex gap-2">
-                    {["Before", "After"].map((label) => (
-                      <div key={label} className="relative flex h-24 flex-1 items-end justify-start overflow-hidden rounded border p-1.5"
-                        style={{ background: "var(--elevated)", borderColor: "var(--border-subtle)" }}>
-                        <span className="rounded-sm px-1.5 py-0.5 text-[10px] font-semibold"
-                          style={{ background: label === "After" ? "var(--sage)" : "rgba(240,240,240,0.15)", color: label === "After" ? "#1a2a10" : "var(--text-muted)" }}>
-                          {label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 h-px" style={{ background: "var(--border-subtle)" }} />
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 flex gap-3 border-t pt-6" style={{ borderColor: "var(--border-subtle)" }}>
-              {["Share", "Discuss"].map((label) => (
-                <button key={label} className="flex flex-1 items-center justify-center gap-2 rounded-md border py-2.5 text-sm font-semibold transition-colors hover:border-amber/30"
-                  style={{ background: "var(--elevated)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                  <span className="material-symbols-outlined text-lg">{label === "Share" ? "share" : "forum"}</span>{label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </aside>
-      </div>
-    </main>
+</div>
+    </>
   );
 }

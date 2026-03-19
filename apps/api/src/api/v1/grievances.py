@@ -4,18 +4,26 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.database import get_db_session
 from src.core.worker import dispatch_task
-from src.repositories import grievance_repository
+from src.repositories.grievances import GrievanceRepository
 
 router = APIRouter()
 
 
 class GrievanceCreateRequest(BaseModel):
-	title: str = Field(min_length=3, max_length=160)
+	citizen_id: str | None = None
+	category: str | None = None
+	priority: str | None = None
+	title: str = Field(min_length=3, max_length=500)
 	description: str = Field(min_length=5)
+	latitude: float | None = None
+	longitude: float | None = None
+	location_address: str | None = None
 	location_text: str | None = None
 	before_photo_url: str | None = None
 	hint_category: str | None = None
@@ -28,6 +36,8 @@ class GrievanceCreateResponse(BaseModel):
 	grid_id: str
 	processing_task_id: str
 	submitted_at: str
+	response_deadline: str
+	resolution_deadline: str
 	status: str
 
 
@@ -35,16 +45,28 @@ class GrievanceDetailsResponse(BaseModel):
 	grievance_id: str
 	grid_id: str
 	status: str
+	category: str
+	priority: str
 	title: str
 	description: str
-	location_text: str | None = None
+	citizen_id: str
+	citizen_name: str | None = None
+	citizen_phone: str | None = None
+	latitude: float | None = None
+	longitude: float | None = None
+	location_address: str | None = None
 	before_photo_url: str | None = None
-	hint_category: str | None = None
-	hint_priority: str | None = None
-	hint_department: str | None = None
-	processing_task_id: str
+	after_photo_url: str | None = None
+	ai_category: str | None = None
+	ai_priority: str | None = None
+	ai_summary: str | None = None
+	damage_severity: float | None = None
+	assigned_department_id: str | None = None
+	assigned_department_name: str | None = None
+	assigned_team_id: str | None = None
+	assigned_team_name: str | None = None
 	submitted_at: str
-	ai_result: dict[str, Any] | None = None
+	updated_at: str
 	timeline: list[dict[str, Any]]
 
 
@@ -106,11 +128,12 @@ class GrievanceListItem(BaseModel):
 	grid_id: str
 	status: str
 	title: str
+	category: str
+	priority: str
+	ai_category: str | None = None
+	ai_priority: str | None = None
+	assigned_department_id: str | None = None
 	submitted_at: str
-	hint_category: str | None = None
-	hint_priority: str | None = None
-	hint_department: str | None = None
-	ai_result: dict[str, Any] | None = None
 
 
 class GrievanceListResponse(BaseModel):
@@ -124,11 +147,18 @@ def _build_grid_id() -> str:
 	return f"GRI-{year}-{suffix}"
 
 
-@router.post("", response_model=GrievanceCreateResponse)
-async def create_grievance(payload: GrievanceCreateRequest) -> GrievanceCreateResponse:
+def _to_iso(value: Any) -> str:
+	return value.isoformat() if hasattr(value, "isoformat") else str(value)
+
+
+@router.post("", response_model=GrievanceCreateResponse, status_code=201)
+async def create_grievance(
+	payload: GrievanceCreateRequest,
+	db: AsyncSession = Depends(get_db_session),
+) -> GrievanceCreateResponse:
+	repo = GrievanceRepository(db)
 	grievance_id = str(uuid4())
 	grid_id = _build_grid_id()
-	submitted_at = datetime.now(timezone.utc).isoformat()
 
 	task_id = dispatch_task(
 		"src.tasks.ai_processing.process_grievance_ai",
@@ -136,47 +166,83 @@ async def create_grievance(payload: GrievanceCreateRequest) -> GrievanceCreateRe
 		payload.model_dump(),
 	)
 
-	grievance_repository.create(
-		{
-			"grievance_id": grievance_id,
-			"grid_id": grid_id,
-			"status": "CREATED",
-			"submitted_at": submitted_at,
-			"processing_task_id": task_id,
-			"title": payload.title,
-			"description": payload.description,
-			"location_text": payload.location_text,
-			"before_photo_url": payload.before_photo_url,
-			"hint_category": payload.hint_category,
-			"hint_priority": payload.hint_priority,
-			"hint_department": payload.hint_department,
-			"ai_result": None,
-			"timeline": [
-				{
-					"status": "CREATED",
-					"timestamp": submitted_at,
-					"description": "Grievance submitted successfully",
-				}
-			],
-		}
-	)
+	try:
+		created = await repo.create(
+			{
+				"id": grievance_id,
+				"grid_id": grid_id,
+				"citizen_id": payload.citizen_id,
+				"category": payload.category or payload.hint_category or "OTHER",
+				"priority": payload.priority or payload.hint_priority or "MEDIUM",
+				"title": payload.title,
+				"description": payload.description,
+				"latitude": payload.latitude,
+				"longitude": payload.longitude,
+				"location_address": payload.location_address or payload.location_text,
+				"before_photo_url": payload.before_photo_url,
+			}
+		)
+	except ValueError as exc:
+		raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 	return GrievanceCreateResponse(
-		grievance_id=grievance_id,
-		grid_id=grid_id,
+		grievance_id=str(created["id"]),
+		grid_id=str(created["grid_id"]),
 		processing_task_id=task_id,
-		submitted_at=submitted_at,
-		status="CREATED",
+		submitted_at=_to_iso(created.get("created_at")),
+		response_deadline=_to_iso(created.get("response_deadline")),
+		resolution_deadline=_to_iso(created.get("resolution_deadline")),
+		status=str(created.get("status", "CREATED")),
 	)
 
 
 @router.get("/{grievance_id}", response_model=GrievanceDetailsResponse)
-async def get_grievance(grievance_id: str) -> GrievanceDetailsResponse:
-	grievance = grievance_repository.get_by_id(grievance_id)
+async def get_grievance(
+	grievance_id: str,
+	db: AsyncSession = Depends(get_db_session),
+) -> GrievanceDetailsResponse:
+	repo = GrievanceRepository(db)
+	grievance = await repo.get_by_id(grievance_id)
 	if grievance is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
-	return GrievanceDetailsResponse(**grievance)
+	timeline = await repo.get_timeline(grievance_id)
+	return GrievanceDetailsResponse(
+		grievance_id=str(grievance["id"]),
+		grid_id=str(grievance["grid_id"]),
+		status=str(grievance["status"]),
+		category=str(grievance["category"]),
+		priority=str(grievance["priority"]),
+		title=str(grievance["title"]),
+		description=str(grievance["description"]),
+		citizen_id=str(grievance["citizen_id"]),
+		citizen_name=grievance.get("citizen_name"),
+		citizen_phone=grievance.get("citizen_phone"),
+		latitude=float(grievance["latitude"]) if grievance.get("latitude") is not None else None,
+		longitude=float(grievance["longitude"]) if grievance.get("longitude") is not None else None,
+		location_address=grievance.get("location_address"),
+		before_photo_url=grievance.get("before_photo_url"),
+		after_photo_url=grievance.get("after_photo_url"),
+		ai_category=str(grievance["ai_category"]) if grievance.get("ai_category") else None,
+		ai_priority=str(grievance["ai_priority"]) if grievance.get("ai_priority") else None,
+		ai_summary=grievance.get("ai_summary"),
+		damage_severity=float(grievance["damage_severity"]) if grievance.get("damage_severity") is not None else None,
+		assigned_department_id=str(grievance["assigned_department_id"]) if grievance.get("assigned_department_id") else None,
+		assigned_department_name=grievance.get("assigned_department_name"),
+		assigned_team_id=str(grievance["assigned_team_id"]) if grievance.get("assigned_team_id") else None,
+		assigned_team_name=grievance.get("assigned_team_name"),
+		submitted_at=_to_iso(grievance.get("created_at")),
+		updated_at=_to_iso(grievance.get("updated_at")),
+		timeline=[
+			{
+				"status": str(event.get("status") or "UPDATED"),
+				"timestamp": _to_iso(event.get("timestamp")),
+				"description": str(event.get("description") or "Status updated"),
+				**({"metadata": event.get("metadata")} if event.get("metadata") else {}),
+			}
+			for event in timeline
+		],
+	)
 
 
 @router.get("", response_model=GrievanceListResponse)
@@ -185,34 +251,56 @@ async def list_grievances(
 	category: str | None = Query(default=None),
 	priority: str | None = Query(default=None),
 	department: str | None = Query(default=None),
+	department_id: str | None = Query(default=None),
 	limit: int = Query(default=50, ge=1, le=200),
 	offset: int = Query(default=0, ge=0),
+	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceListResponse:
-	items = grievance_repository.list_grievances(
+	repo = GrievanceRepository(db)
+	items = await repo.list_grievances(
 		status=status,
 		category=category,
 		priority=priority,
-		department=department,
+		department_id=department_id or department,
 		limit=limit,
 		offset=offset,
 	)
 
 	return GrievanceListResponse(
 		count=len(items),
-		items=[GrievanceListItem(**item) for item in items],
+		items=[
+			GrievanceListItem(
+				grievance_id=str(item["id"]),
+				grid_id=str(item["grid_id"]),
+				status=str(item["status"]),
+				title=str(item["title"]),
+				category=str(item["category"]),
+				priority=str(item["priority"]),
+				ai_category=str(item["ai_category"]) if item.get("ai_category") else None,
+				ai_priority=str(item["ai_priority"]) if item.get("ai_priority") else None,
+				assigned_department_id=str(item["assigned_department_id"]) if item.get("assigned_department_id") else None,
+				submitted_at=_to_iso(item.get("created_at")),
+			)
+			for item in items
+		],
 	)
 
 
 @router.post("/{grievance_id}/ai-result", response_model=GrievanceAIResultResponse)
-async def receive_ai_result(grievance_id: str, payload: GrievanceAIResultRequest) -> GrievanceAIResultResponse:
-	updated = grievance_repository.update_ai_result(grievance_id, payload.model_dump())
+async def receive_ai_result(
+	grievance_id: str,
+	payload: GrievanceAIResultRequest,
+	db: AsyncSession = Depends(get_db_session),
+) -> GrievanceAIResultResponse:
+	repo = GrievanceRepository(db)
+	updated = await repo.update_ai_result(grievance_id, payload.model_dump())
 	if updated is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return GrievanceAIResultResponse(
 		grievance_id=grievance_id,
-		status=updated["status"],
-		updated_at=datetime.now(timezone.utc).isoformat(),
+		status=str(updated["status"]),
+		updated_at=_to_iso(updated.get("updated_at")),
 	)
 
 
@@ -220,8 +308,10 @@ async def receive_ai_result(grievance_id: str, payload: GrievanceAIResultRequest
 async def update_grievance_status(
 	grievance_id: str,
 	payload: GrievanceStatusUpdateRequest,
+	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceAIResultResponse:
-	updated = grievance_repository.update_status(
+	repo = GrievanceRepository(db)
+	updated = await repo.update_status(
 		grievance_id=grievance_id,
 		status=payload.status,
 		notes=payload.notes,
@@ -231,8 +321,8 @@ async def update_grievance_status(
 
 	return GrievanceAIResultResponse(
 		grievance_id=grievance_id,
-		status=updated["status"],
-		updated_at=datetime.now(timezone.utc).isoformat(),
+		status=str(updated["status"]),
+		updated_at=_to_iso(updated.get("updated_at")),
 	)
 
 
@@ -240,8 +330,10 @@ async def update_grievance_status(
 async def submit_feedback(
 	grievance_id: str,
 	payload: GrievanceFeedbackRequest,
+	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceFeedbackResponse:
-	updated = grievance_repository.add_feedback(
+	repo = GrievanceRepository(db)
+	updated = await repo.add_feedback(
 		grievance_id,
 		rating=payload.rating,
 		comment=payload.comment,
@@ -250,11 +342,10 @@ async def submit_feedback(
 	if updated is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
-	feedback = updated.get("latest_feedback") or {}
 	return GrievanceFeedbackResponse(
 		grievance_id=grievance_id,
 		rating=payload.rating,
-		submitted_at=str(feedback.get("submitted_at") or datetime.now(timezone.utc).isoformat()),
+		submitted_at=_to_iso(updated.get("updated_at")),
 		message="Feedback submitted successfully",
 	)
 
@@ -263,7 +354,9 @@ async def submit_feedback(
 async def contest_grievance(
 	grievance_id: str,
 	payload: GrievanceContestRequest,
+	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceContestResponse:
+	repo = GrievanceRepository(db)
 	audit_id = f"audit_{uuid4().hex[:8]}"
 	audit_task_id = dispatch_task(
 		"src.tasks.ai_processing.run_contestation_audit",
@@ -273,7 +366,7 @@ async def contest_grievance(
 		audit_id,
 	)
 
-	updated = grievance_repository.mark_contested(
+	updated = await repo.mark_contested(
 		grievance_id,
 		reason=payload.reason,
 		evidence_photo=payload.evidence_photo,
@@ -284,7 +377,7 @@ async def contest_grievance(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return GrievanceContestResponse(
-		status=updated["status"],
+		status=str(updated["status"]),
 		audit_triggered=True,
 		audit_id=audit_id,
 		audit_task_id=audit_task_id,

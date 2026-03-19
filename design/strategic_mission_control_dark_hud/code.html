@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Mission Control Strategic Command HUD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#fddf9d",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#d9c2b2",
+                        "surface-variant": "#492c39",
+                        "primary-fixed-dim": "#ffb77a",
+                        "outline-variant": "#534437",
+                        "on-primary": "#4c2700",
+                        "on-secondary-container": "#ffb08e",
+                        "on-tertiary": "#3e2e00",
+                        "primary-fixed": "#ffdcc2",
+                        "on-secondary-fixed-variant": "#7c2e00",
+                        "on-primary-fixed": "#2e1500",
+                        "on-secondary-fixed": "#360f00",
+                        "on-secondary": "#581e00",
+                        "on-tertiary-fixed-variant": "#574411",
+                        "secondary": "#ffb596",
+                        "surface-tint": "#ffb77a",
+                        "on-tertiary-container": "#5b4714",
+                        "on-primary-fixed-variant": "#6d3a00",
+                        "inverse-on-surface": "#442835",
+                        "inverse-surface": "#ffd8e7",
+                        "on-background": "#ffd8e7",
+                        "tertiary-container": "#d3b778",
+                        "outline": "#a18d7e",
+                        "primary-container": "#ffa552",
+                        "surface-dim": "#230b18",
+                        "secondary-container": "#8c3400",
+                        "secondary-fixed": "#ffdbcd",
+                        "surface-bright": "#4e303e",
+                        "background": "#230b18",
+                        "inverse-primary": "#8f4e00",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#251a00",
+                        "secondary-fixed-dim": "#ffb596",
+                        "error": "#ffb4ab",
+                        "on-primary-container": "#713c00",
+                        "surface-container-high": "#3d212f",
+                        "surface-container-low": "#2d1320",
+                        "surface": "#230b18",
+                        "surface-container": "#311724",
+                        "surface-container-lowest": "#1d0612",
+                        "on-surface": "#ffd8e7",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#ffcba2",
+                        "surface-container-highest": "#492c39",
+                        "tertiary": "#f0d291",
+                        "tertiary-fixed-dim": "#e0c384"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(35, 11, 24, 0.65);
+        }
+        .scanner-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFA552, transparent);
+            position: absolute;
+            width: 100%;
+            top: 0;
+        }
+        .grid-mesh {
+            background-image: 
+                linear-gradient(rgba(83, 68, 55, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(83, 68, 55, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 overflow-hidden h-screen">
+<!-- Top Navigation Anchor -->
+<header class="w-full sticky top-0 z-50 flex items-center justify-between px-8 h-16 w-full bg-[#230B18] shadow-[0_0_24px_0_rgba(255,165,82,0.08)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#F0D291]">GrievanceGrid</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-[#D9C2B2] opacity-70 hover:text-[#FFCBA2] transition-colors duration-200 cursor-pointer active:scale-95 font-['Inter'] tracking-tight" href="#">Analytics</a>
+<a class="text-[#D9C2B2] opacity-70 hover:text-[#FFCBA2] transition-colors duration-200 cursor-pointer active:scale-95 font-['Inter'] tracking-tight" href="#">Department</a>
+<a class="text-[#D9C2B2] opacity-70 hover:text-[#FFCBA2] transition-colors duration-200 cursor-pointer active:scale-95 font-['Inter'] tracking-tight" href="#">Reports</a>
+<a class="text-[#D9C2B2] opacity-70 hover:text-[#FFCBA2] transition-colors duration-200 cursor-pointer active:scale-95 font-['Inter'] tracking-tight" href="#">Archive</a>
+<a class="text-[#FFA552] border-b-2 border-[#FFA552] pb-1 font-['Inter'] tracking-tight" href="#">Strategy</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#D9C2B2] cursor-pointer hover:text-[#FFA552]">notifications</span>
+<span class="material-symbols-outlined text-[#D9C2B2] cursor-pointer hover:text-[#FFA552]">settings</span>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant/20 overflow-hidden">
+<img alt="User Profile" data-alt="High quality professional user profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTFqa4DBNinYt1rrzcqNA8_fDDJ_FDY4ElPG0-wuh-N64fNynqbgAcSh2GV_7S19Y6zBGijPAtGz_maFYQNsPskTeN7MBOjaQyiOH7oJgkrgCNb7HqZCn7vMR6sXzRC4O_9BJliydx94NuT-wENezEiEB56YdVD3jVNs3E-qOHu8Nbn_jAu_2KEpkobpUk3xnwqtoGgZlUzwc0O61IadU4aPrVWeqzoSXDbKz4RLDmZlVVzsLn9a9J_hJaIGr3qls5YMGrr4h2u3yy"/>
+</div>
+</div>
+</header>
+<main class="relative h-[calc(100vh-64px)] w-full flex overflow-hidden">
+<!-- Background Map Component -->
+<div class="absolute inset-0 z-0 bg-surface grid-mesh">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-surface/40 to-surface"></div>
+<!-- Mock Interactive Map Background -->
+<div class="w-full h-full relative">
+<img alt="Strategic Map" class="w-full h-full object-cover opacity-15 grayscale contrast-125 mix-blend-luminosity" data-alt="Deep plum and charcoal tactical map overlay" data-location="Global Command Center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv7yLyNf1iepZoO6mK_pW0vzTupssTX7C4dYDal3CqhpEbhmpMIlRN8wL4Px4NgE_8K3OmLVTIaT2MHNdlsjQBHZwyTtTdeqb1ww5_MILRuvx_eOMmv0fC8RkrSfRxKAhzAv3HMCKTdAI6NEwDLNUqfdclcNwyyIubwugT4vmBpNdXLFeLKQWqXVrEsyYR9olkDPGq876IQM9-KWacih5heVeKNbxafAgEvZfgjqRqGVWkITKjB-dpU1j11rM_dFFXVosv1kyl8YCQ"/>
+<!-- Vibrant Data Clusters -->
+<div class="absolute top-1/4 left-1/3 group cursor-pointer">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full animate-pulse border border-primary-container"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-2 h-2 bg-primary-container rounded-full shadow-[0_0_12px_#FFA552]"></div>
+</div>
+</div>
+<div class="absolute top-1/2 left-2/3 group cursor-pointer">
+<div class="w-20 h-20 bg-primary-container/10 rounded-full border border-primary-container/40"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-4 h-4 bg-primary-container rounded-full shadow-[0_0_20px_#FFA552]"></div>
+</div>
+</div>
+<!-- Sage Green Health Pins -->
+<div class="absolute bottom-1/3 left-1/4">
+<span class="material-symbols-outlined text-[#C4D6B0] text-3xl drop-shadow-[0_0_8px_rgba(196,214,176,0.6)]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div class="absolute top-1/4 right-1/4">
+<span class="material-symbols-outlined text-[#C4D6B0] text-3xl drop-shadow-[0_0_8px_rgba(196,214,176,0.6)]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+<!-- Side Navigation (Immutable Anchor) -->
+<aside class="h-full w-64 glass-panel border-r border-outline-variant/15 flex flex-col py-6 px-4 gap-8 z-20">
+<div class="flex flex-col gap-1">
+<span class="text-[#F0D291] font-black italic tracking-tighter">GovTech</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-[0.2em] text-on-surface-variant/60">Precision Ops</span>
+</div>
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 px-4 rounded-lg font-bold text-xs uppercase tracking-widest shadow-[0_0_24px_0_rgba(255,165,82,0.15)] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Grievance
+            </button>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant/60 font-['Inter'] text-sm font-medium uppercase tracking-widest hover:bg-[#311724] hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span> Dashboard
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant/60 font-['Inter'] text-sm font-medium uppercase tracking-widest hover:bg-[#311724] hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">gavel</span> Cases
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant/60 font-['Inter'] text-sm font-medium uppercase tracking-widest hover:bg-[#311724] hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">view_list</span> Queue
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant/60 font-['Inter'] text-sm font-medium uppercase tracking-widest hover:bg-[#311724] hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">group</span> Personnel
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#FFA552] bg-[#311724] border-r-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-lg">query_stats</span> Strategy
+                </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant/60 font-['Inter'] text-sm font-medium uppercase tracking-widest hover:bg-[#311724] hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">terminal</span> System
+                </a>
+</nav>
+<div class="border-t border-outline-variant/10 pt-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant/60 text-xs font-medium uppercase tracking-widest hover:text-[#F0D291]" href="#">
+<span class="material-symbols-outlined text-base">help</span> Support
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant/60 text-xs font-medium uppercase tracking-widest hover:text-error" href="#">
+<span class="material-symbols-outlined text-base">logout</span> Logout
+                </a>
+</div>
+</aside>
+<!-- Main HUD Canvas -->
+<div class="flex-1 relative z-10 flex flex-col pointer-events-none">
+<!-- Top KPI Bar -->
+<div class="w-full p-6 flex justify-between gap-6 pointer-events-auto">
+<div class="flex-1 bg-surface-container-low/80 glass-panel border border-outline-variant/15 p-4 flex flex-col gap-1 rounded-lg">
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60">TOTAL ACTIVE</span>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-black text-primary-container leading-none">12,842</span>
+<span class="text-[10px] text-[#C4D6B0] font-bold">+2.4% Δ</span>
+</div>
+</div>
+<div class="flex-1 bg-surface-container-low/80 glass-panel border border-outline-variant/15 p-4 flex flex-col gap-1 rounded-lg">
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60">SLA COMPLIANCE</span>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-black text-tertiary leading-none">98.2%</span>
+<span class="text-[10px] text-tertiary/60 font-bold">STABLE</span>
+</div>
+</div>
+<div class="flex-1 bg-surface-container-low/80 glass-panel border border-outline-variant/15 p-4 flex flex-col gap-1 rounded-lg">
+<span class="font-['Inter'] text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/60">CRITICAL CLUSTERS</span>
+<div class="flex items-end justify-between">
+<span class="text-3xl font-black text-primary-container leading-none">07</span>
+<span class="text-[10px] text-error font-bold">WARNING</span>
+</div>
+</div>
+</div>
+<!-- Dashboard Content Layout -->
+<div class="flex-1 flex justify-between p-6 gap-6 items-end overflow-hidden">
+<!-- Left Sidebar: Sector Crisis Score -->
+<section class="w-72 glass-panel border border-outline-variant/15 p-5 rounded-xl pointer-events-auto flex flex-col gap-6 self-start">
+<div class="flex items-center justify-between border-b border-outline-variant/10 pb-3">
+<h2 class="font-['Inter'] text-xs font-black uppercase tracking-widest text-tertiary">Sector Crisis Score</h2>
+<span class="material-symbols-outlined text-sm text-on-surface-variant/40">signal_cellular_alt</span>
+</div>
+<div class="space-y-4">
+<!-- Metric 1 -->
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-bold tracking-wider">
+<span class="text-on-surface-variant">NORTH SECTOR [N-01]</span>
+<span class="text-primary-container">84/100</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest rounded-sm"></div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-bold tracking-wider">
+<span class="text-on-surface-variant">CENTRAL HUB [C-04]</span>
+<span class="text-primary-container">42/100</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest rounded-sm"></div>
+<div class="flex-1 bg-surface-container-highest rounded-sm"></div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-bold tracking-wider">
+<span class="text-on-surface-variant">SOUTHERN EDGE [S-12]</span>
+<span class="text-primary-container">96/100</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+<div class="flex-1 bg-primary-container rounded-sm"></div>
+</div>
+</div>
+</div>
+<div class="mt-4 p-4 bg-surface-container-lowest/40 rounded border border-outline-variant/10 text-[10px] text-on-surface-variant/60 font-mono italic">
+                        Real-time threat vectors analyzed via neural mesh overlay. Accuracy 99.4%.
+                    </div>
+</section>
+<!-- Right Sidebar: AI Audit Stream -->
+<section class="w-80 h-[500px] glass-panel border border-outline-variant/15 rounded-xl pointer-events-auto flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant/15 flex items-center justify-between bg-surface-container-high/40">
+<span class="text-[10px] font-black uppercase tracking-widest text-tertiary">AI Audit Stream</span>
+<div class="flex gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+<div class="flex-1 p-4 font-mono text-[11px] leading-relaxed text-on-surface-variant/80 overflow-y-auto space-y-3 custom-scrollbar">
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:22:04</span>
+<span class="text-tertiary">SYS: Scanning N-01 cluster patterns...</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:22:08</span>
+<span>AUDIT: Grievance anomaly detected in infrastructure sub-layer.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:22:15</span>
+<span class="text-error">WARN: Conflict resolution escalation in progress.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:23:01</span>
+<span>SYS: Routing additional personnel to S-12 vector.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:23:45</span>
+<span class="text-on-surface-variant/40">IDLE: Monitoring baseline frequency...</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:24:00</span>
+<span class="text-tertiary">SYS: Pattern match found. Resolving ID#84920.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-primary-container opacity-50">14:24:12</span>
+<span>AUDIT: Metadata scrub complete. Archiving record.</span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-lowest border-t border-outline-variant/15 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[9px] font-bold text-primary uppercase tracking-tighter">Live Audit Processing</span>
+</div>
+</section>
+</div>
+</div>
+<!-- Floating Contextual FAB (Suppressed on Strategy/HUD as per rules, but included if needed for specific HUD action) -->
+<!-- Suppressing as per Contextual FAB Suppression rule: "Suppress on Transactional screens" and HUD is highly specialized -->
+</main>
+<!-- Bottom Status Bar (Replacement for Nav Shell in Mobile/Specific view if needed) -->
+<footer class="md:hidden fixed bottom-0 left-0 right-0 bg-[#230B18] h-16 flex items-center justify-around z-50 shadow-[0_-8px_24px_rgba(0,0,0,0.5)]">
+<span class="material-symbols-outlined text-[#FFA552]">dashboard</span>
+<span class="material-symbols-outlined text-[#D9C2B2] opacity-70">gavel</span>
+<span class="material-symbols-outlined text-[#D9C2B2] opacity-70">query_stats</span>
+<span class="material-symbols-outlined text-[#D9C2B2] opacity-70">settings</span>
+</footer>
+</body></html>

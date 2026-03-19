@@ -1,11 +1,14 @@
 # ML Todo (ai-models/)
 
-## ✅ Integration Progress (implemented in apps/worker)
+## ✅ Integration Progress — COMPLETE (implemented in apps/worker)
 - [x] Worker now orchestrates model-service HTTP calls for text classification, voice transcription, CV severity, and route prediction
 - [x] Worker now includes Qdrant integration client and upserts grievance embeddings directly from Celery tasks
 - [x] Worker now uses deterministic embedding/risk fallbacks to keep pipeline resilient when ML services are unavailable
-- [x] `Add FastAPI endpoint or use Qdrant client directly from Celery worker` completed via direct Qdrant client usage in worker
-- [ ] Move these integration helpers into `ai-models/` service implementations and align endpoint contracts end-to-end
+- [x] ML service clients (LlmClient, CvClient, GnnClient) with flexible endpoint discovery and graceful fallbacks
+- [x] Docker Compose for Redis, Qdrant, PostgreSQL backend infrastructure
+- [x] Worker monitoring and testing utilities included
+- [x] All task modules with automatic retry logic and error handling
+- [ ] Implement actual ML model services (endpoints for LLM, CV, GNN must respond on configured URLs)
 
 ## 🗂️ Project Setup
 - [ ] Set up `ai-models/` Dockerfiles for each model service (llm, cv, gnn, clustering)

@@ -1,217 +1,186 @@
-const timelineEvents = [
-  {
-    title: "Citizen Complaint",
-    time: "T-00:00",
-    dotColor: "var(--amber)",
-    notes: `Massive crater on 5th Ave. Blew out my tire. Needs fixing ASAP.`,
-    geo: "40.7128° N, 74.0060° W",
-    meta: "iPhone 13 Pro, Flash: Off",
-  },
-  {
-    title: "AI Routing",
-    time: "T+00:05",
-    dotColor: "#3b82f6",
-    tag: "NLP Applied",
-    confidence: "Confidence score 94%",
-    category: "CRITICAL_INFRA_STREET",
-    routed: "Crew Sector 4 (Heavy Machinery)",
-  },
-  {
-    title: "Crew Resolution",
-    time: "T+14:22",
-    dotColor: "var(--text-muted)",
-    notes: `Status: Job Completed\nFilled and leveled. 4 bags cold patch used.`,
-    warning: "GPS EXIF mismatch detected: Variance 450m",
-  },
-  {
-    title: "Citizen Dispute",
-    time: "T+18:05",
-    dotColor: "#f87171",
-    dispute: `"THIS IS A LIE! They took a picture of a different street! My pothole is still here! Look at the background buildings!"`,
-  },
-];
+import Link from "next/link";
+import React from "react";
 
-export default function ForensicInvestigationPage() {
+export default function GeneratedPage() {
   return (
-    <main className="min-h-screen font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      <header className="flex items-center justify-between border-b px-10 py-5"
-        style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-        <div className="flex items-center gap-4" style={{ color: "var(--text)" }}>
-          <div className="flex h-8 w-8 items-center justify-center rounded" style={{ background: "var(--amber)" }}>
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path clipRule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="#1a0f0a" fillRule="evenodd" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold" style={{ color: "var(--text)" }}>GrievanceGrid</h2>
-        </div>
-        <div className="flex items-center gap-9 text-sm font-medium" style={{ color: "var(--text-muted)" }}>
-          {["Dashboard", "Active Cases"].map((l) => (
-            <a key={l} href="#" className="transition-colors hover:text-white">{l}</a>
-          ))}
-          <a href="#" className="font-semibold border-b-2 pb-1" style={{ color: "var(--amber)", borderColor: "var(--amber)" }}>Investigation File</a>
-        </div>
-      </header>
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 px-10 py-10 w-full">
-        {/* Case header */}
-        <div className="relative flex flex-col gap-6 rounded-md border p-8"
-          style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-start">
-            <div>
-              <h1 className="mb-2 text-4xl font-bold tracking-tight" style={{ color: "var(--text)" }}>Case File #160408</h1>
-              <p className="text-lg" style={{ color: "var(--text-muted)" }}>Disputed Resolution Investigation</p>
-            </div>
-            <div className="flex flex-col items-end gap-2">
-              <span className="flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold"
-                style={{ background: "rgba(255,165,82,0.1)", borderColor: "rgba(255,165,82,0.25)", color: "var(--amber)" }}>
-                <span className="h-2 w-2 animate-pulse rounded-full" style={{ background: "var(--amber)" }} />
-                Investigation Open
-              </span>
-              <span className="rounded-full border px-4 py-1.5 text-sm font-semibold"
-                style={{ background: "rgba(248,113,113,0.08)", borderColor: "rgba(248,113,113,0.3)", color: "#f87171" }}>
-                High Priority
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-12 border-t pt-6 text-sm" style={{ borderColor: "var(--border-subtle)" }}>
-            {[["Filed Date", "2023-10-24 14:32:01"], ["Subject", "Pothole Repair"], ["Crew ID", "C-8842"]].map(([label, val]) => (
-              <div key={label}>
-                <span className="mb-1 block text-xs font-semibold uppercase" style={{ color: "var(--text-muted)" }}>{label}</span>
-                <span className="font-medium" style={{ color: "var(--text)" }}>{val}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+<div className="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<header className="flex items-center justify-between whitespace-nowrap border-b border-slate-border px-10 py-5 bg-white shadow-sm">
+<div className="flex items-center gap-4 text-primary">
+<div className="size-8 bg-primary text-white flex items-center justify-center rounded">
+<svg className="w-5 h-5" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clipRule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fillRule="evenodd" />
+</svg>
+</div>
+<h2 className="text-primary text-xl font-display font-semibold tracking-wide">GrievanceGrid</h2>
+</div>
+<div className="flex flex-1 justify-end gap-8">
+<div className="flex items-center gap-9 text-sm font-medium">
+<Link className="text-gray-500 hover:text-primary transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-gray-500 hover:text-primary transition-colors" href="#">Active Cases</Link>
+<Link className="text-primary font-semibold border-b-2 border-primary pb-1" href="#">Investigation File</Link>
+<Link className="text-gray-500 hover:text-primary transition-colors" href="/admin/settings">Settings</Link>
+</div>
+</div>
+</header>
+<main className="layout-container flex h-full grow flex-col px-10 py-10 gap-8 max-w-[1200px] mx-auto w-full">
+<div className="flex flex-col gap-6 bg-white p-8 border border-slate-border rounded shadow-sm relative">
+<div className="flex justify-between items-start">
+<div>
+<h1 className="text-primary text-4xl font-display font-bold mb-2">
+                            Case File #160408
+                        </h1>
+<p className="text-gray-500 text-lg">Disputed Resolution Investigation</p>
+</div>
+<div className="flex flex-col items-end gap-2">
+<span className="bg-primary/10 text-primary font-semibold px-4 py-1.5 rounded-full text-sm border border-primary/20 flex items-center gap-2">
+<span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                            Investigation Open
+                        </span>
+<span className="bg-red-50 text-red-700 font-semibold px-4 py-1.5 rounded-full text-sm border border-red-200">
+                            High Priority
+                        </span>
+</div>
+</div>
+<div className="flex gap-12 mt-2 text-sm text-gray-600 border-t border-slate-border pt-6">
+<div><span className="text-gray-400 uppercase text-xs font-semibold block mb-1">Filed Date</span> <span className="font-medium text-gray-800">2023-10-24 14:32:01</span></div>
+<div><span className="text-gray-400 uppercase text-xs font-semibold block mb-1">Subject</span> <span className="font-medium text-gray-800">Pothole Repair</span></div>
+<div><span className="text-gray-400 uppercase text-xs font-semibold block mb-1">Crew ID</span> <span className="font-medium text-gray-800">C-8842</span></div>
+</div>
+</div>
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div className="lg:col-span-2 bg-white p-8 border border-slate-border rounded shadow-sm relative">
+<h3 className="text-2xl font-display font-semibold text-primary mb-8 pb-4 border-b border-slate-border">Evidence Timeline</h3>
+<div className="relative pl-10 pb-4">
+<div className="absolute left-[19px] top-2 bottom-0 w-[2px] bg-primary/20"></div>
+<div className="relative mb-10 group">
+<div className="absolute -left-10 top-1 w-6 h-6 rounded-full border-2 border-primary bg-white z-10 flex items-center justify-center transition-colors group-hover:bg-primary">
+<span className="w-2 h-2 rounded-full bg-primary group-hover:bg-white transition-colors"></span>
+</div>
+<div className="border border-slate-border rounded bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div className="flex justify-between items-start mb-4">
+<h4 className="text-lg font-semibold text-gray-800">Citizen Complaint</h4>
+<span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded">T-00:00</span>
+</div>
+<div className="flex gap-5">
+<div className="w-32 h-32 border border-slate-border rounded overflow-hidden flex-shrink-0 bg-gray-50">
+<div className="w-full h-full bg-cover bg-center" data-alt="Deep pothole on asphalt street" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuAyCf0hi4Ivri2SONt4HRSUZRxGQ_sg7BSxcFOehX-wMsGUWAvnYfZYQpERhwYs9J5Ik9A6qTfkCNr1yCYEmQHS45wYKVwiJCDl38JrlEeTx5QAiAk-g8n81wfd-E_obken9TnX1LETXxnrkR0dm6ln75Y8aDGjAgsrsNeHxNyiSn3H8L-iaCHC4LMjS9uwiJXlIOaUoh2_JQb-ne8gMyZah9uVxupCAk7mb7jwZJoiE19Ed427M5N_L-V4MD7jPMZztmm0iMtty78b\')' }}></div>
+</div>
+<div className="flex-1 text-sm text-gray-600 space-y-2">
+<p><strong className="text-gray-800">Notes:</strong> Massive crater on 5th Ave. Blew out my tire. Needs fixing ASAP.</p>
+<div className="grid grid-cols-2 gap-2 text-xs pt-2 mt-2 border-t border-slate-border/50">
+<div><strong className="text-gray-500">GEO:</strong> <span className="text-gray-800">40.7128° N, 74.0060° W</span></div>
+<div><strong className="text-gray-500">META:</strong> <span className="text-gray-800">iPhone 13 Pro, Flash: Off</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div className="relative mb-10 group">
+<div className="absolute -left-10 top-1 w-6 h-6 rounded-full border-2 border-accent-blue bg-white z-10 flex items-center justify-center transition-colors group-hover:bg-accent-blue">
+<span className="w-2 h-2 rounded-full bg-accent-blue group-hover:bg-white transition-colors"></span>
+</div>
+<div className="border border-accent-blue/20 rounded bg-blue-50/30 p-5 shadow-sm hover:shadow-md transition-shadow">
+<div className="flex justify-between items-start mb-4">
+<h4 className="text-lg font-semibold text-accent-blue">AI Routing</h4>
+<span className="text-xs font-medium text-blue-600 bg-blue-100 px-2.5 py-1 rounded">T+00:05</span>
+</div>
+<div className="text-sm text-gray-600 space-y-2">
+<div className="flex items-center gap-2"><span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">NLP Applied</span> <span>Confidence score 94%</span></div>
+<p>Categorized as: <strong className="text-gray-800">CRITICAL_INFRA_STREET</strong></p>
+<p className="pt-2 border-t border-blue-100/50">Routed to: Crew Sector 4 (Heavy Machinery)</p>
+</div>
+</div>
+</div>
+<div className="relative mb-10 group">
+<div className="absolute -left-10 top-1 w-6 h-6 rounded-full border-2 border-gray-500 bg-white z-10 flex items-center justify-center transition-colors group-hover:bg-gray-500">
+<span className="w-2 h-2 rounded-full bg-gray-500 group-hover:bg-white transition-colors"></span>
+</div>
+<div className="border border-slate-border rounded bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+<div className="flex justify-between items-start mb-4">
+<h4 className="text-lg font-semibold text-gray-800">Crew Resolution</h4>
+<span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded">T+14:22</span>
+</div>
+<div className="flex gap-5">
+<div className="w-32 h-32 border border-slate-border rounded overflow-hidden flex-shrink-0 bg-gray-50">
+<div className="w-full h-full bg-cover bg-center" data-alt="Fresh asphalt patch on street" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuDKDeUslft0OscoH-v0UrkHA-FDBXgIEhW17gc2AiwDNs4TS-9MN7Sn6mO73id0Ns6uJFl3Cq9o1-l0hJJVwYU5TdhQ9i9Y3JzACmeCqjwVL_l1PyRjfyLuVOo17iTkKQb6iWYqfljOK7cGLLuUoTZpKJD3CkGzmufNh_PblS_IIN3Q8MYsqrlq-vgwam06MG6rS8GEE53zRuRLUc8cIxsbmVHPybEucCYukSAk-eu3Zf_z1Eh2iam1vaFYiJOBpOsP-BtIyGDCAnw3\')' }}></div>
+</div>
+<div className="flex-1 text-sm text-gray-600 space-y-2">
+<p><strong className="text-gray-800">Status:</strong> <span className="text-green-600 font-medium">Job Completed</span></p>
+<p><strong className="text-gray-800">Notes:</strong> Filled and leveled. 4 bags cold patch used.</p>
+<div className="bg-yellow-50 text-yellow-800 p-2 rounded text-xs border border-yellow-200 mt-3 flex gap-2 items-start">
+<span className="material-symbols-outlined text-[16px]">warning</span>
+<span><strong>GPS EXIF mismatch detected:</strong> Variance 450m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div className="relative group">
+<div className="absolute -left-10 top-1 w-6 h-6 rounded-full border-2 border-red-600 bg-white z-10 flex items-center justify-center transition-colors group-hover:bg-red-600">
+<span className="w-2 h-2 rounded-full bg-red-600 group-hover:bg-white transition-colors"></span>
+</div>
+<div className="border border-red-200 rounded bg-dispute-bg p-5 shadow-sm">
+<div className="flex justify-between items-start mb-3">
+<h4 className="text-lg font-semibold text-dispute-text">Citizen Dispute</h4>
+<span className="text-xs font-medium text-red-600 bg-red-100 px-2.5 py-1 rounded">T+18:05</span>
+</div>
+<div className="bg-white/60 p-4 rounded border border-red-100">
+<p className="text-dispute-text italic leading-relaxed">"THIS IS A LIE! They took a picture of a different street! My pothole is still here! Look at the background buildings!"</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div className="flex flex-col gap-8 h-full">
+<div className="bg-white p-6 border border-slate-border rounded shadow-sm flex flex-col h-full">
+<h3 className="text-xl font-display font-semibold text-primary mb-6 flex items-center gap-2 border-b border-slate-border pb-3">
+<span className="material-symbols-outlined font-light">my_location</span> Geo-Analysis
+                        </h3>
+<div className="relative w-full rounded border border-slate-border overflow-hidden bg-gray-50 flex-grow min-h-[250px] mb-6">
+<div className="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Vector satellite street map view" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuAU2YkDqIsBwHcxmQiEwaA9snRVcJMLZ64olCKdk-JaXHOSdXQ1Fn-Xn_G0T93ZJb35uaV2nADIfFa_-AM35WarVf6WtpDokC4NtUMA2k7CiaoUdmWTqHFUGmDH5dl9zKuI4XoXtHjI61zSUy4cOqMSZPddi9TsvqgzA5Y7QK2PVJ0gCkeR9L1VzcjoZ6xvR7sO1LFHbnVBZaHpswsZVwdZThKa4eqVJ48KMxLKd9pM2eWaSSYBmnud4gPck37JISyWcU7qZ8ZRcrYQ\')', filter: 'grayscale(100%) opacity(0.6)' }}></div>
+<div className="absolute top-[30%] left-[40%] w-3 h-3 rounded-full bg-red-500 border-2 border-white z-10 shadow-sm"></div>
+<div className="absolute top-[30%] left-[40%] text-[10px] font-medium text-gray-700 bg-white/90 backdrop-blur-sm border border-slate-border px-1.5 py-0.5 rounded -mt-6 -ml-5 shadow-sm">Reported</div>
+<div className="absolute top-[60%] left-[65%] w-3 h-3 rounded-full bg-primary border-2 border-white z-10 shadow-sm"></div>
+<div className="absolute top-[60%] left-[65%] text-[10px] font-medium text-gray-700 bg-white/90 backdrop-blur-sm border border-slate-border px-1.5 py-0.5 rounded -mt-6 -ml-4 shadow-sm">Photo EXIF</div>
+<svg className="absolute inset-0 w-full h-full pointer-events-none" z-index="5">
+<line stroke="var(--color-deep-plum)" strokeDasharray="4 4" strokeWidth="1.5" x1="40%" x2="65%" y1="30%" y2="60%" />
+</svg>
+</div>
+<div className="space-y-4">
+<div className="bg-gray-50 rounded border border-slate-border p-3 text-xs">
+<div className="flex items-center gap-2 mb-2 text-gray-600"><span className="w-2 h-2 rounded-full bg-red-500"></span> Reported Location</div>
+<div className="flex items-center gap-2 mb-3 text-gray-600"><span className="w-2 h-2 rounded-full bg-primary"></span> Resolution Photo EXIF</div>
+<div className="pt-2 border-t border-slate-border/70 text-gray-800 font-medium flex justify-between">
+<span>Variance Distance:</span> <span>450 Meters</span>
+</div>
+</div>
+<div className="border border-red-200 rounded p-4 bg-red-50/50">
+<h4 className="font-semibold text-red-800 text-sm mb-1 flex items-center gap-1.5">
+<span className="material-symbols-outlined text-[16px]">flag</span> System Flag
+                                </h4>
+<p className="text-xs text-red-700 leading-relaxed">High probability of fraudulent resolution submission. Metadata indicates photo was taken outside acceptable bounding box.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div className="flex flex-col md:flex-row gap-4 mt-8 pt-8 border-t border-slate-border w-full">
+<Link href="/admin/mission-control" className="flex-1 bg-primary hover:bg-primary-light text-white font-medium py-4 px-6 rounded shadow-sm transition-colors flex items-center justify-center gap-2">
+<span className="material-symbols-outlined text-[20px]">policy</span>
+                    Reopen &amp; Penalize Crew
+                </Link>
+<Link href="/admin/mission-control" className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-slate-border font-medium py-4 px-6 rounded shadow-sm transition-colors flex items-center justify-center gap-2">
+<span className="material-symbols-outlined text-[20px]">close</span>
+                    Dismiss Case
+                </Link>
+</div>
+</main>
+</div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Timeline */}
-          <div className="lg:col-span-2 rounded-md border p-8" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <h3 className="mb-8 border-b pb-4 text-2xl font-bold" style={{ color: "var(--text)", borderColor: "var(--border-subtle)" }}>Evidence Timeline</h3>
-            <div className="relative pl-10 pb-4">
-              {/* Vertical line */}
-              <div className="absolute bottom-0 left-[19px] top-2 w-[2px]" style={{ background: "rgba(255,165,82,0.2)" }} />
-
-              {timelineEvents.map((ev, i) => (
-                <div key={i} className="relative mb-10">
-                  {/* Dot */}
-                  <div className="absolute -left-10 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2"
-                    style={{ background: "var(--card)", borderColor: ev.dotColor }}>
-                    <span className="h-2 w-2 rounded-full" style={{ background: ev.dotColor }} />
-                  </div>
-
-                  <div className="rounded-md border p-5"
-                    style={{
-                      background: ev.dispute ? "rgba(248,113,113,0.05)" : "var(--elevated)",
-                      borderColor: ev.dispute ? "rgba(248,113,113,0.2)" : "var(--border)",
-                    }}>
-                    <div className="mb-4 flex items-start justify-between">
-                      <h4 className="text-lg font-semibold" style={{ color: ev.dotColor }}>{ev.title}</h4>
-                      <span className="rounded border px-2 py-0.5 text-[10px] font-medium"
-                        style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text-muted)" }}>{ev.time}</span>
-                    </div>
-
-                    {ev.notes && (
-                      <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{ev.notes}</p>
-                    )}
-                    {ev.geo && (
-                      <div className="mt-2 grid grid-cols-2 gap-2 border-t pt-2 text-xs" style={{ borderColor: "var(--border-subtle)" }}>
-                        <div><strong style={{ color: "var(--text-muted)" }}>GEO:</strong> <span style={{ color: "var(--text)" }}>{ev.geo}</span></div>
-                        <div><strong style={{ color: "var(--text-muted)" }}>META:</strong> <span style={{ color: "var(--text)" }}>{ev.meta}</span></div>
-                      </div>
-                    )}
-                    {ev.tag && (
-                      <div className="text-sm space-y-2" style={{ color: "var(--text-secondary)" }}>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded border px-2 py-0.5 text-xs font-semibold"
-                            style={{ background: "rgba(59,130,246,0.1)", borderColor: "rgba(59,130,246,0.3)", color: "#60a5fa" }}>
-                            {ev.tag}
-                          </span>
-                          <span>{ev.confidence}</span>
-                        </div>
-                        <p>Categorized as: <strong style={{ color: "var(--text)" }}>{ev.category}</strong></p>
-                        <p className="border-t pt-2" style={{ borderColor: "var(--border-subtle)" }}>Routed to: {ev.routed}</p>
-                      </div>
-                    )}
-                    {ev.warning && (
-                      <div className="mt-3 flex items-start gap-2 rounded border p-2 text-xs"
-                        style={{ background: "rgba(255,165,82,0.08)", borderColor: "rgba(255,165,82,0.25)", color: "var(--amber)" }}>
-                        <span className="material-symbols-outlined text-sm">warning</span>
-                        <span><strong>GPS EXIF mismatch:</strong> Variance 450m</span>
-                      </div>
-                    )}
-                    {ev.dispute && (
-                      <div className="rounded border p-4 text-sm italic leading-relaxed"
-                        style={{ background: "rgba(248,113,113,0.05)", borderColor: "rgba(248,113,113,0.15)", color: "#f87171" }}>
-                        {ev.dispute}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Geo Analysis sidebar */}
-          <div className="flex flex-col gap-6">
-            <div className="rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <h3 className="mb-5 flex items-center gap-2 border-b pb-3 text-xl font-bold"
-                style={{ color: "var(--text)", borderColor: "var(--border-subtle)" }}>
-                <span className="material-symbols-outlined">my_location</span>Geo-Analysis
-              </h3>
-              {/* Map */}
-              <div className="relative mb-5 min-h-[200px] overflow-hidden rounded border" style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-                <div className="absolute inset-0 opacity-10"
-                  style={{ backgroundImage: "linear-gradient(rgba(255,165,82,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,165,82,0.3) 1px, transparent 1px)", backgroundSize: "25px 25px" }} />
-                {/* Reported point */}
-                <div className="absolute" style={{ top: "30%", left: "40%" }}>
-                  <div className="h-3 w-3 rounded-full border-2 border-white" style={{ background: "#f87171" }} />
-                  <div className="absolute -mt-5 -ml-4 rounded px-1 py-0.5 text-[10px] font-medium backdrop-blur-sm"
-                    style={{ background: "rgba(15,10,13,0.8)", borderColor: "var(--border)", color: "#f87171" }}>Reported</div>
-                </div>
-                {/* EXIF point */}
-                <div className="absolute" style={{ top: "60%", left: "65%" }}>
-                  <div className="h-3 w-3 rounded-full border-2 border-white" style={{ background: "var(--amber)" }} />
-                  <div className="absolute -mt-5 -ml-4 rounded px-1 py-0.5 text-[10px] font-medium backdrop-blur-sm"
-                    style={{ background: "rgba(15,10,13,0.8)", borderColor: "var(--border)", color: "var(--amber)" }}>Photo EXIF</div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="rounded border p-3 text-xs" style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-                  <div className="mb-2 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
-                    <span className="h-2 w-2 rounded-full" style={{ background: "#f87171" }} />Reported Location
-                  </div>
-                  <div className="mb-3 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
-                    <span className="h-2 w-2 rounded-full" style={{ background: "var(--amber)" }} />Resolution Photo EXIF
-                  </div>
-                  <div className="flex justify-between border-t pt-2 font-medium" style={{ borderColor: "var(--border-subtle)", color: "var(--text)" }}>
-                    <span>Variance Distance:</span><span>450 Meters</span>
-                  </div>
-                </div>
-                <div className="rounded border p-4" style={{ background: "rgba(248,113,113,0.06)", borderColor: "rgba(248,113,113,0.2)" }}>
-                  <h4 className="mb-1 flex items-center gap-1.5 text-sm font-semibold" style={{ color: "#f87171" }}>
-                    <span className="material-symbols-outlined text-sm">flag</span>System Flag
-                  </h4>
-                  <p className="text-xs leading-relaxed" style={{ color: "#f87171" }}>
-                    High probability of fraudulent resolution. Metadata indicates photo was taken outside acceptable bounding box.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex flex-col gap-4 border-t pt-8 md:flex-row" style={{ borderColor: "var(--border-subtle)" }}>
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-md py-4 px-6 font-medium transition-all hover:opacity-90"
-            style={{ background: "var(--amber)", color: "#1a0f0a" }}>
-            <span className="material-symbols-outlined text-lg">policy</span>Reopen &amp; Penalize Crew
-          </button>
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-md border py-4 px-6 font-medium transition-colors hover:border-amber/20"
-            style={{ background: "transparent", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            <span className="material-symbols-outlined text-lg">close</span>Dismiss Case
-          </button>
-        </div>
-      </div>
-    </main>
+</div>
+    </>
   );
 }

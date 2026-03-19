@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | AI Routing Audit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39",
+              "outline-variant": "#534437"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "mono": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #230b18;
+            color: #ffd8e7;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1d0612;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #534437;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(45, 19, 32, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl dark:bg-[#2D1320]/60 h-screen w-64 rounded-none border-r border-[#534437]/15 shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-10">
+<h1 class="text-lg font-black text-[#F0D291] tracking-tighter">GrievanceGrid</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-[#D9C2B2] opacity-50 font-bold">Institutional Suite</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+                Cases
+            </a>
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">gavel</span>
+                Audit
+            </a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-primary/10 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Case
+            </button>
+<div class="mt-6 pt-6 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:text-[#F0D291] font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                    Support
+                </a>
+</div>
+</div>
+</aside>
+<main class="ml-64 h-screen flex flex-col overflow-hidden">
+<!-- TopNavBar Shell -->
+<header class="flex justify-between items-center w-full px-6 py-3 h-16 bg-[#230B18] dark:bg-[#230B18] border-b border-outline-variant/10">
+<div class="flex items-center gap-8">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D9C2B2] text-lg opacity-50">search</span>
+<input class="bg-[#2D1320] border-none rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary-container text-[#D9C2B2] placeholder:text-[#D9C2B2]/30" placeholder="Audit lookup..." type="text"/>
+</div>
+<nav class="flex gap-6">
+<a class="font-['Inter'] tracking-tight text-sm text-[#F0D291] border-b-2 border-[#FFA552] pb-1" href="#">Reports</a>
+<a class="font-['Inter'] tracking-tight text-[#D9C2B2] text-sm opacity-80 hover:bg-[#311724] transition-colors cursor-pointer px-2 py-1 rounded" href="#">Directives</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#D9C2B2] opacity-80 hover:bg-[#311724] p-2 rounded transition-all">notifications</button>
+<button class="material-symbols-outlined text-[#D9C2B2] opacity-80 hover:bg-[#311724] p-2 rounded transition-all">help_outline</button>
+<div class="h-8 w-8 rounded-full border border-primary/20 overflow-hidden bg-surface-container ml-2">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="User professional profile portrait minimalist" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUZP93uvF-fxzhy2VXAawWi3gmVgNiVd2SOwBNea310MSgjt_sQVvrjk15uhDQCKhGYttEdWjjc0orzFSD0QoSYqO0Vz_hOMSTpGYRMwSG4tP_GNvCY4wYQoe-ln3dSEwmQLWH13vMg8y2wokhfS2Ooka_L9c9hr22C1n3wnYHpfct9_44mMA415N_y5G-TKk-59jUEZ4s8iSEDyvIM7kkfA4sUIbsFHmn-_gwJDdx6ytG8SKptnh2akAur1ybpzTnV9zWF0Wc9Uck"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Audit Table Canvas -->
+<section class="flex-1 overflow-auto p-6 flex flex-col gap-6">
+<!-- Dashboard Metrics -->
+<div class="grid grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold mb-1">Success Rate</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-tertiary">98.4%</span>
+<span class="text-[10px] text-primary">+0.2%</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold mb-1">Latency (P99)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-tertiary">142ms</span>
+<span class="text-[10px] text-error">-12ms</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold mb-1">Routing Drift</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-tertiary">0.02%</span>
+<span class="text-[10px] opacity-40">Stable</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold mb-1">Active Queries</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-tertiary">1,204</span>
+<span class="material-symbols-outlined text-[10px] text-primary">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Audit Table -->
+<div class="bg-surface-container-low rounded-xl border border-outline-variant/5 flex-1 flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low/50">
+<h2 class="font-bold text-tertiary tracking-tight">System Audit Log</h2>
+<div class="flex gap-2">
+<button class="bg-surface-container px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider text-on-surface-variant border border-outline-variant/20 hover:border-primary/40 transition-all">Filter</button>
+<button class="bg-surface-container px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider text-on-surface-variant border border-outline-variant/20 hover:border-primary/40 transition-all">Export</button>
+</div>
+</div>
+<div class="overflow-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest/30 sticky top-0 z-10">
+<th class="p-4 text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">Trace ID</th>
+<th class="p-4 text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">Intent Cluster</th>
+<th class="p-4 text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">Node Path</th>
+<th class="p-4 text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold text-right">Confidence</th>
+<th class="p-4 text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container/40 transition-colors group cursor-pointer">
+<td class="p-4 font-mono text-xs text-on-surface-variant/80">#TX-9921-A</td>
+<td class="p-4">
+<span class="text-sm font-semibold text-tertiary">Billing Dispute</span>
+<p class="text-[10px] text-on-surface-variant/40">v4.2 Router</p>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+<span>GATE_01</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span>CORE_PRI</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-primary-container font-bold">FIN_RESOLVER</span>
+</div>
+</td>
+<td class="p-4 text-right font-mono text-xs text-primary-container">0.992</td>
+<td class="p-4">
+<span class="bg-green-900/20 text-[#C4D6B0] text-[10px] font-bold px-2 py-0.5 rounded border border-[#C4D6B0]/20 uppercase tracking-tighter">Verified</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/40 transition-colors group cursor-pointer bg-surface-container/20">
+<td class="p-4 font-mono text-xs text-on-surface-variant/80">#TX-9918-B</td>
+<td class="p-4">
+<span class="text-sm font-semibold text-tertiary">Schema Validation</span>
+<p class="text-[10px] text-on-surface-variant/40">Edge_Router_02</p>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+<span>GATE_04</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-error font-bold">SYS_DEBUG</span>
+</div>
+</td>
+<td class="p-4 text-right font-mono text-xs text-primary-container">0.874</td>
+<td class="p-4">
+<span class="bg-yellow-900/20 text-tertiary text-[10px] font-bold px-2 py-0.5 rounded border border-tertiary/20 uppercase tracking-tighter">Manual Review</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/40 transition-colors group cursor-pointer">
+<td class="p-4 font-mono text-xs text-on-surface-variant/80">#TX-9915-C</td>
+<td class="p-4">
+<span class="text-sm font-semibold text-tertiary">Tier Upgrade</span>
+<p class="text-[10px] text-on-surface-variant/40">v4.2 Router</p>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+<span>GATE_01</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span>SALES_AUTH</span>
+</div>
+</td>
+<td class="p-4 text-right font-mono text-xs text-primary-container">0.999</td>
+<td class="p-4">
+<span class="bg-green-900/20 text-[#C4D6B0] text-[10px] font-bold px-2 py-0.5 rounded border border-[#C4D6B0]/20 uppercase tracking-tighter">Verified</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/40 transition-colors group cursor-pointer">
+<td class="p-4 font-mono text-xs text-on-surface-variant/80">#TX-9914-F</td>
+<td class="p-4">
+<span class="text-sm font-semibold text-tertiary">GDPR Erasure</span>
+<p class="text-[10px] text-on-surface-variant/40">Compliance_Node</p>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+<span>GATE_01</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-error font-bold">PRIVACY_ENGINE</span>
+</div>
+</td>
+<td class="p-4 text-right font-mono text-xs text-error">0.642</td>
+<td class="p-4">
+<span class="bg-error-container/20 text-error text-[10px] font-bold px-2 py-0.5 rounded border border-error/20 uppercase tracking-tighter">Flagged</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/40 transition-colors group cursor-pointer">
+<td class="p-4 font-mono text-xs text-on-surface-variant/80">#TX-9910-K</td>
+<td class="p-4">
+<span class="text-sm font-semibold text-tertiary">Account Recovery</span>
+<p class="text-[10px] text-on-surface-variant/40">v4.2 Router</p>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2 text-[10px] text-on-surface-variant/60">
+<span>GATE_01</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span>AUTH_GATE</span>
+</div>
+</td>
+<td class="p-4 text-right font-mono text-xs text-primary-container">0.995</td>
+<td class="p-4">
+<span class="bg-green-900/20 text-[#C4D6B0] text-[10px] font-bold px-2 py-0.5 rounded border border-[#C4D6B0]/20 uppercase tracking-tighter">Verified</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Logic Reveal Sidebar (Terminal Style) -->
+<aside class="w-96 bg-surface-container-low border-l border-outline-variant/10 flex flex-col">
+<div class="p-4 border-b border-outline-variant/10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary">terminal</span>
+<h3 class="text-[10px] uppercase tracking-widest font-black text-on-surface-variant/80">Decision Logic</h3>
+</div>
+<span class="bg-primary/10 text-primary text-[8px] font-bold px-1.5 py-0.5 rounded">LIVE_DEBUG</span>
+</div>
+<div class="flex-1 overflow-auto bg-surface-container-lowest p-4 font-mono text-[11px] leading-relaxed text-on-surface-variant/80">
+<div class="mb-4">
+<p class="text-primary-container opacity-50">// TRACE_INIT: #TX-9921-A</p>
+<p class="text-tertiary">[2023-11-24 14:02:11] Incoming payload validation...</p>
+<p class="text-[#C4D6B0]">[OK] Checksum verified: 0x82f..11</p>
+</div>
+<div class="mb-4 pl-3 border-l-2 border-outline-variant/20">
+<p class="text-on-surface-variant">Analyzing Intent: "dispute transaction 1022"</p>
+<p class="text-tertiary-fixed-dim">Detected Entities:</p>
+<ul class="list-none pl-2">
+<li>- Action: DISPUTE</li>
+<li>- Target: TRANSACTION</li>
+<li>- Confidence_Score: 0.992</li>
+</ul>
+</div>
+<div class="mb-4">
+<p class="text-on-surface-variant">Logic Branching:</p>
+<p class="text-primary-container">IF (intent == DISPUTE &amp;&amp; sector == FINANCIAL)</p>
+<p class="pl-4 text-[#C4D6B0]">ROUTE TO FIN_RESOLVER (high_priority)</p>
+<p class="text-primary-container">ELSE</p>
+<p class="pl-4 opacity-50">FALLBACK TO GEN_SUPPORT</p>
+</div>
+<div class="mb-4 animate-pulse">
+<p class="text-tertiary">Calculating Path Efficiency...</p>
+<p class="text-on-surface-variant">Node_Load [FIN_RESOLVER]: 12%</p>
+<p class="text-[#C4D6B0]">Path optimized. Executing routing...</p>
+</div>
+<div class="p-3 bg-surface-container rounded border border-outline-variant/10 mt-6">
+<p class="text-[10px] text-tertiary font-bold mb-2">RAW_JSON_OBJECT</p>
+<pre class="text-[9px] text-on-surface-variant/40">{
+  "trace": "9921-A",
+  "meta": {
+    "version": "1.0.4",
+    "cluster": "east-01"
+  },
+  "flags": ["high_conf"]
+}
+                        </pre>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant/10">
+<button class="w-full bg-surface-container-highest/50 py-2 rounded text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20 hover:bg-primary hover:text-on-primary transition-all">
+                        Inject Test Vector
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- FAB for Contextual Action (Audit specific) -->
+<button class="fixed bottom-6 right-[400px] bg-primary text-on-primary h-12 w-12 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</body></html>

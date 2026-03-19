@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Dispatch Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39",
+              "outline-variant": "#534437"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-dock {
+        backdrop-filter: blur(20px);
+        background: rgba(45, 19, 32, 0.6);
+      }
+      .industrial-grid {
+        background-image: 
+          linear-gradient(to right, rgba(83, 68, 55, 0.1) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(83, 68, 55, 0.1) 1px, transparent 1px);
+        background-size: 80px 80px;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- TopNavBar -->
+<nav class="bg-[#230B18] dark:bg-[#230B18] flex justify-between items-center w-full px-6 py-3 h-16 fixed top-0 z-50">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#F0D291]">GrievanceGrid</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="font-['Inter'] tracking-tight text-[#D9C2B2] text-sm opacity-80 hover:bg-[#311724] transition-colors cursor-pointer active:opacity-70 px-3 py-1 rounded" href="#">Reports</a>
+<a class="font-['Inter'] tracking-tight text-[#D9C2B2] text-sm opacity-80 hover:bg-[#311724] transition-colors cursor-pointer active:opacity-70 px-3 py-1 rounded" href="#">Directives</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-low flex items-center px-3 py-1.5 rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-sm text-tertiary mr-2">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0 text-on-surface-variant w-48 placeholder:text-outline/50" placeholder="Search grid..." type="text"/>
+</div>
+<button class="p-2 hover:bg-[#311724] rounded-full transition-colors">
+<span class="material-symbols-outlined text-[#FFA552]">notifications</span>
+</button>
+<button class="p-2 hover:bg-[#311724] rounded-full transition-colors">
+<span class="material-symbols-outlined text-[#FFA552]">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User Profile Avatar" data-alt="Close up professional portrait of a male user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBiPvF7EQ6S1h9UBGwRi5CE9NEjHI2yPCO5bAlNK504Igx8nSLq5YKjKiL9sD7EE3X_CG2w6qsrFLwx7Dc-D5Hl9__5wLXdJL8vrldukCkGcrZuyU7JClgMXMQ_PxXQUwpuetJD8jCeFw4dsxPRl7calQhkLgWHXB6lJmkCIEfQaiSq6_7uHQA_9bdbyLIvvrF-ZDYtW6JLWh0vdiOinQkCKIznSEQo8lngDY3BLTN201jIoQP0EG6c0lfzXmOmOoFYuMeWZu9tIN4"/>
+</div>
+</div>
+</nav>
+<div class="flex h-screen pt-16">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl dark:bg-[#2D1320]/60 h-screen w-64 rounded-none border-r border-[#534437]/15 shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-8 pt-12">
+<h2 class="text-lg font-black text-[#F0D291]">GrievanceGrid</h2>
+<p class="text-[10px] font-['Inter'] font-medium uppercase tracking-wider text-[#D9C2B2] opacity-60">Institutional Suite</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-wider transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span>Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3 rounded-lg font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/10 hover:brightness-110 transition-all">
+                    New Case
+                </button>
+<div class="mt-4 border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] transition-all" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 overflow-y-auto industrial-grid bg-surface">
+<div class="p-8 pb-32">
+<!-- Header Stats -->
+<header class="flex justify-between items-end mb-10">
+<div>
+<h1 class="text-4xl font-black text-tertiary tracking-tighter mb-2">FIELD COMMAND</h1>
+<p class="text-on-surface-variant font-label text-xs uppercase tracking-[0.2em]">Regional Dispatch &amp; SLA Monitoring</p>
+</div>
+<div class="flex gap-8">
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase tracking-widest mb-1">Active Units</p>
+<p class="text-2xl font-bold text-primary">42 / 50</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase tracking-widest mb-1">Critical SLAs</p>
+<p class="text-2xl font-bold text-error">04</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase tracking-widest mb-1">Efficiency</p>
+<p class="text-2xl font-bold text-tertiary">98.2%</p>
+</div>
+</div>
+</header>
+<!-- Assignment Grid -->
+<section class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-10">
+<!-- Assignment Card 1 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-error group hover:bg-surface-container transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-error-container text-on-error-container text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Emergency</span>
+<h3 class="text-lg font-bold text-on-surface mt-2">Grid Failure #8821</h3>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase font-label tracking-widest">SLA Time</p>
+<p class="text-xl font-mono text-error font-bold">04:12:09</p>
+</div>
+</div>
+<div class="h-24 w-full bg-surface-container-highest rounded mb-4 overflow-hidden relative">
+<img alt="Map View" class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all" data-alt="Satellite map view of a suburban grid layout" data-location="Chicago" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIqbqdVq-wSScBHTcLJmL5BqZTvk6YfwyGVtQTEE-8fZfhM04HnumuVREhLvj2OR0hQmAwTJ3edNtbivH2Wg6CVrdT_ThFu64k9Xa_ELwIFutHsIEaYLkT-GS5qXlimpdaev_hPPGWHf9BdBjvNRameEPXFF-hftX6jiLAj4f6iFsaE551dcva0IvlbVN50fyxdLG3ttnPeCWLTd3jdWMujFHtlpbeNbwf6EfBie0KRmS_0ErqRtxpva-SqyMX4Bb7rMgRx9O-nvkS"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent"></div>
+<div class="absolute bottom-2 left-2 text-[10px] font-mono text-tertiary">LAT: 41.8781 / LONG: 87.6298</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person</span>
+<span>Unit: Echo-9</span>
+</div>
+<button class="text-primary hover:underline flex items-center gap-1">
+                                View Details <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Assignment Card 2 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-primary group hover:bg-surface-container transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-primary-container/20 text-primary-container text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Maintenance</span>
+<h3 class="text-lg font-bold text-on-surface mt-2">Substation Audit</h3>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase font-label tracking-widest">SLA Time</p>
+<p class="text-xl font-mono text-primary font-bold">12:45:00</p>
+</div>
+</div>
+<div class="h-24 w-full bg-surface-container-highest rounded mb-4 overflow-hidden relative">
+<img alt="Map View" class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all" data-alt="Dark aerial city view with orange light trails" data-location="San Francisco" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHtcsOFXrJlNV5O-6g2Vb-02dicLjrpMwArHRymVTKQALsVDe3MZG_xWj2hNfRucTfZ9B5cdMsm8EdfT58sSx9qJDzUyILKgt-NExsLJl1Mmc36Kl7y2mB28Z8JCqFoMR_uGirH-SZuuzqXA818ninfSzhaNXHDZNCv60PPD-diD2BS6HvO2JRaeUyBSHHhEFBR8wZ6hgzQzmL8T0-BcQQLnvsA1Hvb0czapE457nN9b1eDupZxXSfJS-iA6sXE7XlIcEYOO_JV-o4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent"></div>
+<div class="absolute bottom-2 left-2 text-[10px] font-mono text-tertiary">LAT: 37.7749 / LONG: 122.4194</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person</span>
+<span>Unit: Sierra-4</span>
+</div>
+<button class="text-primary hover:underline flex items-center gap-1">
+                                View Details <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Assignment Card 3 -->
+<div class="bg-surface-container-low p-5 rounded-xl border-l-4 border-outline-variant/30 group hover:bg-surface-container transition-all">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-tighter">Routine</span>
+<h3 class="text-lg font-bold text-on-surface mt-2">Relay Calibration</h3>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-outline uppercase font-label tracking-widest">SLA Time</p>
+<p class="text-xl font-mono text-on-surface-variant font-bold">28:10:44</p>
+</div>
+</div>
+<div class="h-24 w-full bg-surface-container-highest rounded mb-4 overflow-hidden relative">
+<img alt="Map View" class="w-full h-full object-cover opacity-50 grayscale hover:grayscale-0 transition-all" data-alt="Blueprint style map layout of a city block" data-location="Seattle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf9cd7STGafJ_5_Rw749wzkcLrNj33C5PrmT12EQtnZC_OTuHSCdOc_SP_ImHKDGIyFSf9f3RShj1N3gQ4c7X4Ump8VzTSmj7YQr5Mw2Pb4kJVtwlSf1-poKuOnWPT41_tOGB1o5uIZUY0S1fDLCXYsxR1AY2shT-YZZF9EO526GW1l6s7x_uQLtdvfbpWVoIuqs3fS1NJXZFu2hq0gZ6fE-Pbb7USk0Dl8gl0fpMbXE6eeQRVtcdQMl_l8ksrJY2nF5g-NlYSIciS"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent"></div>
+<div class="absolute bottom-2 left-2 text-[10px] font-mono text-tertiary">LAT: 47.6062 / LONG: 122.3321</div>
+</div>
+<div class="flex justify-between items-center text-xs text-on-surface-variant font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person</span>
+<span>Unit: Tango-1</span>
+</div>
+<button class="text-primary hover:underline flex items-center gap-1">
+                                View Details <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Data Table Section -->
+<section class="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/5">
+<div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center">
+<h2 class="font-bold text-tertiary uppercase tracking-wider text-sm">Crew Dispatch Queue</h2>
+<div class="flex gap-2">
+<button class="bg-surface-container text-[10px] font-bold px-3 py-1 rounded text-on-surface-variant hover:text-on-surface border border-outline-variant/10">Export CSV</button>
+<button class="bg-surface-container text-[10px] font-bold px-3 py-1 rounded text-on-surface-variant hover:text-on-surface border border-outline-variant/10">Filters</button>
+</div>
+</div>
+<table class="w-full text-left text-sm">
+<thead class="bg-surface-container-lowest text-[10px] text-outline uppercase tracking-[0.15em]">
+<tr>
+<th class="px-6 py-3 font-semibold">Crew ID</th>
+<th class="px-6 py-3 font-semibold">Location</th>
+<th class="px-6 py-3 font-semibold">Task Progress</th>
+<th class="px-6 py-3 font-semibold">Status</th>
+<th class="px-6 py-3 font-semibold">Last Contact</th>
+<th class="px-6 py-3 text-right font-semibold">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4 font-bold text-on-surface">UNIT-882 (Foxtrot)</td>
+<td class="px-6 py-4 text-on-surface-variant">Zone A-12 (North Sector)</td>
+<td class="px-6 py-4">
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[75%]"></div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="flex items-center gap-2 text-[10px] font-bold text-[#C4D6B0] uppercase"><span class="h-1.5 w-1.5 rounded-full bg-[#C4D6B0]"></span> En Route</span></td>
+<td class="px-6 py-4 text-on-surface-variant font-mono">2m ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-tertiary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4 font-bold text-on-surface">UNIT-901 (Kilo)</td>
+<td class="px-6 py-4 text-on-surface-variant">Station 09 (Downtown)</td>
+<td class="px-6 py-4">
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[40%]"></div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="flex items-center gap-2 text-[10px] font-bold text-primary-container uppercase"><span class="h-1.5 w-1.5 rounded-full bg-primary-container"></span> On Site</span></td>
+<td class="px-6 py-4 text-on-surface-variant font-mono">Active Now</td>
+<td class="px-6 py-4 text-right">
+<button class="text-tertiary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-4 font-bold text-on-surface">UNIT-445 (Romeo)</td>
+<td class="px-6 py-4 text-on-surface-variant">External Terminal 4</td>
+<td class="px-6 py-4">
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full w-[95%]"></div>
+</div>
+</td>
+<td class="px-6 py-4"><span class="flex items-center gap-2 text-[10px] font-bold text-error uppercase"><span class="h-1.5 w-1.5 rounded-full bg-error"></span> Delayed</span></td>
+<td class="px-6 py-4 text-on-surface-variant font-mono">15m ago</td>
+<td class="px-6 py-4 text-right">
+<button class="text-tertiary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</main>
+</div>
+<!-- Frosted Bottom Action Dock -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl px-4">
+<div class="glass-dock border border-outline-variant/10 rounded-2xl p-4 flex items-center justify-between shadow-2xl shadow-black/40">
+<div class="flex items-center gap-6 px-4">
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-[9px] uppercase font-bold tracking-widest text-outline">Assign</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/20"></div>
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors">map</span>
+<span class="text-[9px] uppercase font-bold tracking-widest text-outline">Map View</span>
+</button>
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors">group</span>
+<span class="text-[9px] uppercase font-bold tracking-widest text-outline">Roster</span>
+</button>
+<button class="flex flex-col items-center gap-1 group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-tertiary transition-colors">history</span>
+<span class="text-[9px] uppercase font-bold tracking-widest text-outline">Logs</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right mr-2 hidden sm:block">
+<p class="text-[10px] text-outline font-bold uppercase leading-none">Global Status</p>
+<p class="text-xs text-[#C4D6B0] font-black tracking-tight">NOMINAL</p>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary h-12 px-6 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined">bolt</span> 
+                    Quick Action
+                </button>
+</div>
+</div>
+</div>
+</body></html>

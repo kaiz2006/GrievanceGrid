@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: grievance-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: grievance-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    environment:
+      - QDRANT_API_ENABLE_CONSOLE=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: grievance-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: grievances
+      POSTGRES_USER: grievances
+      POSTGRES_PASSWORD: grievances
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grievances"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grievance-worker
+    depends_on:
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      REDIS_PUBSUB_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      POSTGRES_URL: postgresql://grievances:grievances@postgres:5432/grievances
+      WORKER_DRY_RUN: "false"
+      WORKER_LOG_LEVEL: INFO
+      CELERY_MODE: worker
+    command: celery -A src.celery_app:celery_app worker --loglevel=INFO
+    volumes:
+      - ./src:/app/src
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grievance-beat
+    depends_on:
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      REDIS_PUBSUB_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      WORKER_DRY_RUN: "false"
+      WORKER_LOG_LEVEL: INFO
+      CELERY_MODE: beat
+    command: celery -A src.celery_app:celery_app beat --loglevel=INFO
+    volumes:
+      - ./src:/app/src
+
+  flower:
+    image: mher/flower:2.0.0
+    container_name: grievance-flower
+    depends_on:
+      - redis
+      - worker
+    ports:
+      - "5555:5555"
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    command: celery -A src.celery_app:celery_app flower --port=5555
+    volumes:
+      - ./src:/app/src
+
+volumes:
+  redis-data:
+  qdrant-data:
+  postgres-data:
+
+networks:
+  default:
+    name: grievance-network

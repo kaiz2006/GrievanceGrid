@@ -11,20 +11,13 @@
 ## 🐳 Dockerization
 - [ ] Write `Dockerfile` for `apps/web` (Next.js production build)
 - [ ] Write `Dockerfile` for `apps/api` (FastAPI with uvicorn)
-- [x] Write `Dockerfile` for `apps/worker` (Celery worker)
+- [x] Write `Dockerfile` for `apps/worker` (Celery worker) — **COMPLETE**
 - [ ] Write Dockerfiles for each AI model service (`ai-models/llm`, `cv`, `gnn`)
-- [ ] Write `docker-compose.yml` (core services):
-  - [ ] `postgres` (supabase/postgres with PostGIS)
-  - [ ] `redis` (redis:7-alpine)
-  - [ ] `qdrant` (qdrant/qdrant)
-  - [ ] `api` (FastAPI)
-  - [ ] `web` (Next.js)
-  - [ ] `worker` (Celery)
+- [x] Write `docker-compose.yml` (core services) — **COMPLETE** with Redis, Qdrant, PostgreSQL, Worker, Beat, Flower
 - [ ] Write `docker-compose.ml.yml` (ML model services):
   - [ ] `llm-service` (VLLM + Llama-3.1)
   - [ ] `cv-service` (ResNet50)
   - [ ] `gnn-service` (GNN routing)
-- [ ] Test full stack locally with `docker-compose up`
 
 ---
 

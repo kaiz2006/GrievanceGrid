@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategic Global Mission Control HUD | GrievanceGrid</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39",
+              "outline-variant": "#534437"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #230B18;
+            color: #D9C2B2;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(45, 19, 32, 0.6);
+            backdrop-filter: blur(20px);
+        }
+        .hud-border {
+            border: 1px solid rgba(83, 68, 55, 0.15);
+        }
+        .macro-grid {
+            background-image: 
+                linear-gradient(to right, rgba(83, 68, 55, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(83, 68, 55, 0.1) 1px, transparent 1px);
+            background-size: 80px 80px;
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #FFA552, transparent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface-variant h-screen w-screen overflow-hidden">
+<!-- Global Layout Wrapper -->
+<div class="flex h-full w-full relative">
+<!-- SideNavBar Shared Component Execution -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl border-r border-[#534437]/15 h-screen w-64 rounded-none shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black text-[#F0D291]">GrievanceGrid</h1>
+<p class="font-['Inter'] text-xs font-medium uppercase tracking-wider text-[#FFA552] opacity-80">Institutional Suite</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1 px-2">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-wider hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span>Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 space-y-4">
+<button class="w-full py-3 bg-gradient-to-br from-[#FFCBA2] to-[#FFA552] text-[#4c2700] font-bold text-xs uppercase tracking-widest rounded-lg shadow-lg shadow-[#FFA552]/20 active:scale-95 transition-transform">
+                    New Case
+                </button>
+<div class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-xs font-medium uppercase tracking-wider cursor-pointer">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</div>
+</div>
+</aside>
+<!-- Main Workspace (Canvas) -->
+<main class="flex-1 ml-64 relative overflow-hidden bg-surface-lowest">
+<!-- TopNavBar Shared Component Execution -->
+<header class="flex justify-between items-center w-full px-6 py-3 h-16 bg-[#230B18] z-30 relative border-b border-[#534437]/15">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 bg-[#2D1320] px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-[#FFA552]" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-['Inter'] tracking-tight text-[#D9C2B2] placeholder:text-[#D9C2B2]/40 w-64" placeholder="Search mission parameters..." type="text"/>
+</div>
+<nav class="hidden lg:flex items-center gap-6 font-['Inter'] tracking-tight text-[#D9C2B2] text-sm">
+<a class="text-[#F0D291] border-b-2 border-[#FFA552] pb-1 cursor-pointer active:opacity-70 transition-all" href="#">Reports</a>
+<a class="text-[#D9C2B2] opacity-80 hover:bg-[#311724] transition-colors cursor-pointer active:opacity-70 transition-all p-1 rounded" href="#">Directives</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FFA552] cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-[#D9C2B2]/80 cursor-pointer" data-icon="help_outline">help_outline</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-[#FFA552]/30">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="Close up of a professional male avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmMa6b9Ud24XOw2GoZNM_buVL0-wU5ZjlYC_GcdHaPARd1hTiJLyDvLYjKAYNjrP3ReUXS65ca19frAw2khdrWVYxPSZb23fxiv9xIdsMCYr7iAezOvWHNsFG-ZenxoHhqt4gbE0zKF91c15Prw0dSBKRI00sNA7bndu3wuA66tNV57SXQf98XMhD2PORgVQ4t36ikxXi00JdAuaRsogNdwki77OeIuZJf36W9ojidiBHo4fOp1OyKn81yw_jnIck2I11aK5GJG8sQ"/>
+</div>
+</div>
+</header>
+<!-- Mission Control Content -->
+<div class="absolute inset-0 z-0 macro-grid opacity-30"></div>
+<!-- Full Screen Map Foundation -->
+<div class="absolute inset-0 z-0">
+<img alt="Global satellite data" class="w-full h-full object-cover opacity-40 mix-blend-screen" data-alt="High-tech dark satellite world map with data points" data-location="Global" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFnp4dknxWoGNUZOWw5wVMNNdMToDLj9ME76tUmDHSKwRCx3yV6Y4oK7j3xFYWpQXTSeZasPljmaOWMNRk4Uyp336Fl5Rsmfvx_mlRvLuQ0jQhAiA8gpF9v66kBrurzwHIysgaF9wDPSWWlzLqGGt_L7LV_e8nok3uaAJJWZ4iTJ1Pe4YbEAPE8CvvidxNYKiAP190fouTBydtzVK-j6rGQvr-FOi_1j2J6sORNVwwgBD-11NNFNBf7nc6V11Eme933xnfCbTjG-WG"/>
+<!-- Pulsing Hotspots Overlays -->
+<div class="absolute top-[30%] left-[45%] group cursor-pointer">
+<div class="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
+<div class="relative w-4 h-4 bg-primary rounded-full shadow-lg shadow-primary/50"></div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-surface-container-highest px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest text-tertiary">
+                        SECTOR 7G: CRITICAL (9.4)
+                    </div>
+</div>
+<div class="absolute top-[55%] left-[62%] group cursor-pointer">
+<div class="absolute inset-0 bg-error/20 rounded-full animate-ping"></div>
+<div class="relative w-4 h-4 bg-error rounded-full shadow-lg shadow-error/50"></div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-surface-container-highest px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest text-error">
+                        SECTOR 12B: BREACH (0.8)
+                    </div>
+</div>
+<div class="absolute top-[40%] left-[25%] group cursor-pointer">
+<div class="absolute inset-0 bg-tertiary/20 rounded-full animate-ping"></div>
+<div class="relative w-4 h-4 bg-tertiary rounded-full shadow-lg shadow-tertiary/50"></div>
+<div class="absolute top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-surface-container-highest px-3 py-1 rounded-lg text-[10px] font-bold tracking-widest text-on-tertiary-container">
+                        SECTOR 04: NOMINAL (5.2)
+                    </div>
+</div>
+</div>
+<!-- HUD Panels - Left Sidebar Overlay -->
+<div class="absolute left-6 top-24 bottom-6 w-80 flex flex-col gap-4 z-10">
+<!-- Live AI Audit Stream -->
+<section class="glass-panel p-4 rounded-xl hud-border flex-1 flex flex-col overflow-hidden">
+<header class="flex justify-between items-center mb-4 border-b border-outline-variant/10 pb-2">
+<span class="text-[10px] font-bold tracking-[0.2em] text-tertiary uppercase">AI Audit Stream</span>
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-sm shadow-primary"></span>
+</header>
+<div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar">
+<div class="flex flex-col gap-1 border-l-2 border-primary/40 pl-3 py-1">
+<span class="text-[9px] font-mono text-primary/60">14:02:41 // SYSTEM</span>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Anomalous directive detected in Sector 7G. Initiating sentiment purge sequence.</p>
+</div>
+<div class="flex flex-col gap-1 border-l-2 border-tertiary/40 pl-3 py-1">
+<span class="text-[9px] font-mono text-tertiary/60">14:02:12 // AUDIT</span>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Conflict resolution #4412 finalized. Efficiency +12.4% against previous quarter.</p>
+</div>
+<div class="flex flex-col gap-1 border-l-2 border-error/40 pl-3 py-1">
+<span class="text-[9px] font-mono text-error/60">13:58:04 // ALERT</span>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Protocol violation in Directive 88-Alpha. Human intervention bypassed.</p>
+</div>
+<div class="flex flex-col gap-1 border-l-2 border-primary/20 pl-3 py-1">
+<span class="text-[9px] font-mono text-primary/40">13:55:29 // LOG</span>
+<p class="text-[11px] leading-relaxed text-on-surface-variant">Institutional stability index remains steady at 98.4%. No immediate threats.</p>
+</div>
+</div>
+</section>
+<!-- Sector Metrics -->
+<section class="glass-panel p-4 rounded-xl hud-border h-48">
+<header class="mb-3">
+<span class="text-[10px] font-bold tracking-[0.2em] text-tertiary uppercase">Resource Allocation</span>
+</header>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between text-[10px] mb-1">
+<span class="text-on-surface-variant/60 uppercase">Compute Power</span>
+<span class="text-primary font-bold">88%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[88%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] mb-1">
+<span class="text-on-surface-variant/60 uppercase">Personnel Readiness</span>
+<span class="text-tertiary font-bold">42%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[42%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] mb-1">
+<span class="text-on-surface-variant/60 uppercase">Conflict Suppression</span>
+<span class="text-primary-fixed-dim font-bold">64%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed-dim w-[64%]"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom HUD Panels -->
+<div class="absolute bottom-6 left-[22rem] right-6 h-32 flex gap-4 z-10">
+<!-- Sector Crisis Scores Bento -->
+<div class="flex-1 grid grid-cols-4 gap-4">
+<div class="glass-panel p-3 rounded-xl hud-border flex flex-col justify-center">
+<span class="text-[9px] font-bold tracking-widest text-on-surface-variant/50 uppercase">NORTH AMER</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-primary">0.12</span>
+<span class="material-symbols-outlined text-[14px] mb-1 text-primary" data-icon="trending_down">trending_down</span>
+</div>
+</div>
+<div class="glass-panel p-3 rounded-xl hud-border flex flex-col justify-center border-t-2 border-t-error/50">
+<span class="text-[9px] font-bold tracking-widest text-on-surface-variant/50 uppercase">EURO ZONE</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-error">8.94</span>
+<span class="material-symbols-outlined text-[14px] mb-1 text-error" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="glass-panel p-3 rounded-xl hud-border flex flex-col justify-center">
+<span class="text-[9px] font-bold tracking-widest text-on-surface-variant/50 uppercase">APAC RIM</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-tertiary">3.41</span>
+<span class="material-symbols-outlined text-[14px] mb-1 text-tertiary" data-icon="trending_flat">trending_flat</span>
+</div>
+</div>
+<div class="glass-panel p-3 rounded-xl hud-border flex flex-col justify-center">
+<span class="text-[9px] font-bold tracking-widest text-on-surface-variant/50 uppercase">GLOBAL AGG</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-on-surface">1.04</span>
+<span class="material-symbols-outlined text-[14px] mb-1 text-primary" data-icon="show_chart">show_chart</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Control -->
+<div class="w-48 glass-panel p-3 rounded-xl hud-border flex flex-col gap-2">
+<button class="flex-1 bg-surface-container-highest hover:bg-surface-bright transition-colors rounded text-[10px] font-bold tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="layers">layers</span>
+                        LAYERS
+                    </button>
+<button class="flex-1 bg-surface-container-highest hover:bg-surface-bright transition-colors rounded text-[10px] font-bold tracking-widest flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="filter_alt">filter_alt</span>
+                        FILTERS
+                    </button>
+</div>
+</div>
+<!-- Right Visual Deck -->
+<div class="absolute right-6 top-24 bottom-44 w-64 flex flex-col gap-4 z-10">
+<section class="glass-panel p-4 rounded-xl hud-border flex-1 overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
+<header class="mb-4 relative z-10">
+<span class="text-[10px] font-bold tracking-[0.2em] text-tertiary uppercase">Target Feed</span>
+</header>
+<div class="aspect-video bg-surface-lowest rounded-lg overflow-hidden border border-outline-variant/20 mb-4 relative">
+<img alt="CCTV Feed 01" class="w-full h-full object-cover grayscale brightness-75 contrast-125" data-alt="Grainy futuristic security camera feed of a hallway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWAGFDPjhr3EnLTGVmelfXxCq21u_GvESHTvBnVQPHDJpIPJswYwDEo6Yslllco6XM_leq43TIrWwBnD_dMBEr00Pr-NB2xKt_d2DWdSIjwshzcV_GCcTeJU9xquv_en2kBZJPAChIuWqfWahMOSVBHXtfLdihKj79CwoyaB2yLSCgJnVGbADHgEs2y3ns7d0kJ-K1zePxVJwKajxIwk5yhYFoMsrbrGRnjj7SxuXcJ0tZhb6D8GU57_Swxpk0OIuxK45lvcf49gDc"/>
+<div class="absolute top-2 left-2 flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-error rounded-full animate-pulse"></span>
+<span class="text-[8px] font-mono text-error font-bold">LIVE CAM 04-A</span>
+</div>
+</div>
+<div class="space-y-4 relative z-10">
+<div class="flex flex-col gap-1">
+<span class="text-[9px] text-on-surface-variant/40">IDENTIFIED SUBJECT</span>
+<span class="text-[11px] font-bold text-on-surface uppercase tracking-wider">Citizen ID: #9901-X</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-[9px] text-on-surface-variant/40">PROBABILITY RATING</span>
+<div class="flex items-center gap-2">
+<div class="h-2 flex-1 bg-surface-container-highest rounded-full">
+<div class="h-full bg-error w-[78%]"></div>
+</div>
+<span class="text-[10px] text-error font-bold">78.2%</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Corner HUD Accents -->
+<div class="absolute top-20 right-6 z-10">
+<div class="flex flex-col items-end gap-1 opacity-60">
+<span class="text-[10px] font-mono text-primary tracking-widest">MISSION CLOCK: 14:03:00</span>
+<span class="text-[8px] font-mono text-on-surface-variant uppercase">Local Terminal: US-EAST-01</span>
+</div>
+</div>
+<div class="scanline"></div>
+</main>
+</div>
+<!-- No Dividers Rule: Structure achieved via surface nesting and backdrop blurs -->
+</body></html>

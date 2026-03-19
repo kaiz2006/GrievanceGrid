@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Multimodal Submission</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39",
+              "outline-variant": "#534437"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #230b18;
+        color: #d9c2b2;
+        font-family: 'Inter', sans-serif;
+      }
+      .glass-panel {
+        background: rgba(45, 19, 32, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      .industrial-grid {
+        background-image: 
+          linear-gradient(to right, rgba(83, 68, 55, 0.1) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(83, 68, 55, 0.1) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface-variant min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl border-r border-[#534437]/15 h-screen w-64 rounded-none shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-10">
+<h1 class="text-lg font-black text-[#F0D291] tracking-tighter">GrievanceGrid</h1>
+<p class="text-[10px] font-medium uppercase tracking-widest text-primary-container opacity-60">Institutional Suite</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span>Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary-container/10 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                New Case
+            </button>
+<div class="mt-6 border-t border-outline-variant/15 pt-4">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:text-[#F0D291] transition-all font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 min-h-screen industrial-grid">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-6 py-3 h-16 bg-[#230B18] border-b border-[#534437]/10 sticky top-0 z-30">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 bg-[#2D1320] px-3 py-1.5 rounded-lg border border-[#534437]/20">
+<span class="material-symbols-outlined text-[#FFA552] text-lg" data-icon="search">search</span>
+<input class="bg-transparent border-none text-sm text-[#D9C2B2] focus:ring-0 w-48 font-['Inter']" placeholder="Search directives..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-[#D9C2B2] opacity-80 text-sm font-medium hover:text-[#F0D291] transition-colors" href="#">Reports</a>
+<a class="text-[#F0D291] border-b-2 border-[#FFA552] pb-1 text-sm font-medium" href="#">Directives</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#D9C2B2] hover:bg-[#311724] rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#D9C2B2] hover:bg-[#311724] rounded-lg transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="User Profile Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBReOqVVp43d_TX6m9tGSO9skaTpFe08gcKbTAfX7qy0R7vF_BgcLyrmo9GUxfPbOqZ6f2Jt9mRRWkblcCDT-Zcx4MZrO3FefGwF0MMzN-XB7jdiM7WTI58g7mRNrsnVFCouMPWZt0-JiPJ34qIK1L-as0MFwmPNeCenHbxBvsvsEesM15uH5Rk44foXsbJ8dSVhOuEne8pQgksvP6xLsPHo_1ZBHz3jsjqDQg1vVYnHtX3UilDuh9gcII6pCdF45PrQyGPzRTDma8L"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="max-w-4xl mx-auto p-12 space-y-12">
+<!-- Header Section -->
+<section class="space-y-2">
+<div class="flex items-center gap-3 text-tertiary mb-2">
+<span class="material-symbols-outlined text-sm" data-icon="history_edu">history_edu</span>
+<span class="text-xs font-bold uppercase tracking-[0.2em]">Form Protocol 11-A</span>
+</div>
+<h2 class="text-4xl font-extrabold text-tertiary tracking-tighter">Multimodal Grievance Submission</h2>
+<p class="text-on-surface-variant max-w-2xl leading-relaxed">Capture and document institutional discrepancies using voice, visual evidence, and precise textual descriptions.</p>
+</section>
+<!-- Multimodal Input Flow -->
+<div class="grid grid-cols-1 gap-6">
+<!-- 1. Voice Intake (Asymmetric Design) -->
+<div class="group relative bg-surface-container-low rounded-xl p-8 border border-outline-variant/5 hover:border-primary-container/20 transition-all">
+<div class="flex flex-col md:flex-row gap-8 items-start">
+<div class="flex-shrink-0">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-3xl" data-icon="mic">mic</span>
+</div>
+</div>
+<div class="flex-grow space-y-4">
+<div>
+<h3 class="text-xl font-bold text-tertiary">Voice Documentation</h3>
+<p class="text-sm text-on-surface-variant/70">Record verbal testimony for rapid intake. AI transcription will be applied automatically.</p>
+</div>
+<div class="h-16 flex items-end gap-1 px-4 bg-surface-container-highest rounded-lg">
+<!-- Waveform Visualization (CSS only) -->
+<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+<div class="w-1 bg-primary/30 h-8 rounded-full"></div>
+<div class="w-1 bg-primary/40 h-10 rounded-full"></div>
+<div class="w-1 bg-primary/60 h-6 rounded-full"></div>
+<div class="w-1 bg-primary/50 h-12 rounded-full"></div>
+<div class="w-1 bg-primary/80 h-14 rounded-full"></div>
+<div class="w-1 bg-primary-container h-8 rounded-full"></div>
+<div class="w-1 bg-primary/40 h-10 rounded-full"></div>
+<div class="w-1 bg-primary/20 h-4 rounded-full"></div>
+<div class="w-1 bg-primary/30 h-8 rounded-full"></div>
+<div class="w-1 bg-primary/40 h-10 rounded-full"></div>
+<div class="w-1 bg-primary/60 h-6 rounded-full"></div>
+<div class="w-1 bg-primary/50 h-12 rounded-full"></div>
+<div class="w-1 bg-primary/80 h-14 rounded-full"></div>
+<div class="w-1 bg-primary-container h-10 rounded-full"></div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 bg-primary-container text-on-primary font-bold rounded-lg text-xs uppercase tracking-widest hover:brightness-110 transition-all">Start Recording</button>
+<span class="text-xs font-mono text-primary opacity-50">00:00:00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Image Evidence (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low rounded-xl p-8 border border-outline-variant/5 flex flex-col justify-between">
+<div class="space-y-2">
+<h3 class="text-xl font-bold text-tertiary">Visual Evidence</h3>
+<p class="text-sm text-on-surface-variant/70">Attach high-resolution photographs or document scans relevant to the grievance.</p>
+</div>
+<div class="mt-8 border-2 border-dashed border-outline-variant/20 rounded-xl h-48 flex flex-col items-center justify-center text-on-surface-variant/40 hover:border-primary-container/40 hover:bg-surface-container transition-all cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-2" data-icon="add_a_photo">add_a_photo</span>
+<p class="text-xs uppercase tracking-widest font-bold">Drop files or click to upload</p>
+<p class="text-[10px] mt-1 italic">Supports: JPG, PNG, PDF (Max 25MB)</p>
+</div>
+</div>
+<!-- Location Utility -->
+<div class="bg-surface-container rounded-xl p-6 border border-outline-variant/10 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-black uppercase tracking-widest text-primary">Geo-Tagging</span>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="location_on">location_on</span>
+</div>
+<div class="flex-grow rounded-lg overflow-hidden relative border border-outline-variant/10 mb-4 grayscale">
+<img class="w-full h-full object-cover opacity-60" data-alt="Industrial map showing urban grid" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2IRRvyIQoqqKiF0iSF8RNnotZMiUu1ezWNc9VytYo6PR_jZmn4eYnLyzLMC3vtqvZ-qmPoU8zNlzp6hDh2MokY_1h_Eysm9ggSd9AOZBFcLUFpGlnE-2gs4p8b-zvxuiAJh0nxl5lGBH3jFK7P5SDlDAHYM_6-xZwDZaRy42uh_U-fn9BNxf4hfQ1IsLxgFe6SZrxoDo7b07Ir_WXYXY_PUlANqu2emLDhLy7x2b3v7w8ttM2lEF46jxvEipM4pjC9vxW8ThykOQW"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[10px] text-primary font-bold">DETECTING...</span>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-xs font-bold text-tertiary">Sector 4-B, Administrative District</p>
+<p class="text-[10px] text-on-surface-variant/60 font-mono">LAT: 40.7128° N | LONG: 74.0060° W</p>
+</div>
+</div>
+</div>
+<!-- 3. Text Intake (Clean Engineering Layout) -->
+<div class="bg-surface-container-low rounded-xl p-8 border border-outline-variant/5">
+<div class="flex items-center justify-between mb-6">
+<div class="space-y-1">
+<h3 class="text-xl font-bold text-tertiary">Technical Specification</h3>
+<p class="text-sm text-on-surface-variant/70">Provide a structured narrative of the grievance.</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 bg-surface-container-highest rounded-lg text-tertiary hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_bold">format_bold</span>
+</button>
+<button class="p-2 bg-surface-container-highest rounded-lg text-tertiary hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_list_bulleted">format_list_bulleted</span>
+</button>
+</div>
+</div>
+<div class="relative group">
+<textarea class="w-full bg-surface-container-highest/50 border-0 border-b border-outline-variant/30 focus:ring-0 focus:border-primary text-[#D9C2B2] text-sm leading-relaxed p-4 rounded-t-lg transition-all" placeholder="Enter detailed grievance report here..." rows="6"></textarea>
+<div class="absolute bottom-0 left-0 h-0.5 bg-primary w-0 group-focus-within:w-full transition-all duration-500"></div>
+</div>
+<div class="mt-4 flex justify-between items-center text-[10px] font-mono text-on-surface-variant/40">
+<span>AUTO-SAVE ENABLED</span>
+<span>0 / 5000 CHARACTERS</span>
+</div>
+</div>
+<!-- 4. Final Submission CTA -->
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-on-surface-variant/60" data-icon="description">description</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-on-surface-variant/60" data-icon="image">image</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-on-surface-variant/60" data-icon="mic">mic</span>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant/60 italic">3 components prepared for transmission.</p>
+</div>
+<div class="flex items-center gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-8 py-3 bg-transparent border border-outline-variant/30 text-tertiary font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-surface-container-highest transition-all">Save Draft</button>
+<button class="flex-1 md:flex-none px-12 py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-xs uppercase tracking-[0.2em] rounded-lg shadow-lg shadow-primary-container/10 active:scale-95 transition-all">Submit Case</button>
+</div>
+</div>
+</div>
+</div>
+<!-- System Footer -->
+<footer class="max-w-4xl mx-auto px-12 pb-12">
+<div class="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-outline-variant/5 text-[10px] text-on-surface-variant/30 uppercase tracking-[0.3em]">
+<div>© 2024 GrievanceGrid Institutional</div>
+<div class="flex gap-8 mt-4 md:mt-0">
+<a class="hover:text-primary transition-colors" href="#">Privacy Protocol</a>
+<a class="hover:text-primary transition-colors" href="#">Audit Standards</a>
+<a class="hover:text-primary transition-colors" href="#">Secure Node v.2.4</a>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

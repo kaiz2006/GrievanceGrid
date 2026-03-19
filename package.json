@@ -8,15 +8,24 @@
     "lint": "turbo run lint",
     "db:generate": "turbo run db:generate --filter=@grievancegrid/database",
     "db:push": "turbo run db:push --filter=@grievancegrid/database",
-    "db:migrate": "turbo run db:migrate --filter=@grievancegrid/database"
+    "db:migrate": "turbo run db:migrate --filter=@grievancegrid/database",
+    "db:studio": "turbo run db:studio --filter=@grievancegrid/database",
+    "db:seed": "turbo run db:seed --filter=@grievancegrid/database",
+    "db:setup": "npm run db:generate && npm run db:push && npm run db:seed"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.1",
+    "prettier": "^3.0.0",
     "turbo": "^2.0.0",
-    "typescript": "^5.0.0",
-    "prettier": "^3.0.0"
+    "typescript": "^5.0.0"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@types/node": "^25.5.0",
+    "dotenv": "^17.3.1"
+  }
 }

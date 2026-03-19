@@ -1,211 +1,147 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors — unchanged */
-  --color-primary: #381d2a;
-  --color-amber: #ffa552;
-  --color-sage: #c4d6b0;
+  /* 1:1 Dark Series Palette - From bento_landing_page_dark */
+  --color-surface: #230b18;
+  --color-on-surface: #ffd8e7;
+  --color-surface-container-lowest: #1d0612;
+  --color-surface-container-low: #2d1320;
+  --color-surface-container: #311724;
+  --color-surface-container-high: #3d212f;
+  --color-surface-container-highest: #492c39;
+  --color-surface-dim: #230b18;
+  --color-surface-bright: #4e303e;
+  --color-surface-tint: #ffb77a;
 
-  /* Dark mode surface palette */
-  --color-dark-base: #0f0a0d;
-  --color-dark-surface: #1a1118;
-  --color-dark-card: #22162b;
-  --color-dark-elevated: #2c1e35;
-  --color-dark-border: #3d2b47;
-  --color-dark-border-subtle: #2a1e32;
+  --color-primary: #ffcba2;
+  --color-on-primary: #4c2700;
+  --color-primary-container: #ffa552;
+  --color-on-primary-container: #713c00;
+  --color-primary-fixed: #ffdcc2;
+  --color-on-primary-fixed-variant: #6d3a00;
+  --color-inverse-primary: #8f4e00;
 
-  /* Text on dark */
-  --color-dark-text: #f0eaf4;
-  --color-dark-text-secondary: #a08cb8;
-  --color-dark-text-muted: #6b5882;
+  --color-secondary: #ffb596;
+  --color-on-secondary: #581e00;
+  --color-secondary-container: #8c3400;
+  --color-on-secondary-container: #ffb08e;
+  --color-secondary-fixed: #ffdbcd;
+  --color-on-secondary-fixed: #360f00;
 
-  /* Amber / sage tints on dark */
-  --color-amber-glow: rgba(255, 165, 82, 0.12);
-  --color-sage-glow: rgba(196, 214, 176, 0.1);
+  --color-tertiary: #f0d291;
+  --color-on-tertiary: #3e2e00;
+  --color-tertiary-container: #d3b778;
+  --color-on-tertiary-container: #5b4714;
+  --color-tertiary-fixed: #fddf9d;
+  --color-on-tertiary-fixed: #251a00;
+  --color-tertiary-fixed-dim: #e0c384;
 
-  --font-display: var(--font-plus-jakarta), sans-serif;
-  --font-mono: var(--font-jetbrains-mono), monospace;
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
 
-  --radius-md: 6px;
+  --color-background: #230b18;
+  --color-on-background: #ffd8e7;
+  --color-outline: #a18d7e;
+  --color-outline-variant: #534437;
+  --color-inverse-surface: #ffd8e7;
+  --color-inverse-on-surface: #442835;
 
-  --shadow-dark: 0 4px 24px -4px rgba(0, 0, 0, 0.5);
-  --shadow-dark-hover: 0 12px 40px -4px rgba(0, 0, 0, 0.7);
-  --shadow-glow-amber: 0 0 20px rgba(255, 165, 82, 0.15);
-  --shadow-glow-sage: 0 0 20px rgba(196, 214, 176, 0.12);
+  /* Utility Colors from Designs */
+  --color-muted-sage: #c4d6b0;
+
+  --font-display: "Inter", sans-serif;
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+
+  --radius-DEFAULT: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+
+  --shadow-warm-glow: 0 0 24px 0 rgba(255, 203, 162, 0.08);
 }
 
 :root {
-  --primary: #381d2a;
-  --amber: #ffa552;
-  --sage: #c4d6b0;
-
-  /* Premium Dark Mode Palette */
-  --background: #0d080b;
-  --surface: #150e12;
-  --card: #1c1419;
-  --elevated: #261b21;
-  --border: rgba(56, 29, 42, 0.25);
-  --border-subtle: rgba(56, 29, 42, 0.15);
-  --text: #f0eaf4;
-  --text-secondary: #a08cb8;
-  --text-muted: #6b5882;
-
-  --shadow-dark: 0 4px 20px -4px rgba(0, 0, 0, 0.6);
-  --shadow-dark-hover: 0 12px 40px -4px rgba(0, 0, 0, 0.8);
+  --background: #230b18;
+  --foreground: #ffd8e7;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ──────────────────────────────────────────────
-   DARK CARD — base card style
-────────────────────────────────────────────── */
-@utility dark-card {
-  background-color: var(--card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  box-shadow: var(--shadow-dark);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-dark-hover);
-    border-color: var(--border);
-  }
+/* 1:1 Design Utilities */
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
-/* ──────────────────────────────────────────────
-   DARK BTN
-────────────────────────────────────────────── */
-@utility dark-btn {
-  border-radius: 6px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    opacity: 0.92;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+.hero-gradient {
+  background: radial-gradient(circle at top right, rgba(255, 165, 82, 0.08), transparent 50%), 
+              radial-gradient(circle at bottom left, rgba(73, 44, 57, 0.4), transparent 50%);
 }
 
-/* ──────────────────────────────────────────────
-   SCROLLING TICKER
-────────────────────────────────────────────── */
-@utility ticker-wrap {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-@utility ticker-content {
-  display: inline-block;
-  animation: ticker 40s linear infinite;
-}
-
-@keyframes ticker {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@utility stream-mask {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 5%,
-    black 95%,
-    transparent
-  );
-}
-
-/* ──────────────────────────────────────────────
-   GAUGE RING
-────────────────────────────────────────────── */
-.gauge-ring {
-  transition: stroke-dashoffset 1s ease-out;
-}
-
-/* ──────────────────────────────────────────────
-   GLOW EFFECTS
-────────────────────────────────────────────── */
-@utility amber-glow {
-  box-shadow: var(--shadow-glow-amber);
-}
-
-@utility sage-glow {
-  box-shadow: var(--shadow-glow-sage);
-}
-
-/* ──────────────────────────────────────────────
-   NOISE TEXTURE overlay for depth
-────────────────────────────────────────────── */
-@utility noise-overlay {
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    border-radius: inherit;
-  }
-}
-
-/* ──────────────────────────────────────────────
-   GRID PATTERN BG
-────────────────────────────────────────────── */
-@utility grid-bg {
-  background-image: linear-gradient(
-      rgba(196, 214, 176, 0.03) 1px,
-      transparent 1px
-    ),
-    linear-gradient(90deg, rgba(196, 214, 176, 0.03) 1px, transparent 1px);
+.industrial-grid {
+  background-image: 
+    linear-gradient(to right, rgba(83, 68, 55, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(83, 68, 55, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* ──────────────────────────────────────────────
-   PULSE GLOW — for active nodes
-────────────────────────────────────────────── */
-@keyframes pulse-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 165, 82, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 8px rgba(255, 165, 82, 0);
-  }
+.macro-grid {
+  background-image: 
+    linear-gradient(to right, rgba(83, 68, 55, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(83, 68, 55, 0.1) 1px, transparent 1px);
+  background-size: 80px 80px;
 }
 
-@utility pulse-amber {
-  animation: pulse-glow 2s ease-in-out infinite;
+.scanline {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #FFA552, transparent);
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.2;
+  pointer-events: none;
+  animation: scanline 8s linear infinite;
 }
 
-/* ──────────────────────────────────────────────
-   SCROLLBAR
-────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
+@keyframes scanline {
+  0% { top: 0%; }
+  100% { top: 100%; }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--surface);
+.timeline-gradient {
+  background: linear-gradient(180deg, #ffa552 0%, #2d1320 100%);
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+.cta-glow {
+  background: linear-gradient(135deg, #ffcba2 0%, #ffa552 100%);
+  box-shadow: 0 0 20px rgba(255, 165, 82, 0.2);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Scrollbar - 1:1 with Tracking Design */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #230b18; }
+::-webkit-scrollbar-thumb { background: #534437; border-radius: 10px; }
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
 }

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Industrial Transparency Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary-fixed-dim": "#ffb596",
+              "on-tertiary-fixed-variant": "#574411",
+              "on-secondary-fixed-variant": "#7c2e00",
+              "primary-fixed-dim": "#ffb77a",
+              "outline-variant": "#534437",
+              "on-primary-fixed": "#2e1500",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #230b18;
+            color: #d9c2b2;
+            font-family: 'Inter', sans-serif;
+        }
+        .industrial-grid {
+            background-image: radial-gradient(rgba(83, 68, 55, 0.1) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(255, 165, 82, 0.1);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 h-screen w-64 rounded-none bg-[#2D1320]/60 backdrop-blur-xl dark:bg-[#2D1320]/60 border-r border-[#534437]/15 shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-10">
+<h1 class="text-lg font-black text-[#F0D291] tracking-tighter">GrievanceGrid</h1>
+<p class="font-['Inter'] text-[10px] font-medium uppercase tracking-wider text-[#D9C2B2] opacity-60">Institutional Suite</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Inter'] text-sm font-medium uppercase tracking-wider">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 transition-all hover:bg-[#311724] hover:text-[#F0D291] hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-['Inter'] text-sm font-medium uppercase tracking-wider">Cases</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 transition-all hover:bg-[#311724] hover:text-[#F0D291] hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-['Inter'] text-sm font-medium uppercase tracking-wider">Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 transition-all hover:bg-[#311724] hover:text-[#F0D291] hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-['Inter'] text-sm font-medium uppercase tracking-wider">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 transition-all hover:bg-[#311724] hover:text-[#F0D291] hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-sm font-medium uppercase tracking-wider">Settings</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold py-3 rounded-lg text-sm uppercase tracking-widest glow-primary active:scale-[0.98] transition-transform">
+                New Case
+            </button>
+<div class="mt-6 border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-2 transition-all hover:text-[#F0D291]" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-['Inter'] text-xs font-medium uppercase tracking-wider">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 ml-64 min-h-screen relative industrial-grid overflow-y-auto">
+<!-- TopAppBar Component -->
+<header class="flex justify-between items-center w-full px-8 py-3 h-16 sticky top-0 bg-[#230B18] z-30">
+<div class="flex items-center gap-8">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary-container text-on-surface-variant placeholder-on-surface-variant/40" placeholder="Search directives..." type="text"/>
+</div>
+<nav class="hidden md:flex gap-6">
+<a class="font-['Inter'] tracking-tight text-[#F0D291] border-b-2 border-[#FFA552] pb-1 text-sm" href="#">Reports</a>
+<a class="font-['Inter'] tracking-tight text-[#D9C2B2] opacity-80 text-sm hover:text-[#F0D291] transition-colors" href="#">Directives</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg hover:bg-[#311724] transition-colors text-[#D9C2B2] opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-[#311724] transition-colors text-[#D9C2B2] opacity-80">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img class="w-full h-full object-cover" data-alt="User profile avatar close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9CXjOgbn9g2jJaTTq_8r1rQ-4CRVsF5WvWxjeYE3HqRGabrzHzZm-sAdVUS68m6DxKIP-o3lQsxfkjnM-uLRyM-Wmj5_xck6eMe4dKZTKUSrx7iJ_5JyHhN4OXOLjjIcOm22MhRl0cHzE6wfPA08FD4XArTChlTjM8J-rIZ9lLklnYqfWe8MHbT_xdvmY2054p13FSk6eNxLKW39jJdELhuz2VzRBTwWS36qDxz4Osybe5_L01xNRf-oSNyy8V9LflQKc5uIrT3e6"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 max-w-7xl mx-auto space-y-8">
+<!-- Hero Metric Console -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- High-Impact Metric Card 1 -->
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary-container relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-5">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">gavel</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary opacity-60 mb-2">Active Litigation</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-4xl font-black text-on-surface tracking-tighter">142</h2>
+<span class="text-xs font-bold text-primary-container">+12.4%</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-4 font-medium italic">Pending resolution phase 4</p>
+</div>
+<!-- High-Impact Metric Card 2 -->
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-tertiary-container relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-5">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">timer</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary opacity-60 mb-2">Avg Processing Time</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-4xl font-black text-on-surface tracking-tighter">4.2d</h2>
+<span class="text-xs font-bold text-on-surface-variant opacity-40">-0.8d</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-4 font-medium italic">Institutional efficiency target met</p>
+</div>
+<!-- High-Impact Metric Card 3 -->
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-outline-variant relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-5">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<p class="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary opacity-60 mb-2">Transparency Index</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-4xl font-black text-on-surface tracking-tighter">98.2%</h2>
+<span class="text-xs font-bold text-on-surface-variant opacity-40">STABLE</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-4 font-medium italic">Highest tier compliance audit</p>
+</div>
+</section>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Industrial Chart Section (L) -->
+<div class="lg:col-span-8 space-y-6">
+<div class="bg-surface-container p-8 rounded-xl relative overflow-hidden">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h3 class="text-xl font-bold text-tertiary tracking-tight">Grievance Flow Architecture</h3>
+<p class="text-sm text-on-surface-variant opacity-70">Volume distribution by department</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container-highest rounded text-[10px] font-bold tracking-widest uppercase">7 Days</span>
+<span class="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded text-[10px] font-bold tracking-widest uppercase">30 Days</span>
+</div>
+</div>
+<!-- Custom Industrial Bar Chart -->
+<div class="h-64 flex items-end justify-between gap-4 px-2">
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-32 rounded-t-sm transition-all group-hover:bg-primary-container relative">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 blur-sm"></div>
+</div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Mon</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-48 rounded-t-sm transition-all group-hover:bg-primary-container relative">
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 blur-sm"></div>
+</div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Tue</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-primary-container h-60 rounded-t-sm transition-all relative">
+<div class="absolute inset-0 bg-primary/40 blur-md"></div>
+</div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Wed</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-40 rounded-t-sm transition-all group-hover:bg-primary-container relative"></div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Thu</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-36 rounded-t-sm transition-all group-hover:bg-primary-container relative"></div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Fri</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-24 rounded-t-sm transition-all group-hover:bg-primary-container relative"></div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Sat</div>
+</div>
+<div class="flex-1 group relative">
+<div class="w-full bg-surface-container-highest h-20 rounded-t-sm transition-all group-hover:bg-primary-container relative"></div>
+<div class="text-[10px] font-bold text-center mt-3 text-on-surface-variant uppercase tracking-tighter">Sun</div>
+</div>
+</div>
+<!-- Macro Grid Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-5 border-[1px] border-outline-variant grid grid-cols-4 grid-rows-4">
+<div class="border-r border-b border-outline-variant"></div>
+<div class="border-r border-b border-outline-variant"></div>
+<div class="border-r border-b border-outline-variant"></div>
+<div class="border-b border-outline-variant"></div>
+</div>
+</div>
+<!-- Report Table (Transparency Dashboard) -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Critical Directives</h3>
+<button class="text-xs text-primary-container font-bold hover:underline">View All</button>
+</div>
+<table class="w-full text-left">
+<thead class="bg-surface-container-highest/30 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant">
+<tr>
+<th class="px-6 py-3">Case Identifier</th>
+<th class="px-6 py-3">Status</th>
+<th class="px-6 py-3">Custodian</th>
+<th class="px-6 py-3 text-right">Priority</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer group">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-tertiary">GRID-AX-9920</span>
+<span class="text-[10px] text-on-surface-variant opacity-60">Submitted 2h ago</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-error-container/30 text-error">CRITICAL</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-primary-container/20 flex items-center justify-center">
+<span class="text-[8px] font-bold text-primary-container">JD</span>
+</div>
+<span class="text-xs font-medium">Jonathan Doe</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-tertiary">GRID-AX-8841</span>
+<span class="text-[10px] text-on-surface-variant opacity-60">Submitted 4h ago</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-highest text-on-surface-variant">REVIEW</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-tertiary/20 flex items-center justify-center">
+<span class="text-[8px] font-bold text-tertiary">SC</span>
+</div>
+<span class="text-xs font-medium">Sarah Chen</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></div>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/50 transition-colors cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-tertiary">GRID-AX-7752</span>
+<span class="text-[10px] text-on-surface-variant opacity-60">Submitted 12h ago</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-highest text-on-surface-variant">REVIEW</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-full bg-outline-variant/20 flex items-center justify-center">
+<span class="text-[8px] font-bold text-outline">BM</span>
+</div>
+<span class="text-xs font-medium">B. Marcus</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary-container"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant/30"></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Bento-Style Sidebar Actions (R) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Tactical Action Card -->
+<div class="bg-surface-container-high rounded-xl p-6 border border-outline-variant/10 shadow-lg">
+<div class="flex items-center gap-4 mb-6">
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Predictive Logic</h4>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Next-Gen Audit</p>
+</div>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed mb-6">
+                            Algorithm suggests <span class="text-tertiary font-bold">4 high-priority</span> audits based on current grievance patterns. Review required within 24 hours.
+                        </p>
+<button class="w-full bg-surface-container-lowest text-primary border border-primary/20 hover:bg-primary/5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors">
+                            Launch Audit Suite
+                        </button>
+</div>
+<!-- Activity Log (Industrial Feed) -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant mb-6 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#f0d291]"></span>
+                            Live Grid Feed
+                        </h4>
+<div class="space-y-6 relative">
+<!-- Feed Item -->
+<div class="flex gap-4 relative">
+<div class="w-[1px] h-full bg-outline-variant/20 absolute left-[15px] top-8"></div>
+<div class="w-8 h-8 rounded-full bg-surface-container border border-outline-variant/20 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-xs text-tertiary">verified_user</span>
+</div>
+<div class="pb-2">
+<p class="text-xs text-on-surface"><span class="font-bold text-tertiary">System</span> validated case GRID-AX-91</p>
+<span class="text-[10px] text-on-surface-variant opacity-60">Just now</span>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex gap-4 relative">
+<div class="w-[1px] h-full bg-outline-variant/20 absolute left-[15px] top-8"></div>
+<div class="w-8 h-8 rounded-full bg-surface-container border border-outline-variant/20 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-xs text-primary-container">gavel</span>
+</div>
+<div class="pb-2">
+<p class="text-xs text-on-surface"><span class="font-bold text-tertiary">Directive</span> issued by Oversight</p>
+<span class="text-[10px] text-on-surface-variant opacity-60">24m ago</span>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container border border-outline-variant/20 flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-xs text-error">warning</span>
+</div>
+<div class="pb-2">
+<p class="text-xs text-on-surface"><span class="font-bold text-tertiary">Escalation</span> detected in Dept. B</p>
+<span class="text-[10px] text-on-surface-variant opacity-60">1h ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- System Status Terminal -->
+<div class="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/10 font-mono text-[10px]">
+<div class="flex items-center justify-between mb-4">
+<span class="text-tertiary">NODE_STATUS: ONLINE</span>
+<span class="text-on-surface-variant opacity-40">v2.4.1</span>
+</div>
+<div class="space-y-1 text-on-surface-variant">
+<p>&gt; Initializing security layer...</p>
+<p>&gt; Latency: 42ms</p>
+<p>&gt; CPU Load: 12%</p>
+<p>&gt; Grid mesh synchronized.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

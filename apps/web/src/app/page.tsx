@@ -1,767 +1,238 @@
-import Navigation from "../components/Navigation";
+"use client";
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function LandingPage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <main
-      className="min-h-screen font-display antialiased"
-      style={{ background: "var(--background)", color: "var(--text)" }}
-    >
-      <Navigation />
+    <div className="bg-surface text-on-surface font-body selection:bg-primary-container/30 selection:text-primary min-h-screen antialiased">
+      {/* TopAppBar - Clean Landing Navigation */}
+      <header className="w-full sticky top-0 z-50 bg-surface/60 backdrop-blur-xl border-b border-outline-variant/10 shadow-warm-glow">
+        <nav className="flex items-center justify-between px-8 h-16 w-full max-w-7xl mx-auto">
+          <div className="flex items-center gap-8">
+            <Link href="/">
+              <span className="text-xl font-bold tracking-tighter text-tertiary cursor-pointer">GrievanceGrid</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-6 tracking-tight text-on-surface-variant">
+              <a className="text-primary-container border-b-2 border-primary-container pb-1 cursor-pointer transition-colors duration-200" href="#">Analytics</a>
+              <a className="text-on-surface-variant opacity-70 hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Department</a>
+              <a className="text-on-surface-variant opacity-70 hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Reports</a>
+              <a className="text-on-surface-variant opacity-70 hover:text-primary transition-colors duration-200 cursor-pointer" href="#">Archive</a>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-primary-container">
+            <Link href="/login" className="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">login</Link>
+            <button className="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">settings</button>
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 ml-2">
+              <img alt="User" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfbfUaFwYkJ5Te7p12nIWGBxRSBCAjEfpvTGEYnDFYWczjskp43rQjnbgrLhigzbAHwDJqkuKQK2bWtFUh4dlK-aj5kUhXqtoTUtCoLNId7jVaHX0GKyg8wXi-6dPkuKa-_ndxu3qFIDhfqah7VmLDKzumhg7tfcWDP47dZkR_ziuA5YPejyAw5PxAgw-ESLzZYFLf0o3OAwxggcHolnWKab6sWyNDr7aTdKrQD6kj-_40WbNEErrYSlRlKUOaXTfYxdvmkqUK2Ich" />
+            </div>
+          </div>
+        </nav>
+      </header>
 
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section className="relative mx-auto max-w-7xl px-6 py-24 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
-        <div className="space-y-8">
-          <div className="space-y-6">
-            <span
-              className="inline-block rounded-full border px-3 py-1 text-xs font-semibold"
-              style={{
-                background: "rgba(56, 29, 42, 0.1)",
-                borderColor: "rgba(56, 29, 42, 0.2)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              AI-POWERED GOVERNANCE
-            </span>
-            <h1
-              className="text-5xl font-bold leading-[1.1] tracking-tight md:text-6xl"
-              style={{ color: "var(--text)" }}
-            >
-              Transforming Public <span style={{ color: "var(--amber)" }}>Grievance</span>
+      <main className="relative overflow-hidden">
+        {/* Background Ambient Glows */}
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary-container/5 rounded-full blur-[120px] -z-10"></div>
+        <div className="absolute bottom-[20%] left-[-10%] w-[600px] h-[600px] bg-surface-variant/20 rounded-full blur-[150px] -z-10"></div>
+
+        {/* Hero Section - Full Width Marketing Style */}
+        <section className="max-w-7xl mx-auto px-8 pt-20 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/20">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-tertiary">V4.0 Stable Engine</span>
+            </div>
+            <h1 className="text-6xl lg:text-7xl font-bold tracking-tight text-on-surface leading-[1.1]">
+              The AI Operating System for <span className="text-tertiary">Civic Infrastructure</span>
             </h1>
-            <p
-              className="max-w-xl text-lg font-medium leading-relaxed"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              AI-powered transparency for every citizen. From systemic issues to
-              individual redressal, we bring clarity and accountability.
+            <p className="text-xl text-on-surface-variant max-w-lg font-light leading-relaxed">
+              Automate the intake, triage, and resolution of public grievances with sub-second precision using the Grid-Core neural architecture.
             </p>
+            <div className="flex items-center gap-6 pt-4">
+              <Link href="/login" className="bg-linear-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-lg font-semibold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                Initialize Grid
+              </Link>
+              <button className="flex items-center gap-2 text-tertiary hover:text-primary transition-colors group">
+                <span className="material-symbols-outlined transition-transform group-hover:scale-110">play_circle</span>
+                <span className="font-medium">System Walkthrough</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-4 pt-2">
-            <a
-              href="/submit"
-              className="dark-btn bg-primary text-white px-7 py-3 text-sm font-semibold flex items-center gap-2 hover:opacity-90 transition-all"
-            >
-              Get Started <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </a>
-            <a
-              href="#impact"
-              className="dark-btn bg-transparent text-text border border-border px-7 py-3 text-sm font-semibold hover:bg-surface transition-all"
-            >
-              View Impact
-            </a>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div className="dark-card bg-surface aspect-square flex items-center justify-center p-2 overflow-hidden border border-border">
-            <div className="w-full h-full rounded-md relative overflow-hidden bg-card/50">
-              <img 
-                alt="Abstract high-end 3D visualization" 
-                className="object-cover w-full h-full mix-blend-lighten opacity-40" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAadhTk4Ekp2dffPUIgO51ckM0z1T1tbtyvsyo1yzXTJrPMOXHycE5u4D8YrtznxIGowI7foiukKuctrrjhQB-kBXxr7uS3k3jmNinF13RzfRWkToBkkiQU4nv9opJ9jwkvvVbjzIh5lXP2Ao9C23qUgBJ9-8fyoxQYCsRo0sUMjrAvWaT2PFbeF7fXQj3ivLVmnoNXLATGaazCV3pfImYOgrdAIDUDWCT_oUFu0gkjcOq9VqT5rNzMH_hNxrHFcHvXpaYm0UGQzI_"
-              />
-              <div 
-                className="absolute bottom-6 left-6 right-6 bg-surface/90 backdrop-blur-md border border-border p-4 rounded-md shadow-lg"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-sm text-text">Live Feed: New Delhi Central</span>
-                  <span className="flex items-center gap-2 bg-sage/10 text-sage px-2 py-1 rounded-full font-semibold text-xs border border-sage/20">
-                    <span className="w-1.5 h-1.5 bg-sage rounded-full animate-pulse"></span> ACTIVE
-                  </span>
+          <div className="hidden lg:block animate-in fade-in slide-in-from-right duration-1000">
+            <div className="relative bg-surface-container-low rounded-xl p-4 shadow-2xl border border-outline-variant/10 rotate-x-6 -rotate-y-12 rotate-z-2 hover:rotate-0 transition-transform duration-700 cursor-default">
+              <div className="absolute inset-0 bg-linear-to-tr from-primary/5 to-transparent rounded-xl pointer-events-none"></div>
+              {/* Dashboard Mockup Header */}
+              <div className="flex items-center justify-between mb-4 px-2">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-error/40"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-tertiary/40"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-on-surface-variant/40"></div>
+                </div>
+                <div className="text-[10px] font-mono text-on-surface-variant/60">GRID_CORE_OS_v4.02</div>
+              </div>
+              {/* Map Visualization HUD Mockup */}
+              <div className="bg-surface-container-lowest rounded-lg h-[400px] relative overflow-hidden group">
+                <img className="w-full h-full object-cover opacity-20 mix-blend-luminosity grayscale group-hover:grayscale-0 transition-all duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNNojjBSBSaciyVzfq1ChqIjWTuDIx9Gnm5ZQxm8jT-ZZarvKL3Qy8k8tFdqjHPZlz2LvYnQ70oDFyufcX0-o40ISsGE270Jks_i9A3f-ENoEwQTcaaS4lZ4jcXaOcaQiWfmTzgGBtxb80_wULCxZHMBvDhbjJRVOmUvrD1pkaW1KM_u_L_qFBjgHzP2pkvNpHs0u-UTA_su4C7djtR3Su9pyV3GuB-hMC1ICk5E4On4JOjFYDtfpCRitgr242BOK2hL32NZc-mTHe" alt="HUD Map" />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-full h-full p-8 grid grid-cols-4 grid-rows-4 gap-4">
+                    <div className="col-start-2 row-start-2 w-3 h-3 rounded-full bg-primary animate-pulse shadow-sm shadow-primary"></div>
+                    <div className="col-start-3 row-start-1 w-2 h-2 rounded-full bg-tertiary"></div>
+                    <div className="col-start-4 row-start-3 w-4 h-4 rounded-full border border-primary/40 flex items-center justify-center">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                    </div>
+                  </div>
+                </div>
+                {/* HUD Overlay Mini-Card */}
+                <div className="absolute bottom-4 left-4 bg-surface-container-highest/90 backdrop-blur-md p-4 rounded-lg border border-outline-variant/20 max-w-[200px] shadow-xl">
+                  <div className="text-[10px] text-tertiary uppercase tracking-widest mb-1 font-bold">Active Incident</div>
+                  <div className="text-sm font-bold text-on-surface">District 7 Block B</div>
+                  <div className="mt-2 h-1 w-full bg-outline-variant/30 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary w-2/3"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── TICKER ───────────────────────────────────────── */}
-      <div
-        className="ticker-wrap border-y py-5"
-        style={{
-          background: "var(--surface)",
-          borderColor: "var(--border-subtle)",
-        }}
-      >
-        <div className="ticker-content flex items-center gap-16 text-sm font-semibold">
-          {[
-            { icon: "verified", col: "var(--amber)", text: "12,450 Resolved" },
-            { icon: "timer", col: "var(--sage)", text: "30s Response" },
-            { icon: "group", col: "var(--text-muted)", text: "1.2M Citizens" },
-            { icon: "location_on", col: "var(--amber)", text: "500+ Cities" },
-            { icon: "verified", col: "var(--amber)", text: "12,450 Resolved" },
-            { icon: "timer", col: "var(--sage)", text: "30s Response" },
-            { icon: "group", col: "var(--text-muted)", text: "1.2M Citizens" },
-            { icon: "location_on", col: "var(--amber)", text: "500+ Cities" },
-          ].map((item, i) => (
-            <span
-              key={i}
-              className="flex items-center gap-2"
-              style={{ color: "var(--text)" }}
-            >
-              <span
-                className="material-symbols-outlined"
-                style={{ color: item.col }}
-              >
-                {item.icon}
-              </span>
-              {item.text}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* ── BENTO GRID ──────────────────────────────────── */}
-      <section className="mx-auto max-w-7xl px-6 py-24" id="impact">
-        <div className="mb-16 text-center">
-          <h2
-            className="text-3xl font-bold tracking-tight"
-            style={{ color: "var(--text)" }}
-          >
-            The Bento Grid System
-          </h2>
-          <p className="mt-4 font-medium" style={{ color: "var(--text-secondary)" }}>
-            Intelligent modules driving public redressal.
-          </p>
-        </div>
-
-        <div className="grid auto-rows-auto grid-cols-1 gap-6 md:grid-cols-4 md:grid-rows-2 md:h-[600px]">
-          {/* Large hero bento — Geospatial AI */}
-          <div
-            className="group relative overflow-hidden rounded-md border md:col-span-2 md:row-span-2"
-            style={{
-              background: "linear-gradient(135deg, #1a0d15 0%, #2c1520 50%, #381d2a 100%)",
-              borderColor: "var(--border)",
-            }}
-          >
-            {/* Background globe icon */}
-            <div
-              className="absolute -bottom-20 -right-20 transform opacity-5 transition-transform duration-700 group-hover:rotate-12 group-hover:opacity-8"
-            >
-              <span className="material-symbols-outlined text-[300px] text-white">
-                public
-              </span>
-            </div>
-            {/* Grid overlay */}
-            <div
-              className="absolute inset-0 opacity-40"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(255,165,82,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,165,82,0.06) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }}
-            />
-            <div className="relative z-10 flex h-full flex-col justify-between p-10">
-              <div>
-                <div
-                  className="mb-6 flex h-12 w-12 items-center justify-center rounded-md backdrop-blur-sm"
-                  style={{ background: "rgba(255,255,255,0.08)" }}
-                >
-                  <span
-                    className="material-symbols-outlined text-2xl"
-                    style={{ color: "var(--amber)" }}
-                  >
-                    map
-                  </span>
-                </div>
-                <h3 className="mb-4 text-3xl font-bold leading-tight tracking-tight text-white">
-                  Geospatial AI Analytics
-                </h3>
-                <p className="max-w-sm text-base font-medium leading-relaxed text-white/70">
-                  Every grievance is mapped with precision. Our AI identifies
-                  patterns and clusters to solve systemic issues before they
-                  escalate.
-                </p>
+        {/* Global Stats Trust Bar */}
+        <section className="border-y border-outline-variant/10 py-12 bg-surface-container-lowest/50">
+          <div className="max-w-7xl mx-auto px-8 flex flex-wrap justify-center md:justify-between items-center gap-12">
+            {[
+              { label: 'Requests Managed', val: '15,000+' },
+              { label: 'Routing Accuracy', val: '99.8%' },
+              { label: 'Avg Response', val: '14ms' },
+              { label: 'Cities Integrated', val: '142' }
+            ].map((stat, i) => (
+              <div key={i} className="text-center md:text-left group">
+                <div className="text-3xl font-black text-tertiary group-hover:scale-110 transition-transform origin-left">{stat.val}</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 mt-1 font-bold">{stat.label}</div>
               </div>
-              <div>
-                <button
-                  className="dark-btn rounded-md px-6 py-2.5 text-sm font-semibold"
-                  style={{
-                    background: "rgba(255,255,255,0.12)",
-                    color: "white",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                  }}
-                >
-                  Explore Map
+            ))}
+          </div>
+        </section>
+
+        {/* Bento Grid Features - Precision & Industrial Aesthetic */}
+        <section className="max-w-7xl mx-auto px-8 py-32">
+          <div className="mb-16">
+            <h2 className="text-4xl font-bold text-on-surface tracking-tight mb-4">Engineered for Industrial <span className="text-tertiary">Performance</span></h2>
+            <p className="text-on-surface-variant max-w-2xl font-light">Precision tools for high-stakes civic management. No bloat, just performance.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            {/* Feature: Neural Routing */}
+            <div className="md:col-span-3 bg-surface-container-low border border-outline-variant/10 p-8 rounded-xl relative overflow-hidden group hover:bg-surface-container transition-all">
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary mb-6 shadow-inner">
+                  <span className="material-symbols-outlined text-2xl">neurology</span>
+                </div>
+                <h3 className="text-2xl font-bold text-tertiary mb-4">AI-Agentic Routing</h3>
+                <p className="text-on-surface-variant leading-relaxed">Our grid automatically classifies and directs every grievance to the correct department agent with zero human intervention needed.</p>
+              </div>
+              <div className="mt-12 bg-surface-container-lowest/50 rounded-lg p-4 border border-outline-variant/10 font-mono text-[9px] text-tertiary/40">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                  <span>PACKET_ID: 772A-PROC</span>
+                </div>
+                <div className="h-1 w-full bg-outline-variant/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary/40 w-[85%]"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature: Verification */}
+            <div className="md:col-span-3 bg-surface-container-low border border-outline-variant/10 p-8 rounded-xl group hover:bg-surface-container transition-all flex gap-8 items-center">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-tertiary mb-3">Institutional Auth</h3>
+                <p className="text-on-surface-variant leading-relaxed">Hardware-level verification for civic reporters ensuring data integrity and preventing system spam.</p>
+              </div>
+              <div className="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0 border border-primary/20 shadow-xl group-hover:scale-105 transition-transform">
+                <span className="material-symbols-outlined text-4xl text-primary">verified_user</span>
+              </div>
+            </div>
+
+            {/* Feature: Geo-Intelligence */}
+            <div className="md:col-span-6 bg-surface-container-low border border-outline-variant/10 p-10 rounded-xl group hover:bg-surface-container transition-all flex flex-col md:flex-row gap-12 items-center">
+              <div className="flex-1">
+                 <h3 className="text-3xl font-bold text-tertiary mb-4">Geospatial Intelligence</h3>
+                 <p className="text-lg text-on-surface-variant font-light leading-relaxed">Precision mapping and automated geofencing ensure that every grievance is accurately pinned to its physical coordinate.</p>
+              </div>
+              <div className="flex gap-2 h-32 items-end">
+                {[40, 60, 55, 80, 45, 90, 70, 30].map((h, i) => (
+                  <div key={i} className="w-4 bg-primary/20 rounded-t-sm group-hover:bg-primary transition-all duration-500" style={{ height: `${h}%`, transitionDelay: `${i * 100}ms` }}></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA Strip */}
+        <section className="max-w-7xl mx-auto px-8 mb-32">
+          <div className="bg-surface-container-low border border-outline-variant/10 rounded-xl p-16 text-center relative overflow-hidden group">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-linear-to-r from-transparent via-primary/40 to-transparent"></div>
+            <div className="relative z-10">
+              <h2 className="text-4xl font-bold text-on-surface mb-6">Ready to upgrade your infrastructure?</h2>
+              <p className="text-on-surface-variant max-w-xl mx-auto mb-10 text-lg">Deploy GrievanceGrid in your department today and experience the precision of an AI-driven operating system.</p>
+              <div className="flex justify-center items-center gap-6">
+                <Link href="/login" className="bg-primary text-on-primary px-10 py-4 rounded-lg font-bold hover:bg-primary-container shadow-xl shadow-primary/10 transition-all active:scale-95">
+                  Start Onboarding
+                </Link>
+                <button className="border border-outline-variant/30 text-tertiary px-10 py-4 rounded-lg font-bold hover:bg-surface-container-highest transition-all active:scale-95">
+                  Request Brief
                 </button>
               </div>
             </div>
           </div>
+        </section>
+      </main>
 
-          {/* Intelligent Intake */}
-          <div
-            className="group dark-card flex flex-col justify-between p-8"
-          >
-            <div>
-              <span
-                className="material-symbols-outlined mb-4 text-2xl"
-                style={{ color: "var(--sage)" }}
-              >
-                mic
-              </span>
-              <h4
-                className="mb-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                Intelligent Intake
-              </h4>
-              <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-                Multimodal voice & image processing.
-              </p>
-            </div>
-            <div
-              className="mt-4 flex items-center justify-between pt-4 transition-transform group-hover:translate-x-1"
-            >
-              <span
-                className="text-xs font-semibold"
-                style={{ color: "var(--amber)" }}
-              >
-                Learn More
-              </span>
-              <span
-                className="material-symbols-outlined text-sm"
-                style={{ color: "var(--amber)" }}
-              >
-                arrow_outward
-              </span>
-            </div>
-          </div>
-
-          {/* AI Routing */}
-          <div
-            className="group flex flex-col justify-between rounded-md border p-8 transition-all duration-300 hover:-translate-y-0.5"
-            style={{
-              background: "rgba(255,165,82,0.04)",
-              borderColor: "rgba(255,165,82,0.15)",
-            }}
-          >
-            <div>
-              <span
-                className="material-symbols-outlined mb-4 text-2xl"
-                style={{ color: "var(--amber)" }}
-              >
-                bolt
-              </span>
-              <h4
-                className="mb-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                AI Routing
-              </h4>
-              <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-                30s automated department assignment.
-              </p>
-            </div>
-            <div
-              className="mt-4 flex items-center justify-between pt-4 transition-transform group-hover:translate-x-1"
-              style={{ color: "var(--amber)" }}
-            >
-              <span className="text-xs font-semibold">Optimize</span>
-              <span className="material-symbols-outlined text-sm">speed</span>
-            </div>
-          </div>
-
-          {/* Live Tracking */}
-          <div
-            className="group dark-card flex flex-col justify-between p-8"
-          >
-            <div>
-              <span
-                className="material-symbols-outlined mb-4 text-2xl"
-                style={{ color: "var(--text-muted)" }}
-              >
-                timeline
-              </span>
-              <h4
-                className="mb-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                Live Tracking
-              </h4>
-              <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-                Real-time progress visualization.
-              </p>
-            </div>
-            <div
-              className="mt-4 flex items-center justify-between pt-4 transition-transform group-hover:translate-x-1"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              <span className="text-xs font-semibold">Dashboard</span>
-              <span className="material-symbols-outlined text-sm">visibility</span>
-            </div>
-          </div>
-
-          {/* Verifiable Finality */}
-          <div
-            className="group flex flex-col justify-between rounded-md border p-8 transition-all duration-300 hover:-translate-y-0.5"
-            style={{
-              background: "rgba(196,214,176,0.04)",
-              borderColor: "rgba(196,214,176,0.15)",
-            }}
-          >
-            <div>
-              <span
-                className="material-symbols-outlined mb-4 text-2xl"
-                style={{ color: "var(--sage)" }}
-              >
-                verified_user
-              </span>
-              <h4
-                className="mb-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                Verifiable Finality
-              </h4>
-              <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
-                Geo-tagged proof of resolution.
-              </p>
-            </div>
-            <div
-              className="mt-4 flex items-center justify-between pt-4 transition-transform group-hover:translate-x-1"
-              style={{ color: "var(--sage)" }}
-            >
-              <span className="text-xs font-semibold">Verify</span>
-              <span className="material-symbols-outlined text-sm">checklist_rtl</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── ADVANCED MODULES ─────────────────────────────── */}
-      <section
-        className="mx-auto my-10 max-w-7xl rounded-md border px-6 py-20"
-        style={{ background: "var(--surface)", borderColor: "var(--border-subtle)" }}
-      >
-        <div className="flex flex-col items-center gap-16 md:flex-row">
-          <div className="md:w-1/3">
-            <h2
-              className="mb-4 text-3xl font-bold leading-tight tracking-tight"
-              style={{ color: "var(--text)" }}
-            >
-              Advanced Governance Modules
-            </h2>
-            <p
-              className="font-medium leading-relaxed"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Scaling transparency across every touchpoint of public service
-              through deep integration.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 md:w-2/3 md:grid-cols-2">
-            <div className="dark-card p-8" style={{ background: "var(--card)" }}>
-              <h5
-                className="mb-3 flex items-center gap-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ color: "var(--amber)" }}
-                >
-                  policy
-                </span>{" "}
-                SLA Enforcement
-              </h5>
-              <p className="text-sm font-medium leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                Automated escalation of delayed grievances to higher authorities
-                after 72 hours of inactivity.
-              </p>
-            </div>
-            <div className="dark-card p-8" style={{ background: "var(--card)" }}>
-              <h5
-                className="mb-3 flex items-center gap-2 text-lg font-bold"
-                style={{ color: "var(--text)" }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ color: "var(--sage)" }}
-                >
-                  translate
-                </span>{" "}
-                Multimodal STT
-              </h5>
-              <p className="text-sm font-medium leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                Speech-to-text processing for 22 official languages with
-                dialect-aware sentiment analysis.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── LIVE STREAM ──────────────────────────────────── */}
-      <section className="mx-auto max-w-7xl px-6 py-20">
-        <div
-          className="overflow-hidden rounded-md border shadow-sm"
-          style={{ background: "var(--card)", borderColor: "var(--border)" }}
-        >
-          {/* Window chrome */}
-          <div
-            className="flex items-center justify-between border-b p-5"
-            style={{
-              background: "var(--elevated)",
-              borderColor: "var(--border-subtle)",
-            }}
-          >
-            <div className="flex gap-2">
-              <div className="h-2.5 w-2.5 rounded-full bg-red-500/60" />
-              <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/60" />
-              <div className="h-2.5 w-2.5 rounded-full bg-green-500/60" />
-            </div>
-            <h3
-              className="flex items-center gap-2 text-sm font-semibold"
-              style={{ color: "var(--text)" }}
-            >
-              <span className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-              Live Public Redressal Stream
-            </h3>
-            <div
-              className="font-mono text-xs"
-              style={{ color: "var(--text-muted)" }}
-            >
-              NODE-01
-            </div>
-          </div>
-
-          {/* Stream cards */}
-          <div className="relative overflow-hidden p-8">
-            <div className="stream-mask flex gap-6">
-              {[
-                { id: "#GRV-88219", excerpt: '"Sanitation blockage reported near Ward 12..."', time: "2m ago" },
-                { id: "#GRV-88224", excerpt: '"Faulty street light grid restoration..."', time: "5m ago" },
-                { id: "#GRV-88231", excerpt: '"Unauthorized commercial noise complaint..."', time: "8m ago" },
-                { id: "#GRV-88235", excerpt: '"Public water hydrant leak identified..."', time: "12m ago" },
-                { id: "#GRV-88219", excerpt: '"Sanitation blockage reported near Ward 12..."', time: "2m ago" },
-                { id: "#GRV-88224", excerpt: '"Faulty street light grid restoration..."', time: "5m ago" },
-              ].map((card, i) => (
-                <div
-                  key={i}
-                  className="dark-card min-w-[320px] space-y-4 p-6"
-                  style={{ background: "var(--elevated)" }}
-                >
-                  <div className="flex items-start justify-between">
-                    <span
-                      className="font-mono text-sm font-semibold"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {card.id}
-                    </span>
-                    <span
-                      className="rounded-full border px-2.5 py-1 text-[10px] font-semibold"
-                      style={{
-                        background: "rgba(196,214,176,0.1)",
-                        borderColor: "rgba(196,214,176,0.25)",
-                        color: "var(--sage)",
-                      }}
-                    >
-                      RESOLVED
-                    </span>
-                  </div>
-                  <p
-                    className="text-sm font-medium"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {card.excerpt}
-                  </p>
-                  <div
-                    className="flex items-center justify-between border-t pt-4"
-                    style={{ borderColor: "var(--border-subtle)" }}
-                  >
-                    <span
-                      className="text-xs font-medium"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      Verified: {card.time}
-                    </span>
-                    <span
-                      className="material-symbols-outlined text-sm"
-                      style={{ color: "var(--sage)" }}
-                    >
-                      verified
-                    </span>
-                  </div>
+      {/* Corporate Footer */}
+      <footer className="bg-surface-container-lowest border-t border-outline-variant/10 py-16 px-8">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="col-span-1 md:col-span-2">
+            <span className="text-2xl font-black tracking-tighter text-tertiary mb-6 block">GrievanceGrid</span>
+            <p className="text-on-surface-variant/60 max-w-sm leading-relaxed mb-8">Precision-engineered software for the future of civic operations. Built by GovTech Labs.</p>
+            <div className="flex gap-4">
+              {['terminal', 'public', 'data_thresholding'].map((icon, i) => (
+                <div key={i} className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer border border-outline-variant/10">
+                  <span className="material-symbols-outlined">{icon}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── TRANSPARENCY + STATS ────────────────────────── */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="grid items-center gap-20 lg:grid-cols-2">
-          {/* Quote card */}
-          <div className="relative">
-            <div
-              className="relative z-10 rounded-md border p-12"
-              style={{
-                background: "rgba(255,165,82,0.06)",
-                borderColor: "rgba(255,165,82,0.2)",
-              }}
-            >
-              <span
-                className="material-symbols-outlined absolute -left-4 -top-6 text-6xl opacity-30"
-                style={{ color: "var(--amber)" }}
-              >
-                format_quote
-              </span>
-              <h2
-                className="mb-6 text-3xl font-bold tracking-tight"
-                style={{ color: "var(--text)" }}
-              >
-                The Transparency Commitment
-              </h2>
-              <p
-                className="text-xl font-medium leading-relaxed"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                &quot;Our mission is to eliminate the &apos;Bureaucratic Black
-                Hole&apos; by ensuring every voice is heard, every action is
-                logged, and every resolution is verifiable by the people.&quot;
-              </p>
-              <div
-                className="mt-8 flex items-center gap-4 border-t pt-6"
-                style={{ borderColor: "rgba(255,165,82,0.2)" }}
-              >
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full border"
-                  style={{
-                    background: "rgba(255,165,82,0.1)",
-                    borderColor: "rgba(255,165,82,0.3)",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined text-sm"
-                    style={{ color: "var(--amber)" }}
-                  >
-                    account_balance
-                  </span>
-                </div>
-                <div>
-                  <p
-                    className="text-sm font-semibold"
-                    style={{ color: "var(--text)" }}
-                  >
-                    GrievanceGrid Council
-                  </p>
-                  <p
-                    className="text-xs font-medium"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    Est. 2024
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Gauge charts */}
-          <div className="grid grid-cols-3 gap-10 text-center">
-            {[
-              { pct: 95, label: "Department\nAccountability", stroke: "#381D2A", accent: "var(--text)" },
-              { pct: 88, label: "Citizens\nTrust", stroke: "#FFA552", accent: "var(--amber)" },
-              { pct: 99, label: "AI\nPrecision", stroke: "#C4D6B0", accent: "var(--sage)" },
-            ].map(({ pct, label, stroke, accent }) => {
-              const r = 56;
-              const circ = 2 * Math.PI * r;
-              const offset = circ * (1 - pct / 100);
-              return (
-                <div key={label} className="flex flex-col items-center">
-                  <div className="relative mb-6 flex h-32 w-32 items-center justify-center">
-                    <svg className="h-full w-full -rotate-90">
-                      <circle
-                        cx="64"
-                        cy="64"
-                        r={r}
-                        fill="transparent"
-                        stroke="rgba(255,255,255,0.06)"
-                        strokeWidth="8"
-                      />
-                      <circle
-                        className="gauge-ring"
-                        cx="64"
-                        cy="64"
-                        r={r}
-                        fill="transparent"
-                        stroke={stroke}
-                        strokeDasharray={circ}
-                        strokeDashoffset={offset}
-                        strokeLinecap="round"
-                        strokeWidth="8"
-                      />
-                    </svg>
-                    <span
-                      className="absolute text-2xl font-bold"
-                      style={{ color: accent }}
-                    >
-                      {pct}%
-                    </span>
-                  </div>
-                  <p
-                    className="whitespace-pre-line text-sm font-semibold leading-tight"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {label}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FOOTER ───────────────────────────────────────── */}
-      <footer
-        className="border-t px-6 py-16"
-        style={{
-          background: "var(--surface)",
-          borderColor: "var(--border-subtle)",
-        }}
-      >
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-4">
-          {/* Brand */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div
-                className="flex items-center justify-center rounded-md p-2"
-                style={{ background: "rgba(255,165,82,0.1)" }}
-              >
-                <span
-                  className="material-symbols-outlined font-semibold"
-                  style={{ color: "var(--amber)" }}
-                >
-                  grid_view
-                </span>
-              </div>
-              <h2
-                className="text-xl font-bold tracking-tight"
-                style={{ color: "var(--text)" }}
-              >
-                GrievanceGrid
-              </h2>
-            </div>
-            <p
-              className="text-sm font-medium leading-relaxed"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Revolutionizing civic engagement through cutting-edge AI and
-              transparent reporting structures.
-            </p>
-            <div className="flex gap-3">
-              {["share", "mail"].map((icon) => (
-                <a
-                  key={icon}
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-md border transition-colors hover:border-amber/30"
-                  style={{
-                    background: "var(--card)",
-                    borderColor: "var(--border)",
-                    color: "var(--text-secondary)",
-                  }}
-                >
-                  <span className="material-symbols-outlined text-[18px]">{icon}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Platform */}
-          <div className="space-y-5">
-            <h4
-              className="text-sm font-bold tracking-wide"
-              style={{ color: "var(--text)" }}
-            >
-              Platform
-            </h4>
-            <ul className="space-y-3 font-medium">
-              {["Citizen Portal", "Officer Dashboard", "Open API"].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-sm transition-colors hover:text-white"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+          <div>
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary mb-6">System</h4>
+            <ul className="space-y-4 text-sm text-on-surface-variant/60">
+              <li><a className="hover:text-primary transition-all" href="#">Core Engine</a></li>
+              <li><a className="hover:text-primary transition-all" href="#">Neural Routing</a></li>
+              <li><a className="hover:text-primary transition-all" href="#">Security Layer</a></li>
             </ul>
           </div>
-
-          {/* Legal */}
-          <div className="space-y-5">
-            <h4
-              className="text-sm font-bold tracking-wide"
-              style={{ color: "var(--text)" }}
-            >
-              Legal
-            </h4>
-            <ul className="space-y-3 font-medium">
-              {["Privacy Policy", "Terms of Service", "Trust & Security"].map(
-                (item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-sm transition-colors hover:text-white"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {item}
-                    </a>
-                  </li>
-                )
-              )}
+          <div>
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-tertiary mb-6">Infrastructure</h4>
+            <ul className="space-y-4 text-sm text-on-surface-variant/60">
+              <li><a className="hover:text-primary transition-all" href="#">Global Nodes</a></li>
+              <li><a className="hover:text-primary transition-all" href="#">API Registry</a></li>
+              <li><a className="hover:text-primary transition-all" href="#">Audit Protocol</a></li>
             </ul>
           </div>
-
-          {/* Subscribe */}
-          <div className="space-y-5">
-            <h4
-              className="text-sm font-bold tracking-wide"
-              style={{ color: "var(--text)" }}
-            >
-              Subscribe
-            </h4>
-            <div className="flex">
-              <input
-                className="w-full rounded-l-md border border-r-0 px-4 py-2 text-sm focus:outline-none focus:ring-1"
-                style={{
-                  background: "var(--card)",
-                  borderColor: "var(--border)",
-                  color: "var(--text)",
-                }}
-                placeholder="Email"
-                type="email"
-              />
-              <button
-                className="rounded-r-md px-4 py-2 text-sm font-semibold transition-colors hover:opacity-90"
-                style={{ background: "var(--amber)", color: "#1a0f0a" }}
-              >
-                Go
-              </button>
-            </div>
-          </div>
         </div>
-
-        {/* Bottom bar */}
-        <div
-          className="mx-auto mt-16 flex max-w-7xl flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row"
-          style={{ borderColor: "var(--border-subtle)" }}
-        >
-          <p
-            className="text-xs font-semibold tracking-wide"
-            style={{ color: "var(--text-muted)" }}
-          >
-            © 2024 GRIEVANCEGRID. ALL RIGHTS RESERVED.
-          </p>
-          <p
-            className="text-xs font-semibold tracking-wide"
-            style={{ color: "var(--text-muted)" }}
-          >
-            SATYAMEVA JAYATE
-          </p>
+        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-outline-variant/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-on-surface-variant/40 uppercase tracking-widest font-mono">
+          <div>© 2026 GRIEVANCE_GRID_SYSTEMS. ALL_RIGHTS_RESERVED.</div>
+          <div className="flex gap-8">
+            <span className="text-primary hover:underline cursor-pointer">Status: Optimal</span>
+            <span className="opacity-60">Build: 4.2.1-STABLE</span>
+          </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

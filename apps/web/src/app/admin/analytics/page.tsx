@@ -1,188 +1,251 @@
-import Navigation from "../../../components/Navigation";
+import Link from "next/link";
+import React from "react";
 
-const kpiCards = [
-  { label: "Avg Resolution", value: "3.2", unit: "d", trend: "+10%", trendColor: "#BA5624" },
-  { label: "SLA Compliance", value: "92%", unit: "", trend: "+2%", trendColor: "var(--sage)" },
-  { label: "Open Grievances", value: "1,048", unit: "", trend: "-5%", trendColor: "var(--sage)" },
-  { label: "Citizen Sat", value: "85%", unit: "", trend: "+1%", trendColor: "var(--sage)" },
-];
-
-const weeklyBars = [
-  { resolved: 45, pending: 30, label: "WK 1" },
-  { resolved: 55, pending: 25, label: "WK 2" },
-  { resolved: 35, pending: 40, label: "WK 3" },
-  { resolved: 70, pending: 15, label: "WK 4 ★" },
-];
-
-const bottlenecks = [
-  { dept: "Sanitation", level: "High", color: "#BA5624", bg: "rgba(186,86,36,0.12)" },
-  { dept: "Roads", level: "Med", color: "#FFA552", bg: "rgba(255,165,82,0.1)" },
-  { dept: "Parks", level: "Low", color: "var(--sage)", bg: "rgba(196,214,176,0.08)" },
-  { dept: "Water", level: "High", color: "#BA5624", bg: "rgba(186,86,36,0.12)" },
-];
-
-const slaRows = [
-  { id: "#TKT-8901", issue: "Massive Pothole — Main St Int", dept: "Roads", time: "00:15:00", critical: true },
-  { id: "#TKT-8905", issue: "Major Water Main Leak", dept: "Water", time: "00:42:30", critical: true },
-  { id: "#TKT-8890", issue: "Missed Sector Trash Pickup", dept: "Sanitation", time: "02:10:00", critical: false },
-];
-
-export default function DeptHeadAnalyticsPage() {
+export default function GeneratedPage() {
   return (
-    <main className="min-h-screen font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      <Navigation />
-      <div className="mx-auto w-full max-w-[1440px] flex flex-col gap-5 px-8 py-8">
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-        {/* Filters bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border p-3"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-          <div className="flex flex-wrap gap-2">
-            {["Last 30 Days", "All Departments", "Priority: High"].map((label, i) => (
-              <button key={label} className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:border-amber/30"
-                style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                <span className="material-symbols-outlined text-lg">{["calendar_month", "filter_alt", "sort"][i]}</span>
-                {label}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium"
-              style={{ background: "var(--amber)", color: "#1a0f0a" }}>
-              <span className="material-symbols-outlined text-lg">refresh</span>Sync Data
-            </button>
-            <button className="flex items-center justify-center rounded-md border p-1.5" style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-              <span className="material-symbols-outlined text-lg">download</span>
-            </button>
-          </div>
-        </div>
+<div className="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div className="layout-container flex h-full grow flex-col">
+<div className="px-8 lg:px-12 xl:px-24 flex flex-1 justify-center py-8">
+<div className="layout-content-container flex flex-col w-full max-w-[1440px] flex-1 gap-6">
+<header className="flex items-center justify-between whitespace-nowrap bg-surface border border-border rounded-md px-6 py-4 shadow-sm">
+<div className="flex items-center gap-3 text-text-main">
+<div className="size-8 flex items-center justify-center bg-primary text-white rounded-md">
+<span className="material-symbols-outlined text-xl">analytics</span>
+</div>
+<h2 className="text-text-main text-xl font-semibold tracking-tight">Executive Analytics Suite <span className="text-text-muted font-mono text-xs ml-2 bg-gray-100 px-2 py-0.5 rounded">v2.4</span></h2>
+</div>
+<div className="flex flex-1 justify-end gap-6 items-center">
+<div className="flex items-center gap-6 hidden md:flex">
+<Link className="text-text-main text-sm font-medium hover:text-primary transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/analytics">Reports</Link>
+<Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/settings">Settings</Link>
+</div>
+<div className="bg-gray-200 border border-border rounded-full bg-center bg-no-repeat aspect-square bg-cover size-10" data-alt="User avatar placeholder image" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkxhiXh4a865sTADhmyGLQu7eYfdelrqKzB7sFiX1TjrVrXAqIy_mwITEp5-RhOBtmmvwL0adOu8nGyhkZP30mpyzqpj0TtVegWZ-e9H254Q-x2j0Bxh7UGlxKfUX4YlujdSt403dppQQa-vHzYnpz2e2qDReX_3xZ5sP9Kzc4Rz9ufNsl57Vi_W2OfpNdpkoFHg8a2fnZLQ14oVN3Y1TEuYTwykEq9pdV837FkFAHPf_mTIo2o5-PGqqEM69ylIKVckbNCOQanwp9')` }}></div>
+</div>
+</header>
+<div className="flex flex-wrap items-center justify-between gap-4 bg-surface border border-border rounded-md p-3 shadow-sm">
+<div className="flex flex-wrap gap-2 w-full md:w-auto">
+<Link href="/admin/mission-control" className="flex items-center gap-2 border border-border bg-white px-3 py-1.5 text-sm font-medium text-text-main hover:bg-gray-50 rounded-md transition-colors">
+<span className="material-symbols-outlined text-[18px] text-text-muted">calendar_month</span>
+                            Last 30 Days
+                        </Link>
+<Link href="/admin/mission-control" className="flex items-center gap-2 border border-border bg-white px-3 py-1.5 text-sm font-medium text-text-main hover:bg-gray-50 rounded-md transition-colors">
+<span className="material-symbols-outlined text-[18px] text-text-muted">filter_alt</span>
+                            All Departments
+                        </Link>
+<Link href="/admin/mission-control" className="flex items-center gap-2 border border-border bg-white px-3 py-1.5 text-sm font-medium text-text-main hover:bg-gray-50 rounded-md transition-colors">
+<span className="material-symbols-outlined text-[18px] text-text-muted">sort</span>
+                            Priority: High
+                        </Link>
+</div>
+<div className="flex gap-2">
+<Link href="/admin/mission-control" className="flex items-center justify-center bg-primary text-white px-4 py-1.5 text-sm font-medium rounded-md hover:bg-primary/90 transition-colors">
+<span className="material-symbols-outlined text-[18px] mr-1.5">refresh</span>
+                            Sync Data
+                        </Link>
+<Link href="/admin/analytics" className="flex items-center justify-center border border-border bg-white text-text-main px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors">
+<span className="material-symbols-outlined text-[18px]">download</span>
+</Link>
+</div>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div className="flex flex-col gap-1 border border-border bg-surface rounded-md p-5 shadow-sm relative overflow-hidden group">
+<div className="flex items-center justify-between mb-2">
+<p className="text-text-muted text-xs font-semibold uppercase tracking-wider">Avg Resolution</p>
+<span className="material-symbols-outlined text-text-muted text-xl opacity-50">timer</span>
+</div>
+<p className="text-primary font-mono text-3xl font-medium tracking-tight">3.2<span className="text-lg text-text-muted ml-0.5">d</span></p>
+<div className="flex items-center gap-1 mt-2">
+<span className="material-symbols-outlined text-alert-text text-sm">trending_up</span>
+<p className="text-alert-text text-xs font-medium font-mono">+10%</p>
+<span className="text-text-muted text-xs ml-1">vs last mo</span>
+</div>
+</div>
+<div className="flex flex-col gap-1 border border-border bg-surface rounded-md p-5 shadow-sm relative overflow-hidden group">
+<div className="flex items-center justify-between mb-2">
+<p className="text-text-muted text-xs font-semibold uppercase tracking-wider">SLA Compliance</p>
+<span className="material-symbols-outlined text-text-muted text-xl opacity-50">verified</span>
+</div>
+<p className="text-success-dark font-mono text-3xl font-medium tracking-tight">92%</p>
+<div className="flex items-center gap-1 mt-2">
+<span className="material-symbols-outlined text-success-dark text-sm">trending_up</span>
+<p className="text-success-dark text-xs font-medium font-mono">+2%</p>
+<span className="text-text-muted text-xs ml-1">vs last mo</span>
+</div>
+</div>
+<div className="flex flex-col gap-1 border border-border bg-surface rounded-md p-5 shadow-sm relative overflow-hidden group">
+<div className="flex items-center justify-between mb-2">
+<p className="text-text-muted text-xs font-semibold uppercase tracking-wider">Open Grievances</p>
+<span className="material-symbols-outlined text-text-muted text-xl opacity-50">assignment_late</span>
+</div>
+<p className="text-primary font-mono text-3xl font-medium tracking-tight">1,048</p>
+<div className="flex items-center gap-1 mt-2">
+<span className="material-symbols-outlined text-success-dark text-sm">trending_down</span>
+<p className="text-success-dark text-xs font-medium font-mono">-5%</p>
+<span className="text-text-muted text-xs ml-1">vs last mo</span>
+</div>
+</div>
+<div className="flex flex-col gap-1 border border-border bg-surface rounded-md p-5 shadow-sm relative overflow-hidden group">
+<div className="flex items-center justify-between mb-2">
+<p className="text-text-muted text-xs font-semibold uppercase tracking-wider">Citizen Sat</p>
+<span className="material-symbols-outlined text-text-muted text-xl opacity-50">sentiment_satisfied</span>
+</div>
+<p className="text-primary font-mono text-3xl font-medium tracking-tight">85%</p>
+<div className="flex items-center gap-1 mt-2">
+<span className="material-symbols-outlined text-success-dark text-sm">trending_up</span>
+<p className="text-success-dark text-xs font-medium font-mono">+1%</p>
+<span className="text-text-muted text-xs ml-1">vs last mo</span>
+</div>
+</div>
+</div>
+<div className="flex flex-col lg:flex-row gap-6">
+<div className="flex-1 lg:w-3/5 border border-border bg-surface rounded-md p-6 shadow-sm flex flex-col">
+<div className="flex justify-between items-start mb-6 border-b border-border pb-4">
+<div>
+<h3 className="text-lg font-semibold tracking-tight text-text-main">Resolution Flow</h3>
+<p className="text-xs font-medium text-text-muted mt-1 uppercase tracking-wide">Weekly Trend (Last 4 Wks)</p>
+</div>
+<div className="flex gap-4">
+<div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary rounded-sm"></div><span className="text-xs font-medium text-text-muted">Resolved</span></div>
+<div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-200 border border-border rounded-sm"></div><span className="text-xs font-medium text-text-muted">Pending</span></div>
+</div>
+</div>
+<div className="flex-1 min-h-[260px] flex items-end justify-between gap-4 pt-4 border-l border-b border-border pb-2 pl-4 relative ml-8">
+<div className="absolute left-[-40px] top-0 h-full flex flex-col justify-between text-[10px] font-mono font-medium text-text-muted pb-6">
+<span>500</span>
+<span>250</span>
+<span>0</span>
+</div>
+<div className="w-full flex flex-col justify-end items-center gap-1 h-full group">
+<div className="w-full max-w-[48px] bg-gray-100 border-x border-t border-border rounded-t-sm" style={{ height: '30%' }}></div>
+<div className="w-full max-w-[48px] bg-primary rounded-t-sm" style={{ height: '45%' }}></div>
+<span className="text-[10px] font-medium text-text-muted mt-2">WK 1</span>
+</div>
+<div className="w-full flex flex-col justify-end items-center gap-1 h-full group">
+<div className="w-full max-w-[48px] bg-gray-100 border-x border-t border-border rounded-t-sm" style={{ height: '25%' }}></div>
+<div className="w-full max-w-[48px] bg-primary rounded-t-sm" style={{ height: '55%' }}></div>
+<span className="text-[10px] font-medium text-text-muted mt-2">WK 2</span>
+</div>
+<div className="w-full flex flex-col justify-end items-center gap-1 h-full group">
+<div className="w-full max-w-[48px] bg-gray-100 border-x border-t border-border rounded-t-sm" style={{ height: '40%' }}></div>
+<div className="w-full max-w-[48px] bg-primary rounded-t-sm" style={{ height: '35%' }}></div>
+<span className="text-[10px] font-medium text-text-muted mt-2">WK 3</span>
+</div>
+<div className="w-full flex flex-col justify-end items-center gap-1 h-full group">
+<div className="w-full max-w-[48px] bg-gray-100 border-x border-t border-border rounded-t-sm" style={{ height: '15%' }}></div>
+<div className="w-full max-w-[48px] bg-primary rounded-t-sm" style={{ height: '70%' }}></div>
+<span className="text-[10px] font-medium text-text-main mt-2 font-bold">WK 4</span>
+</div>
+</div>
+</div>
+<div className="flex-1 lg:w-2/5 border border-border bg-surface rounded-md p-6 shadow-sm flex flex-col">
+<div className="mb-6 border-b border-border pb-4">
+<h3 className="text-lg font-semibold tracking-tight text-text-main">Bottleneck Radar</h3>
+<p className="text-xs font-medium text-text-muted mt-1 uppercase tracking-wide">Dept Vulnerability Zones</p>
+</div>
+<div className="grid grid-cols-2 gap-3 flex-1">
+<div className="border border-alert-text/20 rounded-md p-4 flex flex-col justify-between bg-alert-bg">
+<span className="font-medium text-sm text-text-main">Sanitation</span>
+<span className="font-mono text-xl font-semibold text-alert-text">High</span>
+</div>
+<div className="border border-warning-text/20 rounded-md p-4 flex flex-col justify-between bg-warning-bg">
+<span className="font-medium text-sm text-text-main">Roads</span>
+<span className="font-mono text-xl font-semibold text-warning-text">Med</span>
+</div>
+<div className="border border-success/30 rounded-md p-4 flex flex-col justify-between bg-success/10">
+<span className="font-medium text-sm text-text-main">Parks</span>
+<span className="font-mono text-xl font-semibold text-success-dark">Low</span>
+</div>
+<div className="border border-alert-text/20 rounded-md p-4 flex flex-col justify-between bg-alert-bg">
+<span className="font-medium text-sm text-text-main">Water</span>
+<span className="font-mono text-xl font-semibold text-alert-text">High</span>
+</div>
+</div>
+</div>
+</div>
+<div className="border border-border bg-surface rounded-md shadow-sm @container overflow-hidden">
+<div className="flex items-center justify-between p-5 border-b border-border bg-surface">
+<div className="flex items-center gap-3">
+<h3 className="text-lg font-semibold tracking-tight text-text-main flex items-center gap-2">
+                                SLA Action Required
+                            </h3>
+<span className="text-[10px] font-medium text-alert-text bg-alert-bg border border-alert-text/20 px-2 py-0.5 rounded-full uppercase tracking-wide">Immediate Action</span>
+</div>
+<Link href="/admin/escalations" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">View All</Link>
+</div>
+<div className="overflow-x-auto">
+<table className="w-full text-left border-collapse text-sm">
+<thead>
+<tr className="bg-gray-50 border-b border-border text-text-muted text-xs font-semibold uppercase tracking-wider">
+<th className="p-4 whitespace-nowrap font-medium">Ticket ID</th>
+<th className="p-4 min-w-[200px] font-medium">Issue Details</th>
+<th className="p-4 font-medium">Department</th>
+<th className="p-4 text-center font-medium">Time Remaining</th>
+<th className="p-4 text-center font-medium">Action</th>
+</tr>
+</thead>
+<tbody className="divide-y divide-border">
+<tr className="hover:bg-gray-50/50 transition-colors">
+<td className="p-4 font-mono font-medium text-text-main">#TKT-8901</td>
+<td className="p-4 font-medium text-text-main">Massive Pothole - Main St Int</td>
+<td className="p-4"><span className="bg-gray-100 text-text-main border border-border px-2.5 py-1 rounded text-xs font-medium">Roads</span></td>
+<td className="p-4 text-center">
+<div className="inline-flex items-center gap-1.5 bg-alert-bg text-alert-text border border-alert-text/20 px-2.5 py-1 rounded-full font-mono text-xs font-semibold">
+<span className="size-1.5 rounded-full bg-alert-text animate-pulse"></span>
+                                            00:15:00
+                                        </div>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/escalations" className="bg-primary text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors w-full max-w-[120px]">
+                                            Escalate
+                                        </Link>
+</td>
+</tr>
+<tr className="hover:bg-gray-50/50 transition-colors">
+<td className="p-4 font-mono font-medium text-text-main">#TKT-8905</td>
+<td className="p-4 font-medium text-text-main">Major Water Main Leak</td>
+<td className="p-4"><span className="bg-gray-100 text-text-main border border-border px-2.5 py-1 rounded text-xs font-medium">Water</span></td>
+<td className="p-4 text-center">
+<div className="inline-flex items-center gap-1.5 bg-alert-bg text-alert-text border border-alert-text/20 px-2.5 py-1 rounded-full font-mono text-xs font-semibold">
+<span className="size-1.5 rounded-full bg-alert-text animate-pulse"></span>
+                                            00:42:30
+                                        </div>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/escalations" className="bg-primary text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors w-full max-w-[120px]">
+                                            Escalate
+                                        </Link>
+</td>
+</tr>
+<tr className="hover:bg-gray-50/50 transition-colors">
+<td className="p-4 font-mono font-medium text-text-main">#TKT-8890</td>
+<td className="p-4 font-medium text-text-main">Missed Sector Trash Pickup</td>
+<td className="p-4"><span className="bg-gray-100 text-text-main border border-border px-2.5 py-1 rounded text-xs font-medium">Sanitation</span></td>
+<td className="p-4 text-center">
+<div className="inline-flex items-center gap-1.5 bg-gray-50 text-text-muted border border-border px-2.5 py-1 rounded-full font-mono text-xs font-medium">
+                                            02:10:00
+                                        </div>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="border border-border bg-white text-text-main px-3 py-1.5 rounded text-xs font-medium hover:bg-gray-50 transition-colors w-full max-w-[120px]">
+                                            Nudge
+                                        </Link>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-        {/* KPI cards */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {kpiCards.map((k) => (
-            <div key={k.label} className="flex flex-col gap-1 rounded-md border p-5"
-              style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-              <div className="mb-2 flex items-center justify-between">
-                <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{k.label}</p>
-              </div>
-              <p className="font-mono text-3xl font-medium tracking-tight" style={{ color: "var(--amber)" }}>
-                {k.value}<span className="text-lg" style={{ color: "var(--text-muted)" }}>{k.unit}</span>
-              </p>
-              <p className="mt-2 text-xs font-medium font-mono" style={{ color: k.trendColor }}>{k.trend} vs last mo</p>
-            </div>
-          ))}
-        </div>
 
-        {/* Chart + Bottleneck */}
-        <div className="flex flex-col gap-5 lg:flex-row">
-          {/* Resolution flow chart */}
-          <div className="flex-1 lg:w-3/5 rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <div className="mb-5 flex items-start justify-between border-b pb-4" style={{ borderColor: "var(--border-subtle)" }}>
-              <div>
-                <h3 className="text-lg font-semibold" style={{ color: "var(--text)" }}>Resolution Flow</h3>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Weekly Trend (Last 4 Wks)</p>
-              </div>
-              <div className="flex gap-4">
-                <span className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                  <span className="h-3 w-3 rounded-sm" style={{ background: "var(--amber)" }} />Resolved
-                </span>
-                <span className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                  <span className="h-3 w-3 rounded-sm" style={{ background: "var(--border)" }} />Pending
-                </span>
-              </div>
-            </div>
-            <div className="flex items-end justify-between gap-4 border-b border-l pb-2 pl-4 relative ml-8"
-              style={{ borderColor: "var(--border-subtle)", minHeight: 220 }}>
-              <div className="absolute -left-10 top-0 flex h-full flex-col justify-between pb-6 text-[10px] font-mono" style={{ color: "var(--text-muted)" }}>
-                {["500", "250", "0"].map(v => <span key={v}>{v}</span>)}
-              </div>
-              {weeklyBars.map((b) => (
-                <div key={b.label} className="flex w-full flex-col items-center gap-1">
-                  <div className="flex w-full max-w-[48px] flex-col gap-1" style={{ height: 200 }}>
-                    <div className="w-full rounded-t-sm" style={{ height: `${b.pending}%`, background: "var(--border)" }} />
-                    <div className="w-full rounded-t-sm" style={{ height: `${b.resolved}%`, background: "var(--amber)" }} />
-                  </div>
-                  <span className="mt-2 text-[10px] font-medium" style={{ color: "var(--text-muted)" }}>{b.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottleneck radar */}
-          <div className="flex-1 lg:w-2/5 rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <div className="mb-5 border-b pb-4" style={{ borderColor: "var(--border-subtle)" }}>
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text)" }}>Bottleneck Radar</h3>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Dept Vulnerability Zones</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {bottlenecks.map((b) => (
-                <div key={b.dept} className="flex flex-col justify-between rounded-md border p-4"
-                  style={{ background: b.bg, borderColor: `${b.color}33` }}>
-                  <span className="font-medium text-sm" style={{ color: "var(--text)" }}>{b.dept}</span>
-                  <span className="font-mono text-xl font-semibold" style={{ color: b.color }}>{b.level}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* SLA Action Table */}
-        <div className="overflow-hidden rounded-md border" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-          <div className="flex items-start justify-between border-b p-5" style={{ borderColor: "var(--border)" }}>
-            <div className="flex items-center gap-3">
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text)" }}>SLA Action Required</h3>
-              <span className="rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide"
-                style={{ background: "rgba(186,86,36,0.1)", borderColor: "rgba(186,86,36,0.25)", color: "#BA5624" }}>
-                Immediate Action
-              </span>
-            </div>
-            <button className="text-sm font-medium" style={{ color: "var(--amber)" }}>View All</button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b text-xs font-semibold uppercase tracking-wider"
-                  style={{ background: "var(--elevated)", borderColor: "var(--border)", color: "var(--text-muted)" }}>
-                  {["Ticket ID", "Issue Details", "Department", "Time Remaining", "Action"].map((h) => (
-                    <th key={h} className="p-4 font-medium whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y" style={{ borderColor: "var(--border-subtle)" }}>
-                {slaRows.map((r) => (
-                  <tr key={r.id} className="transition-colors hover:bg-elevated/20">
-                    <td className="p-4 font-mono font-medium" style={{ color: "var(--text)" }}>{r.id}</td>
-                    <td className="p-4 font-medium" style={{ color: "var(--text)" }}>{r.issue}</td>
-                    <td className="p-4">
-                      <span className="rounded border px-2.5 py-1 text-xs font-medium"
-                        style={{ background: "var(--elevated)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                        {r.dept}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <div className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs font-semibold"
-                        style={r.critical ? {
-                          background: "rgba(186,86,36,0.1)", borderColor: "rgba(186,86,36,0.3)", color: "#BA5624",
-                        } : {
-                          background: "var(--elevated)", borderColor: "var(--border)", color: "var(--text-muted)",
-                        }}>
-                        {r.critical && <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "#BA5624" }} />}
-                        {r.time}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <button className="rounded px-3 py-1.5 text-xs font-medium transition-colors w-full max-w-[120px]"
-                        style={r.critical ? { background: "var(--amber)", color: "#1a0f0a" }
-                          : { background: "transparent", border: "1px solid var(--border)", color: "var(--text-secondary)" }}>
-                        {r.critical ? "Escalate" : "Nudge"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
+</div>
+    </>
   );
 }

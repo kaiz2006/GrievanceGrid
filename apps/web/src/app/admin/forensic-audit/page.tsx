@@ -1,147 +1,208 @@
-const ticker = "CRITICAL ALERT: MULTIPLE DISCREPANCIES DETECTED IN SECTOR 7G /// [FRAUD_PROB_99%] /// AWAITING MANUAL VERIFICATION /// AUDIT LOG CORRUPTION IN REGION BETA ///";
+import Link from "next/link";
+import React from 'react';
 
-const kpiCards = [
-  { label: "High-Probability Fraud", value: "07", icon: "gavel", color: "#BA5624", bg: "rgba(186,86,36,0.1)" },
-  { label: "Citizen Disputes", value: "24", icon: "groups", color: "var(--amber)", bg: "rgba(255,165,82,0.07)" },
-  { label: "Integrity Score", value: "94%", icon: "health_and_safety", color: "var(--sage)", bg: "rgba(196,214,176,0.08)" },
-];
-
-const auditRows = [
-  { id: "#GG-4921", date: "2023-10-24", location: "Sector 7G", tag: "[GPS_FAIL]", tagColor: "#f87171", tagBg: "rgba(248,113,113,0.1)" },
-  { id: "#GG-4922", date: "2023-10-24", location: "Region Beta", tag: "[IMG_CORRUPT]", tagColor: "#fb923c", tagBg: "rgba(251,146,60,0.1)" },
-  { id: "#GG-4923", date: "2023-10-23", location: "Zone Alpha", tag: "[VERIFIED]", tagColor: "var(--sage)", tagBg: "rgba(196,214,176,0.1)" },
-];
-
-const chartBars = [
-  [80, 60], [60, 90], [90, 40], [40, 30], [100, 80],
-];
-const days = ["M", "T", "W", "T", "F"];
-
-export default function ForensicAuditPage() {
+export default function GeneratedPage() {
   return (
-    <main className="min-h-screen font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      {/* Alert ticker */}
-      <div className="overflow-hidden border-b py-1 opacity-90" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-        <div className="whitespace-nowrap font-mono text-xs tracking-wider" style={{ color: "var(--amber)", animation: "ticker 30s linear infinite" }}>
-          {ticker} {ticker}
+    <>
+      <div className="w-full min-h-screen bg-background font-display text-primary">
+        <div className="bg-plum text-white font-mono text-xs py-1 overflow-hidden border-b border-slate-300 flex opacity-90">
+          <div className="scrolling-ticker flex-shrink-0 w-full tracking-wider">
+            CRITICAL ALERT: MULTIPLE DISCREPANCIES DETECTED IN SECTOR 7G /// [FRAUD_PROB_99%] ///
+            AWAITING MANUAL VERIFICATION /// AUDIT LOG CORRUPTION IN REGION BETA ///
+          </div>
+          <div aria-hidden="true" className="scrolling-ticker flex-shrink-0 w-full tracking-wider">
+            CRITICAL ALERT: MULTIPLE DISCREPANCIES DETECTED IN SECTOR 7G /// [FRAUD_PROB_99%] ///
+            AWAITING MANUAL VERIFICATION /// AUDIT LOG CORRUPTION IN REGION BETA ///
+          </div>
         </div>
-      </div>
-      <style>{`@keyframes ticker { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }`}</style>
-
-      <div className="mx-auto max-w-[1400px] px-6 py-8">
-        {/* Header */}
-        <header className="mb-8 flex items-center justify-between rounded-md border p-5"
-          style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-          <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-3xl opacity-80" style={{ color: "var(--amber)" }}>analytics</span>
-            <h2 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text)" }}>GrievanceGrid Audit</h2>
-          </div>
-          <div className="flex flex-1 items-center justify-end gap-6">
-            <nav className="flex items-center gap-6 text-sm font-medium" style={{ color: "var(--text-muted)" }}>
-              {["Dashboard", "Hotspots", "Evidence Log"].map((l) => (
-                <a key={l} href="#" className="transition-colors hover:text-white">{l}</a>
-              ))}
-            </nav>
-            <button className="h-10 rounded-md px-6 text-sm font-medium transition-all hover:opacity-90"
-              style={{ background: "var(--amber)", color: "#1a0f0a" }}>New Audit</button>
-          </div>
-        </header>
-
-        {/* KPI cards */}
-        <div className="mb-8 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {kpiCards.map((k) => (
-            <div key={k.label} className="flex flex-col gap-3 rounded-md border p-6"
-              style={{ background: k.bg, borderColor: "var(--border)" }}>
-              <div className="flex items-start justify-between" style={{ color: k.color }}>
-                <p className="w-2/3 text-sm font-semibold uppercase tracking-wider">{k.label}</p>
-                <span className="material-symbols-outlined text-2xl">{k.icon}</span>
+        <div className="layout-container flex h-full grow flex-col px-6 py-8 max-w-[1400px] mx-auto">
+          <header className="flex items-center justify-between whitespace-nowrap bg-white p-5 rounded-md border border-slate-200 shadow-soft mb-8">
+            <div className="flex items-center gap-3 text-plum">
+              <span className="material-symbols-outlined text-3xl opacity-80">analytics</span>
+              <h2 className="text-2xl font-bold tracking-tight">GrievanceGrid Audit</h2>
+            </div>
+            <div className="flex flex-1 justify-end gap-6 items-center">
+              <nav className="flex items-center gap-6 font-medium text-sm text-slate-600">
+                <Link className="hover:text-plum transition-colors" href="/admin/mission-control">
+                  Dashboard
+                </Link>
+                <Link className="hover:text-plum transition-colors" href="#">
+                  Hotspots
+                </Link>
+                <Link className="hover:text-plum transition-colors" href="#">
+                  Evidence Log
+                </Link>
+              </nav>
+              <Link href="/admin/forensic-audit" className="flex items-center justify-center bg-plum text-white text-sm font-medium h-10 px-6 rounded-md shadow-button hover:bg-opacity-90 transition-all">
+                New Audit
+              </Link>
+            </div>
+          </header>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="flex flex-col gap-3 p-6 bg-card-fraud border border-slate-200 rounded-md shadow-soft">
+              <div className="flex justify-between items-start text-card-fraud-border">
+                <p className="text-sm font-semibold uppercase tracking-wider w-2/3">
+                  High-Probability Fraud
+                </p>
+                <span className="material-symbols-outlined text-2xl">gavel</span>
               </div>
-              <p className="mt-2 font-mono text-5xl font-light" style={{ color: "var(--text)" }}>{k.value}</p>
+              <p className="text-slate-800 text-5xl font-light mt-2 font-mono">07</p>
             </div>
-          ))}
-        </div>
-
-        {/* Chart + map */}
-        <div className="mb-8 flex flex-col gap-5 lg:flex-row">
-          <div className="flex-1 lg:w-3/5 flex flex-col rounded-md border p-6"
-            style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <div className="mb-5 flex justify-between items-center border-b pb-4" style={{ borderColor: "var(--border-subtle)" }}>
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text)" }}>Reported vs Verified Audits</h3>
-              <div className="flex gap-4">
-                <span className="flex items-center gap-2 text-xs" style={{ color: "var(--text-muted)" }}>
-                  <span className="h-3 w-3 rounded-sm" style={{ background: "var(--amber)" }} />Reported
-                </span>
-                <span className="flex items-center gap-2 text-xs" style={{ color: "var(--text-muted)" }}>
-                  <span className="h-3 w-3 rounded-sm" style={{ background: "var(--border)" }} />Verified
-                </span>
+            <div className="flex flex-col gap-3 p-6 bg-card-dispute border border-slate-200 rounded-md shadow-soft">
+              <div className="flex justify-between items-start text-card-dispute-border">
+                <p className="text-sm font-semibold uppercase tracking-wider w-2/3">
+                  Citizen Disputes
+                </p>
+                <span className="material-symbols-outlined text-2xl">groups</span>
+              </div>
+              <p className="text-slate-800 text-5xl font-light mt-2 font-mono">24</p>
+            </div>
+            <div className="flex flex-col gap-3 p-6 bg-card-trust border border-slate-200 rounded-md shadow-soft">
+              <div className="flex justify-between items-start text-custom-2">
+                <p className="text-sm font-semibold uppercase tracking-wider w-2/3">
+                  Integrity Score
+                </p>
+                <span className="material-symbols-outlined text-2xl">health_and_safety</span>
+              </div>
+              <p className="text-slate-800 text-5xl font-light mt-2 font-mono">94%</p>
+            </div>
+          </div>
+          <div className="flex flex-col lg:flex-row gap-6 mb-8">
+            <div className="flex-1 lg:w-3/5 bg-white border border-slate-200 rounded-md shadow-soft p-6 flex flex-col">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
+                <h3 className="text-lg font-semibold text-slate-800">
+                  Reported vs Verified Audits
+                </h3>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-plum rounded-sm"></div>
+                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                      Reported
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-muted-grey rounded-sm"></div>
+                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">
+                      Verified
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 grid min-h-[250px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center">
+                <div className="w-full flex justify-center gap-1 items-end h-[80%]">
+                  <div className="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+                  <div className="w-1/2 bg-muted-grey rounded-t-sm h-[60%] opacity-80 hover:opacity-100 transition-opacity"></div>
+                </div>
+                <p className="text-slate-500 text-xs font-medium mt-3">M</p>
+                <div className="w-full flex justify-center gap-1 items-end h-[60%]">
+                  <div className="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+                  <div className="w-1/2 bg-muted-grey rounded-t-sm h-[90%] opacity-80 hover:opacity-100 transition-opacity"></div>
+                </div>
+                <p className="text-slate-500 text-xs font-medium mt-3">T</p>
+                <div className="w-full flex justify-center gap-1 items-end h-[90%]">
+                  <div className="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+                  <div className="w-1/2 bg-muted-grey rounded-t-sm h-[40%] opacity-80 hover:opacity-100 transition-opacity"></div>
+                </div>
+                <p className="text-slate-500 text-xs font-medium mt-3">W</p>
+                <div className="w-full flex justify-center gap-1 items-end h-[40%]">
+                  <div className="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+                  <div className="w-1/2 bg-muted-grey rounded-t-sm h-[30%] opacity-80 hover:opacity-100 transition-opacity"></div>
+                </div>
+                <p className="text-slate-500 text-xs font-medium mt-3">T</p>
+                <div className="w-full flex justify-center gap-1 items-end h-[100%]">
+                  <div className="w-1/2 bg-plum rounded-t-sm h-full opacity-90 hover:opacity-100 transition-opacity"></div>
+                  <div className="w-1/2 bg-muted-grey rounded-t-sm h-[80%] opacity-80 hover:opacity-100 transition-opacity"></div>
+                </div>
+                <p className="text-slate-500 text-xs font-medium mt-3">F</p>
               </div>
             </div>
-            <div className="flex flex-1 items-end justify-between gap-5 border-b border-l pb-2 pl-2"
-              style={{ borderColor: "var(--border-subtle)", minHeight: 220 }}>
-              {chartBars.map((([rep, ver], i)) => (
-                <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                  <div className="flex w-full max-w-[40px] flex-col gap-1 justify-end" style={{ height: 200 }}>
-                    <div className="w-full max-w-full rounded-t-sm" style={{ height: `${ver * 0.9}%`, background: "var(--border)" }} />
-                    <div className="w-full max-w-full rounded-t-sm" style={{ height: `${rep * 0.9}%`, background: "var(--amber)" }} />
-                  </div>
-                  <p className="mt-2 text-xs font-medium" style={{ color: "var(--text-muted)" }}>{days[i]}</p>
+            <div className="flex-none lg:w-2/5 bg-white border border-slate-200 rounded-md shadow-soft p-6 flex flex-col">
+              <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-6">
+                Hotspot Audit Map
+              </h3>
+              <div
+                className="flex-1 rounded-sm border border-slate-200 relative bg-slate-100 overflow-hidden min-h-[250px] bg-center bg-cover toner-map"
+                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGHv0GMIw2T-uJ8pPQUHQF3fMHAoTjmjIcb7hqoXvYWRXI5c4GUzVIdFwVmFnmHbHjx-1p5nQqCu35stLvNh6kJUngk2LRdfRPA1zByiTlyuZeHXJeJmmn5uJQXQBnl3W0HdADjawuhEw-ZooRdVjf1eIWSZzpdHu4_dEqsAfTWwajUqBX48eGpULBKyIW1hpqVy1LnqFpDQjCv2pTnVpIq3Q6u-Ms6oaokwxmkHrjgHOKcp6TRPhda2ei2wBaKqsfk29yE6udWHT5')" }}
+              >
+                <div className="absolute top-1/4 left-1/4 w-8 h-8 bg-plum opacity-40 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-plum rounded-full"></div>
                 </div>
-              ))}
+                <div className="absolute top-1/2 right-1/3 w-12 h-12 bg-plum opacity-30 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-plum rounded-full"></div>
+                </div>
+                <div className="absolute bottom-1/4 right-1/4 w-6 h-6 bg-plum opacity-50 rounded-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 bg-plum rounded-full"></div>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Hotspot map */}
-          <div className="flex-none lg:w-2/5 rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <h3 className="mb-5 border-b pb-4 text-lg font-semibold" style={{ color: "var(--text)", borderColor: "var(--border-subtle)" }}>Hotspot Audit Map</h3>
-            <div className="relative min-h-[220px] overflow-hidden rounded-sm border" style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-              <div className="absolute inset-0 opacity-10"
-                style={{ backgroundImage: "radial-gradient(rgba(255,165,82,0.6) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-              {[[25, 40], [55, 55], [75, 70]].map(([t, l], i) => (
-                <div key={i} className="absolute rounded-full opacity-60"
-                  style={{ top: `${t}%`, left: `${l}%`, width: [32, 48, 24][i], height: [32, 48, 24][i], background: "var(--amber)", mixBlendMode: "screen" }}>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-2 w-2 rounded-full" style={{ background: "rgba(255,165,82,0.8)" }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Audit evidence log */}
-        <div className="mb-8 rounded-md border p-6" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-          <h3 className="mb-4 border-b pb-4 text-lg font-semibold" style={{ color: "var(--text)", borderColor: "var(--border-subtle)" }}>Audit Evidence Log</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b text-xs font-medium uppercase tracking-wider" style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}>
-                  {["ID", "Date", "Location", "Status Tag", "Action"].map((h) => (
-                    <th key={h} className="p-3 font-medium">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>
-                {auditRows.map((r) => (
-                  <tr key={r.id} className="border-b transition-colors hover:bg-elevated/20" style={{ borderColor: "var(--border-subtle)" }}>
-                    <td className="p-3">{r.id}</td>
-                    <td className="p-3">{r.date}</td>
-                    <td className="p-3 font-display">{r.location}</td>
+          <div className="bg-white border border-slate-200 rounded-md shadow-soft p-6 mb-8">
+            <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-4 mb-4">
+              Audit Evidence Log
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="text-slate-500 font-display text-xs uppercase tracking-wider border-b border-slate-200">
+                    <th className="p-3 font-medium">ID</th>
+                    <th className="p-3 font-medium">Date</th>
+                    <th className="p-3 font-medium">Location</th>
+                    <th className="p-3 font-medium">Status Tag</th>
+                    <th className="p-3 font-medium text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm font-mono text-slate-700">
+                  <tr className="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+                    <td className="p-3">#GG-4921</td>
+                    <td className="p-3">2023-10-24</td>
+                    <td className="p-3 font-display">Sector 7G</td>
                     <td className="p-3">
-                      <span className="rounded border px-2 py-0.5 text-xs"
-                        style={{ background: r.tagBg, borderColor: `${r.tagColor}33`, color: r.tagColor }}>
-                        {r.tag}
+                      <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded text-xs">
+                        [GPS_FAIL]
                       </span>
                     </td>
-                    <td className="p-3">
-                      <button className="text-xs font-medium hover:underline underline-offset-2" style={{ color: "var(--amber)" }}>Review</button>
+                    <td className="p-3 text-right">
+                      <Link href="/admin/mission-control" className="text-plum font-display font-medium text-xs hover:underline underline-offset-2">
+                        Review
+                      </Link>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                  <tr className="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+                    <td className="p-3">#GG-4922</td>
+                    <td className="p-3">2023-10-24</td>
+                    <td className="p-3 font-display">Region Beta</td>
+                    <td className="p-3">
+                      <span className="bg-orange-50 text-orange-600 border border-orange-200 px-2 py-0.5 rounded text-xs">
+                        [IMG_CORRUPT]
+                      </span>
+                    </td>
+                    <td className="p-3 text-right">
+                      <Link href="/admin/mission-control" className="text-plum font-display font-medium text-xs hover:underline underline-offset-2">
+                        Review
+                      </Link>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-slate-100 hover:bg-peach-hover transition-colors">
+                    <td className="p-3">#GG-4923</td>
+                    <td className="p-3">2023-10-23</td>
+                    <td className="p-3 font-display">Zone Alpha</td>
+                    <td className="p-3">
+                      <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded text-xs">
+                        [VERIFIED]
+                      </span>
+                    </td>
+                    <td className="p-3 text-right">
+                      <Link href="/admin/mission-control" className="text-slate-500 font-display font-medium text-xs hover:underline underline-offset-2">
+                        View Log
+                      </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </>
   );
 }

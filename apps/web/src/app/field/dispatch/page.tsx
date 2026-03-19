@@ -1,224 +1,228 @@
-"use client";
+import Link from "next/link";
+import React from "react";
 
-const navItems = [
-  { label: "Dashboard", icon: "dashboard", active: true },
-  { label: "Assignments", icon: "work", badge: "12" },
-  { label: "Map View", icon: "map" },
-  { label: "History", icon: "history" },
-  { label: "Settings", icon: "settings" },
-];
-
-const assignments = [
-  {
-    id: "#160408",
-    sla: "01:42:15",
-    slaUrgent: true,
-    type: "Pothole Repair",
-    location: "402 W 8th St, Sector 7",
-    priority: "Critical",
-    priorityColor: "#f87171",
-    active: true,
-  },
-  {
-    id: "#160409",
-    sla: "08:12:00",
-    slaUrgent: false,
-    type: "Streetlight Out",
-    location: "Park Ave & 4th, Sector 2",
-    priority: "Medium",
-    priorityColor: "#fb923c",
-    active: true,
-  },
-  {
-    id: "#160405",
-    sla: "00:00:00",
-    slaUrgent: false,
-    type: "Graffiti Removal",
-    location: "Main Station, Sector 1",
-    priority: "Resolved",
-    priorityColor: "var(--sage)",
-    active: false,
-  },
-];
-
-export default function FieldCrewDispatchPage() {
+export default function GeneratedPage() {
   return (
-    <div className="flex min-h-screen flex-col font-display antialiased md:flex-row" style={{ background: "var(--background)", color: "var(--text)" }}>
-      {/* Sidebar */}
-      <aside className="flex flex-col border-r md:h-screen md:w-[280px] md:shrink-0"
-        style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-        <div className="flex items-center gap-4 border-b p-6" style={{ borderColor: "var(--border)" }}>
-          <div className="relative flex h-12 w-12 items-center justify-center">
-            <div className="absolute inset-0 rotate-45 rounded-md border" style={{ background: "rgba(255,165,82,0.15)", borderColor: "rgba(255,165,82,0.3)" }} />
-            <span className="relative z-10 text-2xl font-bold" style={{ color: "var(--amber)" }}>G</span>
-          </div>
-          <h1 className="font-bold text-xl leading-tight tracking-tight uppercase" style={{ color: "var(--text)" }}>
-            Grievance<br />Grid
-          </h1>
-        </div>
-        <div className="flex items-center gap-4 border-b p-6" style={{ borderColor: "var(--border)" }}>
-          <div className="h-12 w-12 rounded-full border flex items-center justify-center"
-            style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-            <span className="material-symbols-outlined" style={{ color: "var(--amber)" }}>person</span>
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Command Center</p>
-            <p className="font-medium text-lg" style={{ color: "var(--text)" }}>Field Crew</p>
-          </div>
-        </div>
-        <nav className="flex-1 space-y-2 overflow-y-auto p-5">
-          {navItems.map((item) => (
-            <a key={item.label} href="#"
-              className="flex items-center gap-3 rounded-md p-3 font-semibold transition-all"
-              style={item.active ? {
-                background: "rgba(255,165,82,0.12)",
-                color: "var(--amber)",
-                border: "1px solid rgba(255,165,82,0.2)",
-              } : {
-                color: "var(--text-secondary)",
-              }}>
-              <span className="material-symbols-outlined">{item.icon}</span>
-              {item.label}
-              {item.badge && (
-                <span className="ml-auto rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: "#BA5624", color: "#fff" }}>
-                  {item.badge}
-                </span>
-              )}
-            </a>
-          ))}
-        </nav>
-        <div className="border-t p-5" style={{ borderColor: "var(--border)" }}>
-          <button className="flex w-full items-center justify-center gap-2 rounded-md border py-3 font-semibold transition-colors hover:border-amber/30"
-            style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            <span className="material-symbols-outlined">logout</span>Clock Out
-          </button>
-        </div>
-      </aside>
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-      {/* Main */}
-      <main className="relative flex flex-1 flex-col overflow-hidden">
-        {/* Header */}
-        <header className="flex h-20 items-center justify-between border-b px-6 shadow-sm"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-          <h2 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text)" }}>Active Assignments</h2>
-          <div className="flex w-full max-w-xl items-center gap-4 ml-8">
-            <div className="relative w-full rounded-md">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg" style={{ color: "var(--text-muted)" }}>search</span>
-              <input className="w-full rounded-md border py-2.5 pl-10 pr-4 text-sm focus:outline-none"
-                style={{ background: "var(--card)", borderColor: "var(--border)", color: "var(--text)" }}
-                placeholder="Search GRID-ID or location..." />
-            </div>
-          </div>
-        </header>
+<aside className="w-full md:w-[280px] bg-primary text-white flex flex-col h-auto md:h-screen shrink-0 border-r border-primary z-20 shadow-lg">
+<div className="p-6 border-b border-white/10 flex items-center gap-4">
+<div className="relative size-12 flex items-center justify-center">
+<div className="absolute inset-0 bg-white/10 transform rotate-45 rounded-md border border-white/20"></div>
+<span className="relative text-white font-bold text-2xl z-10">G</span>
+</div>
+<h1 className="font-bold text-xl leading-tight tracking-tight uppercase">Grievance<br/>Grid</h1>
+</div>
+<div className="p-6 border-b border-white/10 flex items-center gap-4">
+<div className="size-12 rounded-full border border-white/20 bg-white bg-cover bg-center shadow-sm" data-alt="Field worker profile picture" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuD3gHndj2L4_-9-M9QPndzNG-hFAM3DewOdV1cMW2GXcFcqPRmLwzYCJY20QxAZ7EBCeC50dFnKMSscKpaVnAQMqL7I_16xhtM_ijmQE3KDeCTfUGOeqCVTqpfbMqgJynrV0KwHB8WY63uXBVqC0ROcyVzTFEz5j3ruqVTIfHuv6rEeXl43zTp2RWtBTW9ywO8KKE-XwogZT6r0HhEPRLFUudpRvxKuUILmX47xm9_LZsi7cA6sm5iSFvWVSvqhvEra9ZAjjGKZJNur\')' }}></div>
+<div>
+<p className="font-semibold uppercase text-xs text-white/60 tracking-wider">Command Center</p>
+<p className="font-medium text-lg text-white">Field Crew</p>
+</div>
+</div>
+<nav className="flex-1 overflow-y-auto p-6 space-y-3">
+<Link className="flex items-center gap-3 p-3 rounded-md bg-white/10 text-white font-semibold transition-all hover:bg-white/20 shadow-sm" href="/admin/mission-control">
+<span className="material-symbols-outlined">dashboard</span>
+            Dashboard
+        </Link>
+<Link className="flex items-center gap-3 p-3 rounded-md border border-transparent text-white/80 hover:bg-white/5 hover:text-white font-medium transition-colors" href="#">
+<span className="material-symbols-outlined">work</span>
+            Assignments
+            <span className="ml-auto bg-sla-text text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">12</span>
+</Link>
+<Link className="flex items-center gap-3 p-3 rounded-md border border-transparent text-white/80 hover:bg-white/5 hover:text-white font-medium transition-colors" href="#">
+<span className="material-symbols-outlined">map</span>
+            Map View
+        </Link>
+<Link className="flex items-center gap-3 p-3 rounded-md border border-transparent text-white/80 hover:bg-white/5 hover:text-white font-medium transition-colors" href="#">
+<span className="material-symbols-outlined">history</span>
+            History
+        </Link>
+<Link className="flex items-center gap-3 p-3 rounded-md border border-transparent text-white/80 hover:bg-white/5 hover:text-white font-medium transition-colors" href="/admin/settings">
+<span className="material-symbols-outlined">settings</span>
+            Settings
+        </Link>
+</nav>
+<div className="p-6 border-t border-white/10">
+<Link href="/auth" className="w-full flex items-center justify-center gap-2 p-3 rounded-md border border-white/20 text-white hover:bg-white/10 font-semibold transition-colors">
+<span className="material-symbols-outlined">logout</span>
+            Clock Out
+        </Link>
+</div>
+</aside>
+<main className="flex-1 flex flex-col h-screen overflow-hidden relative z-10 bg-workspace">
+<header className="h-20 bg-white/80 backdrop-blur-sm border-b border-gray-200 flex items-center justify-between px-6 shrink-0 z-20 shadow-sm">
+<h2 className="text-2xl font-bold tracking-tight text-primary">Active Assignments</h2>
+<div className="flex items-center gap-4 w-full max-w-xl ml-8">
+<div className="relative w-full shadow-sm rounded-md">
+<span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+<input className="w-full h-11 pl-10 pr-4 bg-white border border-gray-300 rounded-md font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Search GRID-ID or location..." type="text"/>
+</div>
+<Link href="/admin/mission-control" className="size-11 shrink-0 bg-white border border-gray-300 rounded-md flex items-center justify-center text-primary hover:bg-gray-50 transition-colors shadow-sm">
+<span className="material-symbols-outlined font-medium">filter_list</span>
+</Link>
+</div>
+</header>
+<div className="px-6 py-3 flex gap-3 overflow-x-auto shrink-0 bg-workspace border-b border-gray-200 z-10">
+<Link href="/admin/mission-control" className="px-4 py-2 bg-white border border-gray-200 rounded-md font-semibold text-sm flex items-center gap-2 whitespace-nowrap text-gray-700 hover:bg-gray-50 shadow-sm transition-colors">
+            All Status
+            <span className="material-symbols-outlined text-[18px]">expand_more</span>
+</Link>
+<Link href="/admin/mission-control" className="px-4 py-2 bg-sla-text/10 border border-sla-text/20 rounded-md font-semibold text-sm flex items-center gap-2 whitespace-nowrap text-sla-text hover:bg-sla-text/20 shadow-sm transition-colors">
+            Urgent Only
+            <span className="material-symbols-outlined text-[18px]">warning</span>
+</Link>
+<Link href="/admin/mission-control" className="px-4 py-2 bg-white border border-gray-200 rounded-md font-semibold text-sm flex items-center gap-2 whitespace-nowrap text-gray-700 hover:bg-gray-50 shadow-sm transition-colors">
+            SLA &lt; 2hrs
+            <span className="material-symbols-outlined text-[18px]">timer</span>
+</Link>
+<Link href="/admin/mission-control" className="px-4 py-2 bg-white border border-gray-200 rounded-md font-semibold text-sm flex items-center gap-2 whitespace-nowrap text-gray-700 hover:bg-gray-50 shadow-sm transition-colors">
+            My Zone
+            <span className="material-symbols-outlined text-[18px]">my_location</span>
+</Link>
+</div>
+<div className="flex-1 overflow-y-auto p-6 pb-32">
+<div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6 max-w-7xl mx-auto">
+<article className="bg-white border border-gray-200 rounded-md shadow-sm flex flex-col overflow-hidden group hover:shadow-md transition-shadow">
+<div className="bg-primary text-white px-4 py-3 flex justify-between items-center border-b border-primary/10">
+<span className="font-mono font-bold text-sm tracking-wide">GRID-ID: #160408</span>
+<span className="material-symbols-outlined text-[20px]">priority_high</span>
+</div>
+<div className="p-5 flex-1 flex flex-col gap-5">
+<div className="bg-sla-bg text-sla-text p-4 rounded-md border border-sla-text/20 text-center relative overflow-hidden shadow-sm">
+<div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiMzMzMiLz48L3N2Zz4=')] opacity-10 mix-blend-multiply"></div>
+<p className="font-semibold text-xs tracking-wider uppercase mb-1 relative z-10 opacity-80">SLA Countdown</p>
+<p className="font-mono text-3xl font-bold tracking-widest relative z-10">01:42:15</p>
+</div>
+<div className="flex flex-col sm:flex-row gap-5 flex-1">
+<div className="flex-1 flex flex-col justify-center">
+<dl className="space-y-2">
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Type</dt>
+<dd className="font-semibold text-gray-800 text-sm">Pothole Repair</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Location</dt>
+<dd className="font-semibold text-gray-800 text-sm text-right">402 W 8th St,<br/>Sector 7</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between pb-1">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Priority</dt>
+<dd className="font-bold text-red-600 text-sm">Critical</dd>
+</div>
+</dl>
+</div>
+<div className="shrink-0 w-full sm:w-28 aspect-square border border-gray-200 rounded-md bg-gray-100 relative overflow-hidden shadow-sm">
+<div className="absolute inset-0 bg-cover bg-center" data-alt="Abstract map thumbnail showing location" data-location="Sector 7" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuC61llPYQZQzOyYs8sI9XoLszy-MStf0IN37K_huw0XqpB5jySZblZoyTZYwwY082FwOzRJW14LQU8_gPPnsnjFgyccLtlJjaYAcqiq1ZDFdfcNZq-217gZCiCNWlAcfS0eXBrBoaTCs6aQERjjCZHed_H4ocTuyr4sVpcXl9ED21tQ76ckRGYGv27ITijrZFnbaPCyxK0WxRpNdskf75lT5F2n_EUbZjd413MeCrnlEqn3ngwq4_82fBcO8E-dh8-NveTHisFcdRSr\')' }}></div>
+<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-3 bg-primary rounded-full border border-white shadow-sm animate-pulse"></div>
+</div>
+</div>
+</div>
+<div className="px-5 py-4 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row gap-3">
+<Link href="/admin/mission-control" className="flex-1 bg-primary text-white font-semibold text-sm py-2.5 px-4 rounded-md shadow-sm hover:bg-primary/90 transition-colors">
+                        Navigate
+                    </Link>
+<Link href="/admin/forensic-verify" className="flex-1 bg-white border border-primary text-primary font-semibold text-sm py-2.5 px-4 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                        Verify
+                    </Link>
+</div>
+</article>
+<article className="bg-white border border-gray-200 rounded-md shadow-sm flex flex-col overflow-hidden group hover:shadow-md transition-shadow">
+<div className="bg-gray-800 text-white px-4 py-3 flex justify-between items-center border-b border-gray-800/10">
+<span className="font-mono font-bold text-sm tracking-wide">GRID-ID: #160409</span>
+</div>
+<div className="p-5 flex-1 flex flex-col gap-5">
+<div className="bg-gray-50 text-gray-800 p-4 rounded-md border border-gray-200 text-center shadow-sm">
+<p className="font-semibold text-xs tracking-wider uppercase mb-1 opacity-70">SLA Countdown</p>
+<p className="font-mono text-3xl font-bold tracking-widest text-gray-600">08:12:00</p>
+</div>
+<div className="flex flex-col sm:flex-row gap-5 flex-1">
+<div className="flex-1 flex flex-col justify-center">
+<dl className="space-y-2">
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Type</dt>
+<dd className="font-semibold text-gray-800 text-sm">Streetlight Out</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Location</dt>
+<dd className="font-semibold text-gray-800 text-sm text-right">Park Ave &amp; 4th,<br/>Sector 2</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between pb-1">
+<dt className="font-medium text-xs uppercase text-gray-500 tracking-wide">Priority</dt>
+<dd className="font-bold text-orange-600 text-sm">Medium</dd>
+</div>
+</dl>
+</div>
+<div className="shrink-0 w-full sm:w-28 aspect-square border border-gray-200 rounded-md bg-gray-100 relative overflow-hidden shadow-sm">
+<div className="absolute inset-0 bg-cover bg-center grayscale opacity-80" data-alt="Abstract map thumbnail showing location" data-location="Sector 2" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuDMlyZJmJ3Z4_L6_kMBMePG4wd3NfYHC9MZgWaKL12aKiOVbI7Kv5TV2Uxb4cuoC-9K4S2P7cXpHHf0GhEA30Vr1B0b5pkcDqzxjMK9kzVX_44pX4md2m-vr9Rrjc9fjscEwaHfFpnNqM_vCeaZdxdOWzqnonQKBDbV8nju8CxgnSABlwKK3e0AyujM5ZqlctyXxa0Lowf6N4YmjszmimZW9H_7WbJxkwk9jUBzPE_zzyapHmxdNIDu9zCn4I2ZoQeMeGV39z85P_Lh\')' }}></div>
+<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-3 bg-gray-600 rounded-full border border-white shadow-sm"></div>
+</div>
+</div>
+</div>
+<div className="px-5 py-4 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row gap-3">
+<Link href="/admin/ai-audit" className="flex-1 bg-white border border-gray-300 text-gray-700 font-semibold text-sm py-2.5 px-4 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                        Details
+                    </Link>
+</div>
+</article>
+<article className="bg-white border border-gray-200 rounded-md shadow-sm flex flex-col overflow-hidden group opacity-60">
+<div className="bg-gray-200 text-gray-500 px-4 py-3 flex justify-between items-center border-b border-gray-300">
+<span className="font-mono font-bold text-sm tracking-wide">GRID-ID: #160405</span>
+<span className="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<div className="p-5 flex-1 flex flex-col gap-5">
+<div className="bg-gray-50 text-gray-400 p-4 rounded-md border border-gray-200 text-center shadow-sm">
+<p className="font-semibold text-xs tracking-wider uppercase mb-1 opacity-70">SLA Completed</p>
+<p className="font-mono text-3xl font-bold tracking-widest line-through">00:00:00</p>
+</div>
+<div className="flex flex-col sm:flex-row gap-5 flex-1">
+<div className="flex-1 flex flex-col justify-center">
+<dl className="space-y-2">
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-400 tracking-wide">Type</dt>
+<dd className="font-semibold text-gray-500 text-sm">Graffiti Removal</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between border-b border-gray-100 pb-2">
+<dt className="font-medium text-xs uppercase text-gray-400 tracking-wide">Location</dt>
+<dd className="font-semibold text-gray-500 text-sm text-right">Main Station,<br/>Sector 1</dd>
+</div>
+<div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between pb-1">
+<dt className="font-medium text-xs uppercase text-gray-400 tracking-wide">Status</dt>
+<dd className="font-bold text-green-600/70 text-sm">Resolved</dd>
+</div>
+</dl>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+<div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 p-4 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 items-center justify-between">
+<div className="text-gray-800 hidden md:block">
+<p className="font-medium text-xs uppercase text-gray-500 tracking-wide mb-1">Active Selection</p>
+<p className="font-mono font-bold text-lg tracking-wider text-primary">GRID-ID: #160408</p>
+</div>
+<div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+<Link href="/admin/mission-control" className="bg-primary text-white font-semibold text-sm py-3 px-6 rounded-md border border-transparent hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 flex-1 md:flex-none shadow-sm">
+<span className="material-symbols-outlined text-[20px]">navigation</span>
+                    Navigate
+                </Link>
+<Link href="/admin/mission-control" className="bg-white text-gray-700 font-semibold text-sm py-3 px-6 rounded-md border border-gray-300 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 flex-1 md:flex-none shadow-sm">
+<span className="material-symbols-outlined text-[20px]">photo_camera</span>
+                    Before Photo
+                </Link>
+<Link href="/admin/forensic-verify" className="bg-white border border-primary text-primary font-semibold text-sm py-3 px-6 rounded-md hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 flex-1 md:flex-none shadow-sm">
+<span className="material-symbols-outlined text-[20px]">play_arrow</span>
+                    Start Verif.
+                </Link>
+</div>
+</div>
+</div>
+</main>
 
-        {/* Filter pills */}
-        <div className="flex gap-3 overflow-x-auto border-b px-5 py-3" style={{ borderColor: "var(--border)", background: "var(--background)" }}>
-          {["All Status", "Urgent Only", "SLA < 2hrs", "My Zone"].map((label, i) => (
-            <button key={label} className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md border px-4 py-2 text-sm font-semibold transition-colors"
-              style={i === 1 ? {
-                background: "rgba(186,86,36,0.1)", borderColor: "rgba(186,86,36,0.25)", color: "#BA5624",
-              } : {
-                background: "var(--card)", borderColor: "var(--border)", color: "var(--text-secondary)",
-              }}>
-              {label}
-            </button>
-          ))}
-        </div>
 
-        {/* Cards */}
-        <div className="flex-1 overflow-y-auto p-6 pb-32">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 xl:grid-cols-2 2xl:grid-cols-3">
-            {assignments.map((a) => (
-              <article key={a.id} className={`flex flex-col overflow-hidden rounded-md border shadow-sm transition-shadow hover:shadow-md ${!a.active ? "opacity-50" : ""}`}
-                style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-                {/* Card header */}
-                <div className="flex items-center justify-between border-b px-4 py-3"
-                  style={a.slaUrgent ? { background: "rgba(255,165,82,0.15)", borderColor: "rgba(255,165,82,0.3)" }
-                    : a.active ? { background: "var(--elevated)", borderColor: "var(--border)" }
-                      : { background: "var(--border)", borderColor: "var(--border-subtle)" }}>
-                  <span className="font-mono text-sm font-bold tracking-wide" style={{ color: a.active ? "var(--amber)" : "var(--text-muted)" }}>
-                    GRID-ID: {a.id}
-                  </span>
-                  {a.slaUrgent && <span className="material-symbols-outlined text-lg" style={{ color: "var(--amber)" }}>priority_high</span>}
-                  {!a.active && <span className="material-symbols-outlined text-lg" style={{ color: "var(--sage)" }}>check_circle</span>}
-                </div>
-
-                <div className="flex flex-1 flex-col gap-4 p-5">
-                  {/* SLA countdown */}
-                  <div className="rounded-md border p-4 text-center"
-                    style={a.slaUrgent ? { background: "rgba(186,86,36,0.1)", borderColor: "rgba(186,86,36,0.25)" }
-                      : { background: "var(--elevated)", borderColor: "var(--border-subtle)" }}>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
-                      {a.active ? "SLA Countdown" : "SLA Completed"}
-                    </p>
-                    <p className={`font-mono text-3xl font-bold tracking-widest ${!a.active ? "line-through" : ""}`}
-                      style={{ color: a.slaUrgent ? "#BA5624" : "var(--text-muted)" }}>
-                      {a.sla}
-                    </p>
-                  </div>
-
-                  {/* Details */}
-                  <dl className="space-y-2">
-                    {[
-                      { label: "Type", value: a.type },
-                      { label: "Location", value: a.location },
-                      { label: "Priority", value: a.priority },
-                    ].map((row) => (
-                      <div key={row.label} className="flex items-baseline justify-between border-b pb-2"
-                        style={{ borderColor: "var(--border-subtle)" }}>
-                        <dt className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>{row.label}</dt>
-                        <dd className="text-sm font-semibold" style={{ color: row.label === "Priority" ? a.priorityColor : "var(--text)" }}>
-                          {row.value}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-
-                {/* Footer actions */}
-                <div className="flex gap-3 border-t px-5 py-4" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
-                  {a.active ? (
-                    <>
-                      <button className="flex-1 rounded-md py-2.5 text-sm font-semibold transition-colors hover:opacity-90"
-                        style={{ background: "var(--amber)", color: "#1a0f0a" }}>Navigate</button>
-                      <button className="flex-1 rounded-md border py-2.5 text-sm font-semibold transition-colors hover:border-amber/30"
-                        style={{ background: "transparent", borderColor: "var(--border)", color: "var(--text-secondary)" }}>Verify</button>
-                    </>
-                  ) : (
-                    <button className="flex-1 rounded-md border py-2.5 text-sm font-semibold transition-colors"
-                      style={{ background: "transparent", borderColor: "var(--border-subtle)", color: "var(--text-muted)" }}>Details</button>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom action bar */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 border-t p-4"
-          style={{ background: "rgba(15,10,13,0.92)", backdropFilter: "blur(12px)", borderColor: "var(--border)" }}>
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="hidden md:block">
-              <p className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Active Selection</p>
-              <p className="font-mono text-lg font-bold tracking-wider" style={{ color: "var(--amber)" }}>GRID-ID: #160408</p>
-            </div>
-            <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
-              {[
-                { label: "Navigate", icon: "navigation", primary: true },
-                { label: "Before Photo", icon: "photo_camera", primary: false },
-                { label: "Start Verif.", icon: "play_arrow", primary: false },
-              ].map((btn) => (
-                <button key={btn.label}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md border py-3 px-6 text-sm font-semibold transition-colors md:flex-none"
-                  style={btn.primary ? { background: "var(--amber)", border: "none", color: "#1a0f0a" }
-                    : { background: "transparent", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                  <span className="material-symbols-outlined text-lg">{btn.icon}</span>{btn.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+</div>
+    </>
   );
 }

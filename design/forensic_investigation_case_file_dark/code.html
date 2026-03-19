@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Forensic Investigation Evidence File</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #230b18;
+        color: #d9c2b2;
+        font-family: 'Inter', sans-serif;
+      }
+      .glass-panel {
+        background: rgba(45, 19, 32, 0.6);
+        backdrop-filter: blur(20px);
+      }
+      .industrial-grid {
+        background-image: radial-gradient(circle, #534437 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.05;
+      }
+      .node-active {
+        box-shadow: 0 0 15px rgba(255, 165, 82, 0.4);
+      }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl dark:bg-[#2D1320]/60 h-screen w-64 rounded-none border-r border-[#534437]/15 shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black text-[#F0D291]">GrievanceGrid</h1>
+<p class="font-['Inter'] text-sm font-medium uppercase tracking-wider text-[#FFA552] opacity-60">Institutional Suite</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span>Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200 font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-gradient-to-br from-[#FFCBA2] to-[#FFA552] text-[#4c2700] font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(255,165,82,0.3)] transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>New Case</span>
+</button>
+<div class="mt-6 pt-6 border-t border-[#534437]/20">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 hover:bg-[#311724] hover:text-[#F0D291] transition-all font-['Inter'] text-sm font-medium uppercase tracking-wider" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 overflow-y-auto relative bg-surface">
+<div class="industrial-grid absolute inset-0 pointer-events-none"></div>
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-8 py-3 h-16 sticky top-0 bg-[#230B18] z-30">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#F0D291]">EVIDENCE FILE #8842-X</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-[#F0D291] border-b-2 border-[#FFA552] pb-1 font-['Inter'] tracking-tight text-sm" href="#">Reports</a>
+<a class="text-[#D9C2B2] opacity-80 hover:bg-[#311724] transition-colors font-['Inter'] tracking-tight text-sm px-2 py-1 rounded" href="#">Directives</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined text-[#FFA552] cursor-pointer" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-[#D9C2B2] cursor-pointer" data-icon="help_outline">help_outline</span>
+<div class="h-8 w-8 rounded-full border border-outline-variant overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="Professional avatar for forensic investigator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9zKjmYqHmAfQQfMZdFtfMsNVmHqA6HqNT8earaETnNoMwTEHoFwnY1bZXfIEEanSmCHfyA6RVX3u1SMU64ynt9hBX8YA6eIrRgdq3oeZyq1o8xyL4nFRuKyW-7n7ulIl7kbl46zVNpt6wuDSekWcx2-vGB-2MoJ7qtb3BHkyKulqUC13dkVj3zjrB3zfMIDiPlK-63fq31i_32UcnDDIwZALJEMcORBJFWs1ckvN2DYggap4UG9MVrmMxKkB-lq8vhHN_kPUAG0zz"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 max-w-7xl mx-auto grid grid-cols-12 gap-8 relative">
+<!-- Left Column: Investigation Evidence -->
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- Case Header Card -->
+<div class="bg-surface-container-low rounded-xl p-6 border-l-4 border-primary shadow-lg">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-1 block">Case Classification: Level 4 Investigation</span>
+<h2 class="text-3xl font-extrabold text-tertiary tracking-tight">Financial Discrepancy: Sector 7-G</h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-surface-container-highest text-tertiary-fixed text-xs font-bold rounded-full mb-2">ACTIVE PROBE</span>
+<span class="text-on-surface-variant text-xs font-mono">HASH: 44D8-22F1-A89E</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 border-t border-outline-variant/10 pt-6">
+<div class="space-y-1">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Reporting Agent</p>
+<p class="text-tertiary font-bold">Investigator S. Thorne</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Filing Date</p>
+<p class="text-tertiary font-bold">Oct 14, 2023</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant opacity-60">Status Duration</p>
+<p class="text-tertiary font-bold">14 Days / 6 Hours</p>
+</div>
+</div>
+</div>
+<!-- Forensic Timeline Nodes -->
+<div class="space-y-6">
+<h3 class="text-xs font-bold uppercase tracking-[0.3em] text-on-surface-variant/50 ml-2">Audit Chain of Custody</h3>
+<!-- Timeline Node 1 -->
+<div class="relative flex gap-6 group">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center z-10 node-active">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="report_problem">report_problem</span>
+</div>
+<div class="w-0.5 h-full bg-outline-variant/20 absolute top-10"></div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 flex-1 mb-4 hover:bg-surface-container transition-all">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-lg font-bold text-tertiary">Complaint Lodged</h4>
+<span class="text-xs font-mono text-on-surface-variant/60">10-14-23 09:12 AM</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">Initial discrepancy flagged by automated reconciliation engine. Alert triggered on ledger 0x77FA. Disparity detected: $124,500.22.</p>
+<div class="mt-4 flex gap-2">
+<span class="text-[10px] bg-surface-container-highest px-2 py-1 rounded border border-outline-variant/30 text-primary">RAW_LOG_ENTRY</span>
+<span class="text-[10px] bg-surface-container-highest px-2 py-1 rounded border border-outline-variant/30 text-primary">ENCRYPTED_SIG</span>
+</div>
+</div>
+</div>
+<!-- Timeline Node 2 -->
+<div class="relative flex gap-6 group">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-tertiary text-xl" data-icon="router">router</span>
+</div>
+<div class="w-0.5 h-full bg-outline-variant/20 absolute top-10"></div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 flex-1 mb-4 hover:bg-surface-container transition-all">
+<div class="flex justify-between items-center mb-2">
+<h4 class="text-lg font-bold text-tertiary">Case Routing</h4>
+<span class="text-xs font-mono text-on-surface-variant/60">10-14-23 11:45 AM</span>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">Assigned to Forensics Division (FD-7). Metadata headers attached and audit trail initiated. Verification of routing nodes completed.</p>
+<div class="mt-4 flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Officer headshot 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC38rkeuoXvowSP4w_rUCj2AzjPXfsTz6KOiPGZ8xLA9Sb5cSKS4IzksxEzM-tVMAxyFiy-AbzXXJp5yc0Wq6GgFypszpcuW9twcOfkOYnnVwvH8wxB0LoqjYhrXGhqsrWJTcQY0ibk1AN3UZadjgelJwoklLKyxVC1vcvAVrY11IjXyJ0_Kt-vkSUTKXDLIxMfZ8-gaSNBPT3oNOURHd2sHNRJDX4XQUO-9EfAjhr73i4KeQp1HpSrRYor6D2wq2bBFqwzUp4pCpE2"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Officer headshot 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9EG-MjmeUt4JIi0iPFx2-Z1VnDDcRgwHk0AJDOXYrpFEjHbAJDrbwWtFHMJlsQVZ_MRvazw6nm_gKAXExx0EugqRYappiRIzGle5_lpjNso-rrjkEqpJZjZZfj5opYUusiTWpMGl8F3nFC4vb_r4ZQ78cQvSqkku6csTjUl5FYpQ2nhPQJ4S5HktsM1DOH8U_8j-qs9wdcrDzjqHBg588QtfNW7XAuCJ61o4V3UEg42miI8obT5ZtY7tMqw-IvZF7exwZ_vbaZPqR"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container-highest flex items-center justify-center text-[10px] text-tertiary">+2</div>
+</div>
+</div>
+</div>
+<!-- Timeline Node 3 -->
+<div class="relative flex gap-6 group">
+<div class="flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-on-surface-variant opacity-30 text-xl" data-icon="task_alt">task_alt</span>
+</div>
+</div>
+<div class="bg-surface-container-low/40 rounded-xl p-6 flex-1 mb-4 border border-dashed border-outline-variant/20">
+<div class="flex justify-between items-center">
+<h4 class="text-lg font-bold text-on-surface-variant opacity-40 italic">Resolution Pending</h4>
+<span class="text-xs font-mono text-on-surface-variant/30">PENDING...</span>
+</div>
+<p class="text-sm text-on-surface-variant/40 mt-2">Awaiting final validation from Executive Oversight. Estimated TTR: 48 Hours.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Verification & Map -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Side Panel Map Section -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden shadow-lg border border-outline-variant/5">
+<div class="p-4 bg-surface-container flex items-center justify-between border-b border-outline-variant/10">
+<span class="text-xs font-bold uppercase tracking-wider text-tertiary">Origin Geolocation</span>
+<span class="material-symbols-outlined text-sm text-primary" data-icon="distance">distance</span>
+</div>
+<div class="h-64 relative">
+<img class="w-full h-full object-cover grayscale brightness-50 contrast-125" data-alt="Aerial view map showing grid investigation zones" data-location="Berlin" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADP3BIjMSn0hjMbkl6tLCaidaQErP4HMftw7tD2gcv4ZEav4AaU_5oSslvmcS-iueys8yHhTEbjaTF_MdHX0c9kAFWAFUjWBAP4w7LAlAKMW_kiqAf9YJq2ZH2bIkFZCLwzqIycI8wSfKX8Lgk6Hia5eIbY8FiZUJgEf0GUdx8dsm6v9e3JGizPGWQdjVzjLCdB_Sy7f5vl57KG5btbqxIEgE4OCoVGDBh1czN24qwhWFLp5Kjpat-knnJCxXhcVzfEfKJWZLljnwF"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+<!-- UI Overlays on Map -->
+<div class="absolute top-4 left-4 bg-surface/80 backdrop-blur px-2 py-1 rounded text-[10px] font-mono text-primary border border-primary/20">52.5200° N, 13.4050° E</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-12 h-12 rounded-full border-2 border-primary animate-pulse flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Source Node</span>
+<span class="text-tertiary font-mono">NODE-VX9</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Access Point</span>
+<span class="text-tertiary font-mono">VPN_TUNNEL_04</span>
+</div>
+<button class="w-full border border-outline-variant/30 text-tertiary text-xs py-2 rounded-lg hover:bg-surface-container-highest transition-colors uppercase font-bold tracking-widest mt-2">Open Full Trace</button>
+</div>
+</div>
+<!-- Verification Data Card -->
+<div class="bg-surface-container-low rounded-xl p-6 space-y-6 shadow-lg border border-outline-variant/5">
+<h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Security Integrity</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-1.5 h-12 bg-primary rounded-full"></div>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span class="text-xs font-bold text-tertiary">Verification Score</span>
+<span class="text-xs font-mono text-primary">98.2%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[98%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-1.5 h-12 bg-secondary rounded-full"></div>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span class="text-xs font-bold text-tertiary">Data Authenticity</span>
+<span class="text-xs font-mono text-secondary">84.0%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[84%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-lg p-4 border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-error text-sm" data-icon="shield_lock" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+<span class="text-xs font-bold text-on-error-container">Immutability Lock</span>
+</div>
+<p class="text-[10px] text-on-surface-variant opacity-70 leading-relaxed">This file is anchored to the private blockchain. Any alterations to timeline nodes will trigger an immediate system-wide audit alert.</p>
+</div>
+</div>
+<!-- Related Exhibits -->
+<div class="space-y-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-2">Digital Exhibits</h3>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/10 group cursor-pointer hover:border-primary/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="description">description</span>
+<span class="text-sm font-medium">ledger_export_v2.csv</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity" data-icon="download">download</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/10 group cursor-pointer hover:border-primary/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="image">image</span>
+<span class="text-sm font-medium">surveillance_cam_B4.mp4</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity" data-icon="download">download</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

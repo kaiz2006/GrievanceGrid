@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GrievanceGrid | Forensic Verification Audit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#4c2700",
+              "surface-container": "#311724",
+              "on-background": "#ffd8e7",
+              "on-primary-container": "#713c00",
+              "primary-fixed": "#ffdcc2",
+              "surface-container-high": "#3d212f",
+              "on-tertiary-fixed": "#251a00",
+              "on-secondary": "#581e00",
+              "inverse-surface": "#ffd8e7",
+              "on-error": "#690005",
+              "surface-container-highest": "#492c39",
+              "secondary-container": "#8c3400",
+              "outline": "#a18d7e",
+              "on-secondary-fixed": "#360f00",
+              "inverse-primary": "#8f4e00",
+              "surface-container-low": "#2d1320",
+              "surface": "#230b18",
+              "on-surface-variant": "#d9c2b2",
+              "on-secondary-container": "#ffb08e",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d3b778",
+              "surface-container-lowest": "#1d0612",
+              "secondary-fixed": "#ffdbcd",
+              "tertiary-fixed": "#fddf9d",
+              "inverse-on-surface": "#442835",
+              "on-primary-fixed-variant": "#6d3a00",
+              "background": "#230b18",
+              "tertiary": "#f0d291",
+              "on-surface": "#ffd8e7",
+              "surface-dim": "#230b18",
+              "on-tertiary": "#3e2e00",
+              "primary-container": "#ffa552",
+              "tertiary-fixed-dim": "#e0c384",
+              "surface-tint": "#ffb77a",
+              "on-tertiary-container": "#5b4714",
+              "error-container": "#93000a",
+              "surface-bright": "#4e303e",
+              "primary": "#ffcba2",
+              "secondary": "#ffb596",
+              "surface-variant": "#492c39",
+              "outline-variant": "#534437"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { background-color: #230b18; color: #d9c2b2; font-family: 'Inter', sans-serif; }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: #1d0612; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #534437; border-radius: 10px; }
+      .high-density-grid { border-collapse: separate; border-spacing: 0; }
+      .high-density-grid th, .high-density-grid td { border-bottom: 1px solid rgba(83, 68, 55, 0.15); border-right: 1px solid rgba(83, 68, 55, 0.15); }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-[#2D1320]/60 backdrop-blur-xl border-r border-[#534437]/15 h-screen w-64 rounded-none shadow-2xl shadow-[#FFCBA2]/5">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black text-[#F0D291] tracking-tighter">GrievanceGrid</h1>
+<p class="text-[10px] font-medium uppercase tracking-widest text-[#D9C2B2] opacity-60">Institutional Suite</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 bg-[#311724] text-[#FFA552] rounded-lg px-4 py-3 border-l-4 border-[#FFA552] font-['Inter'] text-sm font-medium uppercase tracking-wider transition-all translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="gavel" style="font-variation-settings: 'FILL' 1;">gavel</span>
+<span>Audit</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-3 font-['Inter'] text-sm font-medium uppercase tracking-wider hover:bg-[#311724] hover:text-[#F0D291] transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-xs uppercase tracking-widest rounded-lg shadow-lg shadow-primary/10 hover:brightness-110 transition-all">
+                New Case
+            </button>
+<div class="mt-6 pt-6 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 text-[#D9C2B2] opacity-70 px-4 py-2 text-xs font-medium uppercase tracking-wider hover:text-[#F0D291] transition-all" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 h-screen flex flex-col bg-surface">
+<!-- TopNavBar Shell -->
+<header class="flex justify-between items-center w-full px-6 py-3 h-16 bg-[#230B18] z-30 border-b border-outline-variant/10">
+<div class="flex items-center gap-8">
+<div class="flex gap-6">
+<a class="text-[#F0D291] border-b-2 border-[#FFA552] pb-1 font-['Inter'] tracking-tight text-sm" href="#">Reports</a>
+<a class="text-[#D9C2B2] opacity-80 font-['Inter'] tracking-tight text-sm hover:text-[#F0D291] transition-colors" href="#">Directives</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<button class="p-2 text-[#D9C2B2] hover:bg-[#311724] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-[#D9C2B2] hover:bg-[#311724] rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant/30 flex items-center justify-center overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="Close up professional headshot of a person" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcBTmY__8d97ru_2kW9P8UcdXYEXU4_TYUJWYXElJATe2RH1OxZHNyEEW1LzDoqXOa0__HRN6G10_AoK4xxvONO7kWQCpFvlw6m8vNJmDDBFNFcQsWvL1zlauXu2XyiKeukzOC8vAl4mF0ImUlK111tOeI4GOmAz2MwF6656aUBLK5vR8B2SrOnvkY5Jx_QbER45Xz3tDM5AOprw0jkGKrltcFvUxP6p8krN80hngeq1_mYT_BOr5dJAORHHi-Mv14KX8u1eQ1pybq"/>
+</div>
+</div>
+</header>
+<!-- Workspace Layout -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left: Verification Log Table (High Density) -->
+<section class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- Audit Controls -->
+<div class="p-4 border-b border-outline-variant/10 flex items-center justify-between bg-surface-container-low/30">
+<div class="flex items-center gap-4">
+<h2 class="font-headline font-extrabold text-tertiary tracking-tight">VERIFICATION_LOG_V4.02</h2>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-[10px] font-mono text-primary uppercase tracking-tighter">FILTER: ACTIVE_ANOMALY</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-[10px] font-mono text-tertiary uppercase tracking-tighter">BATCH_ID: 9920-X</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 bg-surface-container border border-outline-variant/20 rounded text-xs font-bold text-on-surface-variant hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                            REORDER
+                        </button>
+<button class="px-3 py-1.5 bg-primary-container/20 text-primary rounded text-xs font-bold border border-primary/30 hover:bg-primary-container/30 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                            VERIFY ALL
+                        </button>
+</div>
+</div>
+<!-- High-Density Table Container -->
+<div class="flex-1 overflow-auto custom-scrollbar">
+<table class="w-full high-density-grid text-xs text-left">
+<thead class="sticky top-0 bg-surface-container-low z-10">
+<tr class="text-[10px] font-bold uppercase tracking-widest text-[#D9C2B2] opacity-50">
+<th class="p-3 w-12 text-center">ID</th>
+<th class="p-3">TIMESTAMP (UTC)</th>
+<th class="p-3">SOURCE_NODE</th>
+<th class="p-3">EVENT_CLASS</th>
+<th class="p-3">HASH_SIGNATURE</th>
+<th class="p-3">STATUS</th>
+<th class="p-3 w-20 text-center">ACTION</th>
+</tr>
+</thead>
+<tbody class="text-[11px] font-mono">
+<!-- Table Rows -->
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent hover:border-primary">
+<td class="p-3 text-center opacity-40">#001</td>
+<td class="p-3">2023-10-24 09:12:44.02</td>
+<td class="p-3 text-tertiary">PX-992-ALPHA</td>
+<td class="p-3">METRIC_EXCURSION</td>
+<td class="p-3 opacity-60">8f2c...4e1a</td>
+<td class="p-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/30 text-error border border-error/20 font-sans text-[10px]">
+<span class="w-1 h-1 rounded-full bg-error mr-1.5"></span>
+                                        CRITICAL_GAP
+                                    </span>
+</td>
+<td class="p-3 text-center">
+<span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 text-primary" data-icon="visibility">visibility</span>
+</td>
+</tr>
+<tr class="bg-surface-container-low/20 hover:bg-surface-container group cursor-pointer border-l-2 border-primary">
+<td class="p-3 text-center opacity-40">#002</td>
+<td class="p-3">2023-10-24 09:12:44.89</td>
+<td class="p-3 text-tertiary">PX-992-BETA</td>
+<td class="p-3 font-bold text-on-surface">IMAGE_VERIFICATION_REQD</td>
+<td class="p-3 opacity-60">0d9a...bc32</td>
+<td class="p-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/20 text-primary border border-primary/20 font-sans text-[10px]">
+<span class="w-1 h-1 rounded-full bg-primary mr-1.5"></span>
+                                        PENDING_VISUAL
+                                    </span>
+</td>
+<td class="p-3 text-center">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="visibility">visibility</span>
+</td>
+</tr>
+<!-- Multiple rows to fill space -->
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent">
+<td class="p-3 text-center opacity-40">#003</td>
+<td class="p-3">2023-10-24 09:14:02.11</td>
+<td class="p-3 text-tertiary">PX-991-NODE</td>
+<td class="p-3">SYSTEM_LOG_ENTRY</td>
+<td class="p-3 opacity-60">f1a0...9e2b</td>
+<td class="p-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant/70 border border-outline-variant/30 font-sans text-[10px]">
+<span class="w-1 h-1 rounded-full bg-on-surface-variant/40 mr-1.5"></span>
+                                        ROUTINE_AUDIT
+                                    </span>
+</td>
+<td class="p-3 text-center">
+<span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 text-primary" data-icon="visibility">visibility</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent">
+<td class="p-3 text-center opacity-40">#004</td>
+<td class="p-3">2023-10-24 09:15:33.45</td>
+<td class="p-3 text-tertiary">PX-992-ALPHA</td>
+<td class="p-3 text-on-surface">IMAGE_VERIFICATION_REQD</td>
+<td class="p-3 opacity-60">cc4d...110z</td>
+<td class="p-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/20 text-primary border border-primary/20 font-sans text-[10px]">
+<span class="w-1 h-1 rounded-full bg-primary mr-1.5"></span>
+                                        PENDING_VISUAL
+                                    </span>
+</td>
+<td class="p-3 text-center">
+<span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 text-primary" data-icon="visibility">visibility</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent">
+<td class="p-3 text-center opacity-40">#005</td>
+<td class="p-3">2023-10-24 09:18:11.90</td>
+<td class="p-3 text-tertiary">PX-SERVER-ROOT</td>
+<td class="p-3">VALID_CERT_STATE</td>
+<td class="p-3 opacity-60">8823...aa91</td>
+<td class="p-3">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#C4D6B0]/10 text-[#C4D6B0] border border-[#C4D6B0]/20 font-sans text-[10px]">
+<span class="w-1 h-1 rounded-full bg-[#C4D6B0] mr-1.5"></span>
+                                        VERIFIED
+                                    </span>
+</td>
+<td class="p-3 text-center">
+<span class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 text-primary" data-icon="visibility">visibility</span>
+</td>
+</tr>
+<!-- Fill visual space -->
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent"><td class="p-3 text-center opacity-40">#006</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3"></td></tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent"><td class="p-3 text-center opacity-40">#007</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3"></td></tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent"><td class="p-3 text-center opacity-40">#008</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3"></td></tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent"><td class="p-3 text-center opacity-40">#009</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3"></td></tr>
+<tr class="hover:bg-surface-container/50 group cursor-pointer transition-colors border-l-2 border-transparent"><td class="p-3 text-center opacity-40">#010</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3">...</td><td class="p-3"></td></tr>
+</tbody>
+</table>
+</div>
+<!-- Footer Summary -->
+<div class="h-10 px-4 bg-surface-container-lowest border-t border-outline-variant/10 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-on-surface-variant/40">
+<div class="flex gap-6">
+<span>TOTAL ENTRIES: 1,294</span>
+<span>FILTERED: 12</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-xs" data-icon="sync">sync</span>
+                        LIVE_UPDATE: ON
+                    </div>
+</div>
+</section>
+<!-- Right: Evidence View Panel (Fixed) -->
+<section class="w-[420px] border-l border-outline-variant/15 flex flex-col bg-surface-container-low/40">
+<div class="p-4 border-b border-outline-variant/10 flex items-center justify-between">
+<h3 class="text-xs font-black uppercase tracking-widest text-tertiary">Evidence_Inspector</h3>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center bg-surface-container border border-outline-variant/20 rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="open_in_full">open_in_full</span>
+</button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+<!-- Evidence Header Stats -->
+<div class="grid grid-cols-2 gap-2">
+<div class="p-3 bg-surface-container rounded-lg border border-outline-variant/10">
+<p class="text-[9px] uppercase tracking-widest opacity-40 mb-1">Confidence_Score</p>
+<div class="flex items-end gap-1">
+<span class="text-xl font-headline font-bold text-primary">82%</span>
+<span class="material-symbols-outlined text-primary text-sm mb-1" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="p-3 bg-surface-container rounded-lg border border-outline-variant/10">
+<p class="text-[9px] uppercase tracking-widest opacity-40 mb-1">Comparison_Type</p>
+<p class="text-xs font-bold text-tertiary">IMAGE_MATCH_V2</p>
+</div>
+</div>
+<!-- Comparison Tool -->
+<div class="space-y-2">
+<div class="relative group">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-2 px-1">Source: Reference_Archive</p>
+<div class="aspect-video bg-surface-container-highest rounded-lg overflow-hidden border border-outline-variant/30 relative">
+<img alt="Server Hardware Reference" class="w-full h-full object-cover grayscale opacity-60" data-alt="High quality close up of server room components" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhH-XWexxUFF20-kh7LcW0sKm4s2BMm5_nniFk3-jEVE4ps59vdzrMCvSPCIlX7cDMHpcBDa9XBVRM7x-sBDGp9SBqp0Ah5l9bkgDLBrHAh39BGUI-xeQn2GuSxjwIFUvSk9wloNQ0hMjAPuaZU93qC5FhfNSejzkMaetwjjQZFEJpA01d4cSryv2eBh7UULa4KR2VnSFefBo_TWB2JMdrIVJX_wy9hTM5tee8a6MKQS1MwalgdkOeek80V_WRr0lm3yerl7VBcrCa"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-40"></div>
+<div class="absolute top-2 right-2 flex gap-1">
+<span class="px-2 py-0.5 bg-surface/80 backdrop-blur rounded text-[9px] border border-outline-variant/20">CAM_04</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center -my-2 z-10 relative">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/20 border-2 border-surface">
+<span class="material-symbols-outlined text-on-primary text-sm" data-icon="compare">compare</span>
+</div>
+</div>
+<div class="relative group">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/60 mb-2 px-1">Source: Forensic_Dump</p>
+<div class="aspect-video bg-surface-container-highest rounded-lg overflow-hidden border-2 border-primary/50 relative shadow-2xl shadow-primary/5">
+<img alt="Log Entry Artifact" class="w-full h-full object-cover" data-alt="Macro photo of glowing circuit board with orange light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQcwKggdKTIdCUnwHmZmgvx554wmSgoc1g7nhso1usVYYPPR5_VPcByJJ8FQQ1wFjlcAGbNfNSGSS9n_WRZbW4yTWuMpW1nzvhGfnu59OYCLg3xci1I7Z3mgE9-Pk2I6Bs6cJmsOk7glLhiumwXTHAwvsB7RkDirGtXt7TUTdzDQrrFPQ2pRjEp9Wd545_4lHQ2E6kO88aVHVdpBWWrctjJZMBGVE_kTgl2Xk8vAxXjqnU-pBhLHzA_WbNHLL2FoYYN9PIZjjavZWL"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-24 h-24 border border-primary/40 rounded-full animate-pulse flex items-center justify-center">
+<div class="w-12 h-12 border border-primary/60 rounded-full"></div>
+</div>
+</div>
+<div class="absolute bottom-2 left-2 bg-error/90 text-on-error px-2 py-1 rounded text-[10px] font-bold">ANOMALY_DETECTED</div>
+</div>
+</div>
+</div>
+<!-- Discrepancy Analysis -->
+<div class="p-4 bg-surface-container rounded-lg border border-outline-variant/10 space-y-3">
+<div class="flex items-center gap-2 border-b border-outline-variant/10 pb-2">
+<span class="material-symbols-outlined text-sm text-error" data-icon="warning">warning</span>
+<span class="text-[10px] font-black uppercase tracking-widest text-on-surface">Analysis_Report</span>
+</div>
+<ul class="text-[11px] space-y-2 text-on-surface-variant leading-relaxed">
+<li class="flex gap-2">
+<span class="text-tertiary">01:</span>
+<span>Unauthenticated component PX-992-BETA observed in chassis bay 4.</span>
+</li>
+<li class="flex gap-2">
+<span class="text-tertiary">02:</span>
+<span>Power draw exceeds standard profile by 14.2%.</span>
+</li>
+<li class="flex gap-2">
+<span class="text-tertiary">03:</span>
+<span>Firmware checksum mismatch (REF: 0d9a...bc32).</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Evidence Actions -->
+<div class="p-4 border-t border-outline-variant/10 bg-surface-container-low grid grid-cols-2 gap-2">
+<button class="py-2.5 rounded border border-outline-variant/30 text-xs font-bold uppercase tracking-widest hover:bg-surface-container-highest transition-colors">Dismiss</button>
+<button class="py-2.5 rounded bg-primary text-on-primary text-xs font-black uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/10">Flag_Entry</button>
+</div>
+</section>
+</div>
+</main>
+</body></html>

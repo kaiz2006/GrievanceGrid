@@ -1,150 +1,130 @@
-const auditLog = [
-  { text: "[SYSTEM] Processing cluster analysis...", type: "normal" },
-  { text: "[AI] Routing field crew to Gamma-7.", type: "normal" },
-  { text: "[WARNING] Anomaly detected in Grid 4A.", type: "warn" },
-  { text: "[ALERT] Hotspot critical in Sector Zeta.", type: "alert" },
-  { text: "[SYSTEM] Re-routing backup protocols.", type: "normal" },
-  { text: "> _", type: "blink" },
-];
+import Link from "next/link";
+import React from "react";
 
-const sectors = [
-  { label: "Sector Alpha", icon: "error", iconColor: "#f87171", bars: [1, 1, 1, 0.2] },
-  { label: "Sector Beta", icon: "check_circle", iconColor: "var(--sage)", bars: [1, 0.2, 0.2, 0.2] },
-  { label: "Sector Gamma", icon: "warning", iconColor: "var(--amber)", bars: [1, 1, 0.2, 0.2] },
-];
-
-const hudStats = [
-  { label: "Total Active", value: "14,285", trend: "+12%", trendColor: "var(--sage)" },
-  { label: "SLA Compliance", value: "87.4%", trend: "-2.1%", trendColor: "#f87171" },
-  { label: "Critical Clusters", value: "24", trend: "+4", trendColor: "var(--sage)" },
-];
-
-export default function MissionControlPage() {
+export default function GeneratedPage() {
   return (
-    <div className="flex h-screen flex-col overflow-hidden font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      {/* Top KPI strip */}
-      <header className="flex flex-wrap shrink-0 gap-4 p-5 z-10">
-        {hudStats.map((s) => (
-          <div key={s.label} className="flex-1 min-w-50 rounded-md border p-4 flex flex-col justify-between shadow-sm transition-all hover:-translate-y-px"
-            style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <h2 className="mb-2 text-xs font-medium uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>{s.label}</h2>
-            <div className="flex items-end justify-between">
-              <span className="font-mono text-3xl font-bold" style={{ color: "var(--text)" }}>{s.value}</span>
-              <span className="font-bold text-sm" style={{ color: s.trendColor }}>{s.trend}</span>
-            </div>
-          </div>
-        ))}
-      </header>
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-      {/* Main area */}
-      <main className="relative flex flex-1 overflow-hidden">
-        {/* Background "map" */}
-        <div className="absolute inset-0 z-0 bg-surface grid-bg opacity-40" />
-        
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: "linear-gradient(rgba(255,165,82,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,165,82,0.1) 1px, transparent 1px)",
-              backgroundSize: "60px 60px",
-            }} />
-          
-          {/* Cluster blobs */}
-          <div className="absolute top-1/4 left-1/3 h-48 w-48 rounded-full blur-3xl"
-            style={{ background: "rgba(56, 29, 42, 0.3)" }} />
-          <div className="absolute bottom-1/3 right-1/4 h-64 w-64 rounded-full blur-3xl"
-            style={{ background: "rgba(255, 165, 82, 0.05)" }} />
-          
-          {/* Warning pin */}
-          <div className="absolute top-1/2 left-1/2 flex h-16 w-16 items-center justify-center rounded-full border pulse-amber"
-            style={{ background: "rgba(248,113,113,0.1)", borderColor: "rgba(248,113,113,0.4)", boxShadow: "0 0 30px rgba(248,113,113,0.2)" }}>
-            <span className="material-symbols-outlined text-red-400">warning</span>
-          </div>
+<header className="flex flex-wrap gap-4 p-6 z-10 w-full shrink-0">
+<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Total Active</h2>
+<div className="flex justify-between items-end">
+<span className="text-3xl font-bold font-mono text-plum">14,285</span>
+<span className="text-sage font-bold text-sm">+12%</span>
+</div>
+</div>
+<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">SLA Compliance</h2>
+<div className="flex justify-between items-end">
+<span className="text-3xl font-bold font-mono text-plum">87.4%</span>
+<span className="text-red-400 font-bold text-sm">-2.1%</span>
+</div>
+</div>
+<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
+<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Critical Clusters</h2>
+<div className="flex justify-between items-end">
+<span className="text-3xl font-bold font-mono text-plum">24</span>
+<span className="text-sage font-bold text-sm">+4</span>
+</div>
+</div>
+</header>
+<main className="flex-1 flex overflow-hidden relative">
+<div className="absolute inset-0 z-0 bg-white grid-bg" data-alt="High-contrast light grey/white interactive map" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuBkbeKEdriTCooN5ES2dwMLlrgitmBb_Qcfdt4I2rfj8loWjN3WHrHKa9K1Par4YJsCBai_1RXnoxJL3FWK7yRdA4tY8D5bw1ZacfeN_IhLbZEhYKHCgp-7sfVu1JfV7YjKm20qo3OAB3p2jfep2QHL2tioilWB4hTQnvNX6Wcn3EZkBfxM8ABeCqLHCMpMnJhQ8tIllWH4UDkuEgtRxVJtHjERmmBX9opI-WPAKjKIjLVoSEPxxbSqNzyOl3L7F8dPD0UAgZExxcbo\')', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'luminosity', opacity: '0.7' }}>
+<div className="absolute top-1/4 left-1/3 w-32 h-32 bg-plum/10 rounded-full blur-sm border border-plum/20"></div>
+<div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-plum/5 rounded-full blur-md border border-plum/20"></div>
+<div className="absolute top-1/2 left-1/2 w-16 h-16 bg-red-100/50 border border-plum rounded-full flex items-center justify-center" style={{ boxShadow: '0 0 15px 2px rgba(56, 29, 42, 0.1)' }}>
+<span className="material-symbols-outlined text-plum font-light">warning</span>
+</div>
+<div className="absolute top-1/3 right-1/3 w-4 h-4 bg-sage border border-plum rotate-45 flex items-center justify-center shadow-sm">
+<div className="w-1 h-1 bg-white rounded-full"></div>
+</div>
+<div className="absolute bottom-1/4 left-1/4 w-4 h-4 bg-sage border border-plum rotate-45 flex items-center justify-center shadow-sm">
+<div className="w-1 h-1 bg-white rounded-full"></div>
+</div>
+</div>
+<aside className="w-80 h-[calc(100vh-140px)] ml-6 flex flex-col z-10 reduced-industrial bg-white/95 backdrop-blur-sm relative">
+<div className="p-4 border-b border-plum/20 flex items-center justify-between">
+<h1 className="text-lg font-medium uppercase tracking-wider text-plum">Sector Status</h1>
+<span className="material-symbols-outlined text-plum text-2xl font-light">radar</span>
+</div>
+<div className="flex-1 overflow-y-auto p-4 space-y-3">
+<div className="p-3 bg-gray-50 rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div className="flex justify-between items-center mb-2">
+<span className="text-sm font-medium uppercase text-plum">Sector Alpha</span>
+<span className="material-symbols-outlined text-plum text-sm">error</span>
+</div>
+<div className="flex gap-1 h-1.5">
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+<div className="p-3 bg-gray-50 rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div className="flex justify-between items-center mb-2">
+<span className="text-sm font-medium uppercase text-plum">Sector Beta</span>
+<span className="material-symbols-outlined text-sage text-sm">check_circle</span>
+</div>
+<div className="flex gap-1 h-1.5">
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+<div className="p-3 bg-gray-50 rounded border border-plum/10 hover:border-plum/30 transition-colors cursor-pointer">
+<div className="flex justify-between items-center mb-2">
+<span className="text-sm font-medium uppercase text-plum">Sector Gamma</span>
+<span className="material-symbols-outlined text-yellow-600 text-sm">warning</span>
+</div>
+<div className="flex gap-1 h-1.5">
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+<div className="flex-1 bg-plum/20 rounded-full"></div>
+</div>
+</div>
+</div>
+<div className="p-4 border-t border-plum/20 bg-white rounded-b">
+<Link href="/admin/forensic-verify" className="w-full bg-plum text-white text-sm font-medium py-2.5 uppercase tracking-wider rounded border border-transparent hover:bg-plum/90 transition-colors shadow-sm">
+                    Deploy Crew
+                </Link>
+</div>
+</aside>
+<div className="absolute top-6 right-6 z-10 flex flex-col gap-2">
+<div className="reduced-industrial flex flex-col overflow-hidden">
+<Link href="/admin/grievances" className="p-2 border-b border-plum/20 hover:bg-gray-50 flex items-center justify-center transition-colors">
+<span className="material-symbols-outlined text-plum font-light">add</span>
+</Link>
+<Link href="/admin/mission-control" className="p-2 hover:bg-gray-50 flex items-center justify-center transition-colors">
+<span className="material-symbols-outlined text-plum font-light">remove</span>
+</Link>
+</div>
+<Link href="/admin/mission-control" className="reduced-industrial p-2 hover:bg-gray-50 flex items-center justify-center mt-2 transition-colors">
+<span className="material-symbols-outlined text-plum font-light">my_location</span>
+</Link>
+</div>
+<div className="absolute bottom-6 right-6 z-10 w-96 reduced-industrial overflow-hidden bg-light-slate">
+<div className="bg-white px-3 py-2 flex justify-between items-center border-b border-plum/20">
+<span className="text-plum font-medium uppercase text-xs tracking-wider">AI Audit Stream</span>
+<div className="flex gap-1.5">
+<div className="w-2.5 h-2.5 rounded-full border border-plum bg-transparent"></div>
+<div className="w-2.5 h-2.5 rounded-full border border-plum bg-transparent"></div>
+</div>
+</div>
+<div className="p-4 h-48 overflow-y-auto font-mono text-plum text-xs flex flex-col gap-2 bg-light-slate/50">
+<p className="opacity-80">&gt; [SYSTEM] Processing cluster analysis...</p>
+<p className="opacity-80">&gt; [AI] Routing field crew to Gamma-7.</p>
+<p className="text-yellow-700">&gt; [WARNING] Anomaly detected in Grid 4A.</p>
+<p className="text-red-700 font-bold">&gt; [ALERT] Hotspot critical in Sector Zeta.</p>
+<p className="opacity-80">&gt; [SYSTEM] Re-routing backup protocols.</p>
+<p>&gt; _</p>
+</div>
+</div>
+</main>
 
-          {/* Diamonds */}
-          {[[33, 65], [72, 22]].map(([t, l], i) => (
-            <div key={i} className="absolute flex h-5 w-5 rotate-45 items-center justify-center border shadow-glow-sage"
-              style={{ top: `${t}%`, left: `${l}%`, background: "var(--sage)", borderColor: "rgba(255,255,255,0.3)" }}>
-              <div className="h-1.5 w-1.5 rounded-full bg-white shadow-sm" />
-            </div>
-          ))}
-        </div>
-
-        {/* Left sector panel */}
-        <aside className="relative z-10 ml-6 flex w-80 h-[calc(100%-40px)] my-5 flex-col rounded-md border backdrop-blur-xl shadow-2xl"
-          style={{ background: "rgba(13, 8, 11, 0.92)", borderColor: "var(--border)" }}>
-          <div className="flex items-center justify-between border-b p-4" style={{ borderColor: "var(--border)" }}>
-            <h1 className="text-base font-semibold uppercase tracking-wider text-text">Sector Status</h1>
-            <span className="material-symbols-outlined text-2xl text-amber">radar</span>
-          </div>
-
-          <div className="flex-1 space-y-3 overflow-y-auto p-4 custom-scrollbar">
-            {sectors.map((s) => (
-              <div key={s.label} className="cursor-pointer rounded border p-4 transition-all hover:bg-white/5 group"
-                style={{ background: "rgba(255,165,82,0.03)", borderColor: "var(--border-subtle)" }}>
-                <div className="mb-2.5 flex items-center justify-between">
-                  <span className="text-sm font-semibold uppercase tracking-wide text-text-secondary group-hover:text-text transition-colors">{s.label}</span>
-                  <span className="material-symbols-outlined text-lg" style={{ color: s.iconColor }}>{s.icon}</span>
-                </div>
-                <div className="flex gap-1.5 h-1.5">
-                  {s.bars.map((opacity, i) => (
-                    <div key={i} className="flex-1 rounded-full transition-all" style={{ background: `rgba(255,165,82,${opacity * 0.8})` }} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t p-4" style={{ borderColor: "var(--border)" }}>
-            <button className="dark-btn w-full py-3 text-sm font-bold uppercase tracking-widest transition-all hover:shadow-glow-amber"
-              style={{ background: "var(--amber)", border: "none", color: "#0d080b" }}>
-              Deploy Crew
-            </button>
-          </div>
-        </aside>
-
-        {/* Map zoom controls */}
-        <div className="absolute right-6 top-6 z-10 flex flex-col gap-2">
-          <div className="flex flex-col overflow-hidden rounded-md border shadow-lg" 
-            style={{ background: "rgba(13, 8, 11, 0.9)", borderColor: "var(--border)" }}>
-            {["add", "remove"].map((icon) => (
-              <button key={icon} className="flex items-center justify-center border-b p-2.5 transition-colors hover:bg-white/10"
-                style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                <span className="material-symbols-outlined text-[20px]">{icon}</span>
-              </button>
-            ))}
-          </div>
-          <button className="flex items-center justify-center rounded-md border p-2.5 shadow-lg transition-colors hover:bg-white/10"
-            style={{ background: "rgba(13, 8, 11, 0.9)", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-            <span className="material-symbols-outlined text-[20px]">my_location</span>
-          </button>
-        </div>
-
-        {/* AI Audit Stream terminal */}
-        <div className="absolute bottom-6 right-6 z-10 w-100 overflow-hidden rounded-md border shadow-2xl"
-          style={{ background: "rgba(13, 8, 11, 0.96)", borderColor: "var(--border)" }}>
-          <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
-            <span className="font-bold uppercase text-[11px] tracking-[0.2em] text-amber">AI Audit Stream</span>
-            <div className="flex gap-2">
-              {[0, 1].map((i) => (
-                <div key={i} className="h-2 w-2 rounded-full border" style={{ borderColor: "var(--border)" }} />
-              ))}
-            </div>
-          </div>
-          <div className="flex h-52 flex-col gap-2.5 overflow-y-auto p-5 font-mono text-[11px] leading-relaxed custom-scrollbar">
-            {auditLog.map((line, i) => (
-              <p key={i} className={`${line.type === "blink" ? "animate-pulse" : ""} opacity-90`}
-                style={{
-                  color: line.type === "alert" ? "#f87171"
-                    : line.type === "warn" ? "var(--amber)"
-                      : "var(--text-secondary)",
-                  fontWeight: line.type === "alert" ? "bold" : "normal",
-                }}>
-                <span className="text-amber/50 mr-2">&gt;</span>{line.text}
-              </p>
-            ))}
-          </div>
-        </div>
-      </main>
-    </div>
+</div>
+    </>
   );
 }

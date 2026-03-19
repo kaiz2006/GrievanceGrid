@@ -1,176 +1,187 @@
-const logRows = [
-  { id: "LOG-8831", ts: "2023-10-27T14:32:01Z", variance: "89m", status: "FLAGGED", statusColor: "var(--amber)", statusBg: "rgba(255,165,82,0.1)", isCritical: false },
-  { id: "LOG-8832", ts: "2023-10-27T14:35:12Z", variance: "12m", status: "VERIFIED", statusColor: "var(--sage)", statusBg: "rgba(196,214,176,0.1)", isCritical: false },
-  { id: "LOG-8833", ts: "2023-10-27T15:01:44Z", variance: "145m", status: "CRITICAL", statusColor: "#BA5624", statusBg: "rgba(186,86,36,0.1)", isCritical: true },
-  { id: "LOG-8834", ts: "2023-10-27T15:10:05Z", variance: "3m", status: "VERIFIED", statusColor: "var(--sage)", statusBg: "rgba(196,214,176,0.1)", isCritical: false },
-  { id: "LOG-8835", ts: "2023-10-27T15:22:30Z", variance: "55m", status: "FLAGGED", statusColor: "var(--amber)", statusBg: "rgba(255,165,82,0.1)", isCritical: false },
-];
+import Link from "next/link";
+import React from "react";
 
-export default function ForensicVerificationPage() {
+export default function GeneratedPage() {
   return (
-    <div className="flex min-h-screen flex-col font-display antialiased" style={{ background: "var(--background)", color: "var(--text)" }}>
-      {/* Header */}
-      <header className="flex shrink-0 items-center justify-between border-b px-6 py-4 shadow-sm"
-        style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3" style={{ color: "var(--text)" }}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-md" style={{ background: "var(--amber)" }}>
-              <span className="material-symbols-outlined font-medium text-xl" style={{ color: "#1a0f0a" }}>policy</span>
-            </div>
-            <h1 className="text-xl font-bold uppercase tracking-wide">GrievanceGrid Audit</h1>
-          </div>
-          <div className="flex items-center overflow-hidden rounded-md border h-10"
-            style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-            <div className="flex h-full items-center justify-center border-r px-3" style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}>
-              <span className="material-symbols-outlined text-lg">search</span>
-            </div>
-            <input className="h-full bg-transparent px-4 font-mono text-sm placeholder-muted focus:outline-none w-56"
-              style={{ color: "var(--text)" }} placeholder="Search LOG_ID..." />
-          </div>
-        </div>
-        <button className="rounded-md px-5 py-2.5 font-semibold text-sm tracking-wide transition-all hover:opacity-90"
-          style={{ background: "var(--amber)", color: "#1a0f0a" }}>
-          Run Integrity Check
-        </button>
-      </header>
+    <>
+<div className="w-full min-h-screen bg-background font-display text-primary">
 
-      <div className="flex flex-1 gap-5 overflow-hidden p-5">
-        {/* Main table */}
-        <main className="flex flex-1 min-w-0 flex-col gap-3 overflow-hidden">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 shrink-0">
-            {[
-              { label: "Date Range", color: "var(--text-secondary)" },
-              { label: "Variance > 50m", color: "#BA5624" },
-              { label: "Status: Unverified", color: "var(--text-secondary)" },
-            ].map((f) => (
-              <button key={f.label} className="flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors"
-                style={{ background: "var(--card)", borderColor: "var(--border)", color: f.color }}>
-                {f.label}
-                <span className="material-symbols-outlined text-lg">expand_more</span>
-              </button>
-            ))}
-          </div>
+<header className="bg-white flex items-center justify-between px-6 py-4 shrink-0 shadow-sm border-b border-slate-200">
+<div className="flex items-center gap-6">
+<div className="flex items-center gap-3 text-deep-plum">
+<div className="w-8 h-8 bg-deep-plum text-white flex items-center justify-center rounded-md shadow-ambient">
+<span className="material-symbols-outlined font-medium text-xl">policy</span>
+</div>
+<h1 className="text-xl font-bold uppercase tracking-wide">GrievanceGrid Audit</h1>
+</div>
+<div className="flex items-center bg-slate-50 border border-slate-200 rounded-md h-10 shadow-sm focus-within:border-deep-plum focus-within:ring-1 focus-within:ring-deep-plum transition-all overflow-hidden">
+<div className="flex items-center justify-center px-3 text-slate-400 bg-white border-r border-slate-200 h-full">
+<span className="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input className="border-none focus:ring-0 bg-transparent h-full px-4 w-64 font-mono text-sm placeholder-slate-400 text-slate-700" placeholder="Search LOG_ID..." type="text"/>
+</div>
+</div>
+<Link href="/admin/mission-control" className="bg-deep-plum text-white rounded-md shadow-ambient px-5 py-2.5 font-semibold text-sm tracking-wide hover:bg-opacity-90 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-deep-plum">
+            Run Integrity Check
+        </Link>
+</header>
+<div className="flex flex-1 overflow-hidden p-6 gap-6">
+<main className="flex-1 flex flex-col min-w-0 bg-transparent overflow-hidden gap-4">
+<div className="flex gap-3 flex-wrap shrink-0">
+<Link href="/admin/mission-control" className="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+<span>Date Range</span>
+<span className="material-symbols-outlined text-[18px]">expand_more</span>
+</Link>
+<Link href="/admin/mission-control" className="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-burnt-orange hover:bg-orange-50 transition-colors">
+<span>Variance &gt; 50m</span>
+<span className="material-symbols-outlined text-[18px]">expand_more</span>
+</Link>
+<Link href="/admin/forensic-verify" className="bg-white border border-slate-200 rounded-md shadow-sm px-4 py-2 flex items-center gap-2 font-medium text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+<span>Status: Unverified</span>
+<span className="material-symbols-outlined text-[18px]">expand_more</span>
+</Link>
+</div>
+<div className="flex-1 bg-white border border-slate-200 rounded-md shadow-ambient overflow-auto">
+<table className="w-full text-left border-collapse">
+<thead className="bg-deep-plum text-white sticky top-0 z-10 shadow-sm">
+<tr>
+<th className="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">LOG_ID</th>
+<th className="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">TIMESTAMP</th>
+<th className="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">GPS_VARIANCE</th>
+<th className="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap">STATUS</th>
+<th className="p-4 border-b border-slate-200 font-display font-semibold text-xs uppercase tracking-wider whitespace-nowrap w-24 text-center">ACTION</th>
+</tr>
+</thead>
+<tbody className="font-mono text-sm text-slate-600">
+<tr className="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td className="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8831</td>
+<td className="p-4 border-r border-slate-100">2023-10-27T14:32:01Z</td>
+<td className="p-4 border-r border-slate-100 text-burnt-orange font-medium">89m</td>
+<td className="p-4 border-r border-slate-100">
+<span className="bg-amber-flagged/10 text-amber-flagged border border-amber-flagged/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">FLAGGED</span>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span className="material-symbols-outlined block text-[20px]">visibility</span>
+</Link>
+</td>
+</tr>
+<tr className="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td className="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8832</td>
+<td className="p-4 border-r border-slate-100">2023-10-27T14:35:12Z</td>
+<td className="p-4 border-r border-slate-100">12m</td>
+<td className="p-4 border-r border-slate-100">
+<span className="bg-slate-100 text-slate-600 border border-slate-200 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">VERIFIED</span>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span className="material-symbols-outlined block text-[20px]">visibility</span>
+</Link>
+</td>
+</tr>
+<tr className="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group bg-orange-50/30">
+<td className="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8833</td>
+<td className="p-4 border-r border-slate-100">2023-10-27T15:01:44Z</td>
+<td className="p-4 border-r border-slate-100 text-burnt-orange font-semibold">145m</td>
+<td className="p-4 border-r border-slate-100">
+<span className="bg-burnt-orange/10 text-burnt-orange border border-burnt-orange/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">CRITICAL</span>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="p-1.5 rounded-md text-burnt-orange hover:bg-burnt-orange/10 transition-colors">
+<span className="material-symbols-outlined block text-[20px]">gavel</span>
+</Link>
+</td>
+</tr>
+<tr className="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td className="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8834</td>
+<td className="p-4 border-r border-slate-100">2023-10-27T15:10:05Z</td>
+<td className="p-4 border-r border-slate-100">3m</td>
+<td className="p-4 border-r border-slate-100">
+<span className="bg-slate-100 text-slate-600 border border-slate-200 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">VERIFIED</span>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span className="material-symbols-outlined block text-[20px]">visibility</span>
+</Link>
+</td>
+</tr>
+<tr className="hover:bg-peach-hover cursor-pointer border-b border-slate-100 transition-colors group">
+<td className="p-4 border-r border-slate-100 font-medium text-deep-plum">LOG-8835</td>
+<td className="p-4 border-r border-slate-100">2023-10-27T15:22:30Z</td>
+<td className="p-4 border-r border-slate-100 text-amber-flagged font-medium">55m</td>
+<td className="p-4 border-r border-slate-100">
+<span className="bg-amber-flagged/10 text-amber-flagged border border-amber-flagged/20 rounded px-2.5 py-1 uppercase text-xs font-display font-semibold">FLAGGED</span>
+</td>
+<td className="p-4 text-center">
+<Link href="/admin/mission-control" className="p-1.5 rounded-md text-slate-400 hover:text-deep-plum hover:bg-slate-100 transition-colors">
+<span className="material-symbols-outlined block text-[20px]">visibility</span>
+</Link>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<aside className="w-[380px] shrink-0 bg-white border border-slate-200 rounded-md shadow-ambient flex flex-col overflow-y-auto">
+<div className="p-5 border-b border-slate-200 bg-slate-50 sticky top-0 z-10">
+<h2 className="text-lg font-bold text-deep-plum uppercase tracking-wide flex items-center gap-2">
+<span className="material-symbols-outlined text-[22px]">folder_open</span>
+                    Evidence File
+                </h2>
+<p className="font-mono text-xs mt-1.5 text-slate-500 flex items-center gap-1.5">
+<span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ACTIVE_LOG: LOG-8831
+                </p>
+</div>
+<div className="p-5 flex flex-col gap-6">
+<div className="space-y-3">
+<h3 className="font-semibold text-slate-700 uppercase tracking-wider text-xs border-b border-slate-200 pb-2">Visual Verification</h3>
+<div className="grid grid-cols-2 gap-3">
+<div className="flex flex-col gap-1.5">
+<div className="bg-slate-100 aspect-square border border-deep-plum/30 rounded shadow-sm relative overflow-hidden group">
+<div className="absolute inset-0 bg-cover bg-center" data-alt="Citizen reported pothole issue" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuDoghVjbZJI2wj6Ko7s0NUofZHWkdHD6syBIfjj3fvP3HPirwnBU8yXn5hR_ofZkxrtIcdnf23gOf7VPd02XR0NNvJ10ZAESjUxmGcHYgFhZ__nkgpoPSEzqHdluhGDEFXMgspns-K9uEUGPNt8QtkPahH1wiIHfyMcZbTEBrDU1rybBBSBmSxcVnHW5_tBta8Hw8ISjgUFzD0i351-hmApTaUVHW0nDp1ppES1eD35hxo5ZTye3J4r55n9GmF9OD85rP4c0aS7Pfje\')' }}></div>
+<div className="absolute bottom-0 left-0 right-0 bg-deep-plum/90 text-white font-mono text-[9px] p-1.5 truncate">CITIZEN_UPLOAD.JPG</div>
+</div>
+</div>
+<div className="flex flex-col gap-1.5">
+<div className="bg-slate-100 aspect-square border border-deep-plum/30 rounded shadow-sm relative overflow-hidden group">
+<div className="absolute inset-0 bg-cover bg-center" data-alt="Crew patched road surface" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuDy_AK92ejbPF64NcSyZXJDmgdUhytbQfHMMfXlNnepuacnj78Yalu-i73uQP-tI7RRFwhMe0eEURalB74D1Kdo-M9zYpt6BDOis40YV_LxMES-314IyablHbEiEcy563J6Lsx_lwL7QYlziYPK0lWq6HknQ7AXKC3Ut5cm2A7W579SmIoDLEIWkqNiUH5HK734rqQqaMqJyGWNoASCPtfLwnVNLLJeltyEM_zi3I9gLnxTYnVcBEd-ETV6xSSBF8LlUnx24tCiOWYK\')' }}></div>
+<div className="absolute bottom-0 left-0 right-0 bg-deep-plum/90 text-white font-mono text-[9px] p-1.5 truncate">CREW_VERIFY.JPG</div>
+</div>
+</div>
+</div>
+</div>
+<div className="space-y-3">
+<h3 className="font-semibold text-slate-700 uppercase tracking-wider text-xs border-b border-slate-200 pb-2">Auditor Memo</h3>
+<div className="bg-amber-50 border border-amber-200 rounded shadow-sm p-4 relative min-h-[160px]">
+<textarea className="w-full h-full bg-transparent border-none focus:ring-0 resize-none font-mono text-sm p-0 text-slate-800 placeholder-slate-400" placeholder="Enter forensic notes here..."></textarea>
+</div>
+</div>
+<div className="space-y-3 mt-auto pt-4 border-t border-slate-100">
+<Link href="/admin/grievances" className="w-full bg-deep-plum text-white rounded py-2.5 font-semibold text-sm tracking-wide hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span className="material-symbols-outlined text-[18px]">gavel</span>
+                        Issue Violation
+                    </Link>
+<Link href="/admin/forensic-verify" className="w-full bg-white text-slate-700 border border-slate-300 rounded py-2.5 font-semibold text-sm tracking-wide hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span className="material-symbols-outlined text-[18px]">check_circle</span>
+                        Force Verify
+                    </Link>
+</div>
+</div>
+</aside>
+</div>
+<footer className="bg-deep-plum text-slate-300 font-mono text-xs px-6 py-3 flex justify-between shrink-0 border-t border-deep-plum/20">
+<div className="flex gap-6">
+<span className="flex items-center gap-1.5">SYS.STATUS: <span className="text-emerald-400 font-medium flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>ONLINE</span></span>
+<span>NODE: <span className="text-white">US-EAST-G1</span></span>
+<span>DB_LATENCY: <span className="text-white">14ms</span></span>
+</div>
+<div className="flex gap-6">
+<span>UNVERIFIED: <span className="text-amber-flagged font-medium">1,204</span></span>
+<span>CRITICAL: <span className="text-burnt-orange font-medium">89</span></span>
+</div>
+</footer>
 
-          {/* Table */}
-          <div className="flex-1 overflow-auto rounded-md border" style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-            <table className="w-full text-left">
-              <thead className="sticky top-0 z-10" style={{ background: "var(--amber)" }}>
-                <tr>
-                  {["LOG_ID", "TIMESTAMP", "GPS_VARIANCE", "STATUS", "ACTION"].map((h, i) => (
-                    <th key={h} className={`border-b p-4 font-semibold text-xs uppercase tracking-wider whitespace-nowrap ${i === 4 ? "w-24 text-center" : ""}`}
-                      style={{ borderColor: "rgba(26,15,10,0.2)", color: "#1a0f0a" }}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="font-mono text-sm divide-y" style={{ color: "var(--text-secondary)", borderColor: "var(--border-subtle)" }}>
-                {logRows.map((r) => (
-                  <tr key={r.id} className="cursor-pointer transition-colors hover:bg-elevated/30"
-                    style={r.isCritical ? { background: "rgba(186,86,36,0.04)" } : {}}>
-                    <td className="border-r p-4 font-medium" style={{ borderColor: "var(--border-subtle)", color: "var(--amber)" }}>{r.id}</td>
-                    <td className="border-r p-4" style={{ borderColor: "var(--border-subtle)" }}>{r.ts}</td>
-                    <td className="border-r p-4 font-medium" style={{ borderColor: "var(--border-subtle)", color: r.variance.length > 3 ? "#BA5624" : "var(--text-secondary)" }}>
-                      {r.variance}
-                    </td>
-                    <td className="border-r p-4" style={{ borderColor: "var(--border-subtle)" }}>
-                      <span className="rounded border px-2.5 py-1 text-xs font-semibold uppercase"
-                        style={{ background: r.statusBg, borderColor: `${r.statusColor}33`, color: r.statusColor }}>
-                        {r.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-center">
-                      <button className="rounded-md p-1.5 transition-colors hover:bg-elevated"
-                        style={{ color: r.isCritical ? "#BA5624" : "var(--text-muted)" }}>
-                        <span className="material-symbols-outlined text-lg block">{r.isCritical ? "gavel" : "visibility"}</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </main>
-
-        {/* Evidence sidebar */}
-        <aside className="flex w-[360px] shrink-0 flex-col overflow-y-auto rounded-md border"
-          style={{ background: "var(--card)", borderColor: "var(--border)" }}>
-          <div className="sticky top-0 z-10 border-b p-5" style={{ background: "var(--elevated)", borderColor: "var(--border)" }}>
-            <h2 className="flex items-center gap-2 text-lg font-bold uppercase tracking-wide"
-              style={{ color: "var(--text)" }}>
-              <span className="material-symbols-outlined text-xl" style={{ color: "var(--amber)" }}>folder_open</span>
-              Evidence File
-            </h2>
-            <p className="mt-1.5 flex items-center gap-1.5 font-mono text-xs" style={{ color: "var(--text-muted)" }}>
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--sage)" }} />
-              ACTIVE_LOG: LOG-8831
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-6 p-5">
-            {/* Visual verification */}
-            <div className="space-y-3">
-              <h3 className="border-b pb-2 text-xs font-semibold uppercase tracking-wider"
-                style={{ borderColor: "var(--border-subtle)", color: "var(--text-muted)" }}>Visual Verification</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {["CITIZEN_UPLOAD.JPG", "CREW_VERIFY.JPG"].map((label) => (
-                  <div key={label} className="flex flex-col gap-1">
-                    <div className="relative aspect-square overflow-hidden rounded border"
-                      style={{ background: "var(--elevated)", borderColor: "rgba(255,165,82,0.25)" }}>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-3xl" style={{ color: "var(--text-muted)", opacity: 0.3 }}>image</span>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-1.5 font-mono text-[9px] truncate"
-                        style={{ background: "rgba(26,15,10,0.9)", color: "var(--amber)" }}>
-                        {label}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Auditor memo */}
-            <div className="space-y-3">
-              <h3 className="border-b pb-2 text-xs font-semibold uppercase tracking-wider"
-                style={{ borderColor: "var(--border-subtle)", color: "var(--text-muted)" }}>Auditor Memo</h3>
-              <div className="relative min-h-[140px] rounded border p-4"
-                style={{ background: "rgba(255,165,82,0.04)", borderColor: "rgba(255,165,82,0.2)" }}>
-                <textarea className="w-full resize-none bg-transparent font-mono text-sm focus:outline-none h-full"
-                  style={{ color: "var(--text-secondary)" }}
-                  placeholder="Enter forensic notes here..." rows={5} />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="mt-auto space-y-3 border-t pt-4" style={{ borderColor: "var(--border-subtle)" }}>
-              <button className="flex w-full items-center justify-center gap-2 rounded py-2.5 font-semibold text-sm tracking-wide transition-all hover:opacity-90"
-                style={{ background: "var(--amber)", color: "#1a0f0a" }}>
-                <span className="material-symbols-outlined text-lg">gavel</span>Issue Violation
-              </button>
-              <button className="flex w-full items-center justify-center gap-2 rounded border py-2.5 font-semibold text-sm tracking-wide transition-colors hover:border-amber/30"
-                style={{ background: "transparent", borderColor: "var(--border)", color: "var(--text-secondary)" }}>
-                <span className="material-symbols-outlined text-lg">check_circle</span>Force Verify
-              </button>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      {/* Footer */}
-      <footer className="flex shrink-0 items-center justify-between border-t px-6 py-3 font-mono text-xs"
-        style={{ background: "var(--amber)", borderColor: "rgba(26,15,10,0.2)", color: "#1a0f0a" }}>
-        <div className="flex gap-6">
-          <span>SYS.STATUS: <span className="font-medium">ONLINE</span></span>
-          <span>NODE: <span className="font-medium">US-EAST-G1</span></span>
-          <span>DB_LATENCY: <span className="font-medium">14ms</span></span>
-        </div>
-        <div className="flex gap-6">
-          <span>UNVERIFIED: <span className="font-bold">1,204</span></span>
-          <span>CRITICAL: <span className="font-bold">89</span></span>
-        </div>
-      </footer>
-    </div>
+</div>
+    </>
   );
 }
