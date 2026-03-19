@@ -68,6 +68,49 @@ class UserRepository(BaseRepository):
         """
         return await self.fetch_one(query, {"user_id": user_id})
     
+    async def verify_credentials(self, email: str, password: str) -> Optional[Dict[str, Any]]:
+        """Verify user credentials and return user if valid."""
+        user = await self.get_by_email(email)
+        if not user or not user.get("password_hash"):
+            return None
+        
+        if verify_password(password, user["password_hash"]):
+            return user
+        return None
+    
+    async def user_exists(self, email: str) -> bool:
+        """Check if user exists by email."""
+        result = await self.fetch_one(
+            "SELECT 1 FROM users WHERE email = :email LIMIT 1",
+            {"email": email.lower()},
+        )
+        return result is not None
+    
+    async def update_password(self, user_id: str, new_password: str) -> bool:
+        """Update user password."""
+        hashed_password = get_password_hash(new_password)
+        await self.execute(
+            """
+            UPDATE users
+            SET password_hash = :password_hash, updated_at = CURRENT_TIMESTAMP
+            WHERE id = :id
+            """,
+            {"id": user_id, "password_hash": hashed_password},
+        )
+        return True
+    
+    async def deactivate_user(self, user_id: str) -> bool:
+        """Deactivate a user account."""
+        await self.execute(
+            """
+            UPDATE users
+            SET is_active = false, updated_at = CURRENT_TIMESTAMP
+            WHERE id = :id
+            """,
+            {"id": user_id},
+        )
+        return True
+    
     async def list_by_role(
         self,
         role: str,

@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import get_db_session
 from src.core.worker import dispatch_task
+from src.core.dependencies import get_current_user, optional_auth
 from src.repositories.grievances import GrievanceRepository
 
 router = APIRouter()
@@ -154,6 +155,7 @@ def _to_iso(value: Any) -> str:
 @router.post("", response_model=GrievanceCreateResponse, status_code=201)
 async def create_grievance(
 	payload: GrievanceCreateRequest,
+	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceCreateResponse:
 	repo = GrievanceRepository(db)
@@ -171,7 +173,7 @@ async def create_grievance(
 			{
 				"id": grievance_id,
 				"grid_id": grid_id,
-				"citizen_id": payload.citizen_id,
+				"citizen_id": current_user["id"],  # Use authenticated user's ID
 				"category": payload.category or payload.hint_category or "OTHER",
 				"priority": payload.priority or payload.hint_priority or "MEDIUM",
 				"title": payload.title,
@@ -308,6 +310,7 @@ async def receive_ai_result(
 async def update_grievance_status(
 	grievance_id: str,
 	payload: GrievanceStatusUpdateRequest,
+	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceAIResultResponse:
 	repo = GrievanceRepository(db)
@@ -330,6 +333,7 @@ async def update_grievance_status(
 async def submit_feedback(
 	grievance_id: str,
 	payload: GrievanceFeedbackRequest,
+	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceFeedbackResponse:
 	repo = GrievanceRepository(db)
@@ -354,6 +358,7 @@ async def submit_feedback(
 async def contest_grievance(
 	grievance_id: str,
 	payload: GrievanceContestRequest,
+	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceContestResponse:
 	repo = GrievanceRepository(db)

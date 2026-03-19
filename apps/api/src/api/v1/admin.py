@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import get_db_session
+from src.core.dependencies import require_admin
 from src.repositories.grievances import GrievanceRepository
 from src.repositories.operations import AuditLogRepository
 from src.repositories.slas import SLARepository
@@ -68,6 +69,7 @@ class AssignDepartmentRequest(BaseModel):
 @router.get("/escalations", response_model=AdminEscalationResponse)
 async def list_escalations(
 	limit: int = Query(default=100, ge=1, le=300),
+	admin_user: dict = Depends(require_admin),
 	db: AsyncSession = Depends(get_db_session),
 ) -> AdminEscalationResponse:
 	grievance_repo = GrievanceRepository(db)
@@ -102,6 +104,7 @@ async def list_escalations(
 async def list_sla_breaches(
 	department_id: str | None = Query(default=None),
 	limit: int = Query(default=100, ge=1, le=300),
+	admin_user: dict = Depends(require_admin),
 	db: AsyncSession = Depends(get_db_session),
 ) -> SLABreachResponse:
 	sla_repo = SLARepository(db)
@@ -127,6 +130,7 @@ async def list_sla_breaches(
 @router.get("/grievances/{grievance_id}/audit", response_model=AuditHistoryResponse)
 async def get_grievance_audit_history(
 	grievance_id: str,
+	admin_user: dict = Depends(require_admin),
 	db: AsyncSession = Depends(get_db_session),
 ) -> AuditHistoryResponse:
 	audit_repo = AuditLogRepository(db)
@@ -153,6 +157,7 @@ async def get_grievance_audit_history(
 async def assign_department(
 	grievance_id: str,
 	payload: AssignDepartmentRequest,
+	admin_user: dict = Depends(require_admin),
 	db: AsyncSession = Depends(get_db_session),
 ) -> dict[str, str]:
 	grievance_repo = GrievanceRepository(db)

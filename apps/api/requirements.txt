@@ -12,3 +12,5 @@ httpx==0.24.1
 strawberry-graphql[fastapi]==0.209.0
 python-dotenv==1.0.0
 celery==5.4.0
+google-auth==2.27.0
+pydantic[email]==2.3.0

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.v1 import grievances, voice, tracking, clusters, admin, analytics
+from src.api.v1 import grievances, voice, tracking, clusters, admin, analytics, auth
 
 app = FastAPI(
     title="GrievanceGrid API",
@@ -20,6 +20,7 @@ app.add_middleware(
 async def health_check():
     return {"status": "healthy"}
 
+app.include_router(auth.router, prefix="/api/v1", tags=["Auth"])
 app.include_router(grievances.router, prefix="/api/v1/grievances", tags=["Grievances"])
 app.include_router(voice.router, prefix="/api/v1/voice", tags=["Voice"])
 app.include_router(tracking.router, prefix="/api/v1/track", tags=["Tracking"])
