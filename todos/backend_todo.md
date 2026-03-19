@@ -31,15 +31,22 @@
 
 ---
 
-## 🔐 Authentication (`core/security.py`)
-- [ ] Implement Google OAuth 2.0 flow (authorization code exchange, profile fetch)
-- [ ] Implement Basic Auth registration (hash password with bcrypt)
-- [ ] Implement Basic Auth login (verify password hash)
-- [ ] Generate JWT on successful auth with payload: `sub`, `email`, `name`, `role`, `auth_type`, `exp`
-- [ ] JWT validation middleware (`verify_token` dependency)
-- [ ] Role-based access control (RBAC) guards for CITIZEN, CREW, OFFICER, ADMIN, AUDITOR
+## 🔐 Authentication (`core/auth.py`, `api/v1/auth.py`)
+- [x] Implement Google OAuth 2.0 flow (authorization code exchange, profile fetch) — `GoogleOAuthService`
+- [x] Implement Basic Auth registration (hash password with bcrypt) — `POST /auth/register`
+- [x] Implement Basic Auth login (verify password hash) — `POST /auth/login`
+- [x] Generate JWT on successful auth with payload: `sub`, `email`, `name`, `role`, `auth_type`, `exp`
+- [x] JWT validation middleware (`verify_token` dependency) — `get_current_user`
+- [x] Role-based access control (RBAC) guards for CITIZEN, OFFICER, ADMIN, AUDITOR — `require_admin`, `require_officer`, `require_auditor`
 - [ ] Redis session management (store and invalidate tokens)
 - [ ] Rate limiter middleware (per-IP, using Redis)
+- [x] POST /auth/register — New user registration
+- [x] POST /auth/login — User login with email/password
+- [x] POST /auth/google — Google OAuth authentication
+- [x] POST /auth/refresh — Refresh expired access token
+- [x] POST /auth/change-password — Change user password
+- [x] GET /auth/me — Get current user profile
+- [x] POST /auth/logout — Logout (client discard tokens)
 
 ---
 

@@ -83,7 +83,7 @@ export default function CitizenDashboard() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <button className="p-2 rounded-lg text-on-surface-variant hover:bg-[#311724] transition-colors">
+          <button className="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors">
             <span className="material-symbols-outlined">notifications</span>
           </button>
           <div className="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
