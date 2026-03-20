@@ -14,22 +14,45 @@ import {
   Map as MapIcon,
   MessageSquare
 } from "lucide-react";
+import { adminService } from "@/services/admin.service";
 import Shuffle from "../Shuffle";
 
-const metrics = [
-  { label: "New Grievances", value: "142", trend: "+12.5%", icon: TrendingUp, color: "text-blue-500 bg-blue-500/10" },
-  { label: "In Resolution", value: "64", trend: "+5.2%", icon: Clock, color: "text-amber-500 bg-amber-500/10" },
-  { label: "Resolved Today", value: "89", trend: "+18.3%", icon: ShieldCheck, color: "text-green-500 bg-green-500/10" },
-  { label: "Average SLA", value: "4.2h", trend: "-1.5%", icon: Globe, color: "text-purple-500 bg-purple-500/10" },
-];
-
-const actionQueue = [
-  { id: "GRV-1102", type: "Escalated", time: "12m ago", priority: "High", office: "Public Works" },
-  { id: "GRV-1105", type: "SLA at Risk", time: "25m ago", priority: "Critical", office: "Sanitation" },
-  { id: "GRV-1108", type: "New Report", time: "34m ago", priority: "Medium", office: "Traffic Control" },
-];
-
 const AdminDashboardPage = () => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await adminService.getDashboard();
+      setData(result);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Authenticating Command Node...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const metrics = [
+    { label: "New Grievances", value: data.summary.total_grievances.toString(), trend: "+12.5%", icon: TrendingUp, color: "text-blue-500 bg-blue-500/10" },
+    { label: "In Resolution", value: data.summary.pending.toString(), trend: "+5.2%", icon: Clock, color: "text-amber-500 bg-amber-500/10" },
+    { label: "Resolved Today", value: data.summary.resolved.toString(), trend: "+18.3%", icon: ShieldCheck, color: "text-green-500 bg-green-500/10" },
+    { label: "Average SLA", value: data.summary.avg_resolution_hours.toString() + "h", trend: "-1.5%", icon: Globe, color: "text-purple-500 bg-purple-500/10" },
+  ];
+
+  const actionQueue = [
+    { id: "GRV-1102", type: "Escalated", time: "12m ago", priority: "High", office: "Public Works" },
+    { id: "GRV-1105", type: "SLA at Risk", time: "25m ago", priority: "Critical", office: "Sanitation" },
+    { id: "GRV-1108", type: "New Report", time: "34m ago", priority: "Medium", office: "Traffic Control" },
+  ];
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <main className="flex-grow pt-32 pb-12 px-6 relative">

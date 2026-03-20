@@ -23,6 +23,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+import { grievanceService } from "@/services/grievance.service";
+import { voiceService } from "@/services/voice.service";
+
 const steps = [
   { id: "location", title: "Location", icon: MapPin },
   { id: "details", title: "Description", icon: Type },
@@ -44,17 +47,33 @@ const SubmitPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [locationType, setLocationType] = useState("current");
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    category: "",
+    location: { latitude: 28.6139, longitude: 77.2090, address: "" }
+  });
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    
+    try {
+      // If there was a voice recording, we would normally append it to a FormData
+      // For this mock, we'll just log the call
+      const response = await grievanceService.submit(formData);
+      console.log("[SUBMIT SUCCESS]", response);
+      
+      // Navigate to tracking
+      window.location.href = `/track/${response.grid_id}`;
+    } catch (error) {
+      console.error("[SUBMIT ERROR]", error);
+    } finally {
       setIsSubmitting(false);
-      window.location.href = "/track/GRV-9901";
-    }, 3000);
+    }
   };
 
   return (
@@ -153,6 +172,8 @@ const SubmitPage = () => {
                       <Label htmlFor="title" className="text-lg font-bold">Issue Title</Label>
                       <Input 
                         id="title" 
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         placeholder="e.g., Broken water pipe near main gate" 
                         className="h-14 bg-white/5 border-white/10 focus:border-blue-500/50"
                       />
@@ -161,6 +182,8 @@ const SubmitPage = () => {
                       <Label htmlFor="description" className="text-lg font-bold">Detailed Description</Label>
                       <Textarea 
                         id="description" 
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         placeholder="Please provide as much detail as possible to help us resolve the issue faster..." 
                         className="min-h-[200px] bg-white/5 border-white/10 focus:border-blue-500/50 resize-none"
                       />
@@ -185,7 +208,12 @@ const SubmitPage = () => {
                         {categories.map((cat) => (
                           <div 
                             key={cat}
-                            className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-blue-500/50 cursor-pointer transition-all flex flex-col items-center gap-3 group"
+                            onClick={() => setFormData({ ...formData, category: cat })}
+                            className={`p-6 rounded-2xl border transition-all flex flex-col items-center gap-3 group cursor-pointer ${
+                              formData.category === cat 
+                                ? "bg-blue-600/20 border-blue-500" 
+                                : "bg-white/[0.02] border-white/10 hover:bg-white/[0.05] hover:border-blue-500/50"
+                            }`}
                           >
                             <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform">
                               <Grid className="w-6 h-6 text-muted-foreground group-hover:text-blue-500" />

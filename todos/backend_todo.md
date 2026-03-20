@@ -206,8 +206,16 @@
 ---
 
 ## 🧪 Testing
-- [ ] Unit tests for all services (mock DB and ML clients)
-- [ ] Integration tests for all REST endpoints
-- [ ] Test auth flows (Google OAuth mock and Basic Auth)
-- [ ] Test SLA escalation logic
-- [ ] Test geospatial distance validation (verification 50m tolerance)
+- [x] Unit tests for all services (mock DB and ML clients)
+  - [x] `apps/api/tests/unit/test_sla_service.py` — SLA escalation and threshold tests
+  - [x] `apps/api/tests/unit/test_verification_service.py` — Geospatial distance validation (50m tolerance)
+  - [x] `apps/api/tests/unit/test_ai_service.py` — AI service fallback logic
+- [x] Integration tests for all REST endpoints
+  - [x] `apps/api/tests/integration/test_auth_endpoints.py` — Auth flows (register, login, OAuth, refresh, profile, logout)
+  - [x] `apps/api/tests/integration/test_rest_endpoints.py` — Full API endpoints (grievances, tracking, clusters, analytics, admin, voice)
+- [x] Configure pytest stack
+  - [x] `apps/api/tests/conftest.py` — FastAPI TestClient fixtures with dependency overrides
+- [x] Test utility stubs (repository, Redis, storage mocks)
+- [x] Test auth flows (Google OAuth mock and Basic Auth)
+- [x] Test SLA escalation logic
+- [x] Test geospatial distance validation (verification 50m tolerance)

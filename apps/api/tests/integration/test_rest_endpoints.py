@@ -4,13 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from src.repositories.grievances import GrievanceRepository
-from src.repositories.operations import AuditLogRepository
-from src.repositories.operations import ClusterRepository
-from src.repositories.slas import SLARepository
 
-
-@pytest.mark.integration
 def test_health_endpoint(client) -> None:
     response = client.get("/health")
 
@@ -18,11 +12,10 @@ def test_health_endpoint(client) -> None:
     assert response.json() == {"status": "healthy"}
 
 
-@pytest.mark.integration
 def test_create_grievance_dispatches_ai_task(client, monkeypatch: pytest.MonkeyPatch) -> None:
     now = datetime.now(timezone.utc)
 
-    async def fake_create(self, grievance_payload: dict):
+    def fake_create(grievance_payload: dict):
         return {
             "id": grievance_payload["id"],
             "grid_id": grievance_payload["grid_id"],
@@ -32,7 +25,7 @@ def test_create_grievance_dispatches_ai_task(client, monkeypatch: pytest.MonkeyP
             "resolution_deadline": now + timedelta(hours=72),
         }
 
-    monkeypatch.setattr(GrievanceRepository, "create", fake_create)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.create", fake_create)
     monkeypatch.setattr("src.api.v1.grievances.dispatch_task", lambda *args, **kwargs: "task-101")
 
     response = client.post(
@@ -55,9 +48,8 @@ def test_create_grievance_dispatches_ai_task(client, monkeypatch: pytest.MonkeyP
     assert body["grid_id"].startswith("GRI-")
 
 
-@pytest.mark.integration
 def test_list_grievances_returns_filtered_rows(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_list_grievances(self, **kwargs):
+    def fake_list_grievances(**kwargs):
         return [
             {
                 "id": "g-1",
@@ -70,7 +62,7 @@ def test_list_grievances_returns_filtered_rows(client, monkeypatch: pytest.Monke
             }
         ]
 
-    monkeypatch.setattr(GrievanceRepository, "list_grievances", fake_list_grievances)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.list_grievances", fake_list_grievances)
 
     response = client.get("/api/v1/grievances?status=ASSIGNED")
 
@@ -80,9 +72,8 @@ def test_list_grievances_returns_filtered_rows(client, monkeypatch: pytest.Monke
     assert body["items"][0]["status"] == "ASSIGNED"
 
 
-@pytest.mark.integration
 def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_get_by_id(self, grievance_id: str):
+    def fake_get_by_id(grievance_id: str):
         return {
             "id": grievance_id,
             "grid_id": "GRI-2026-DETAIL1",
@@ -96,11 +87,11 @@ def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.Monk
             "updated_at": datetime.now(timezone.utc),
         }
 
-    async def fake_timeline(self, grievance_id: str):
+    def fake_timeline(grievance_id: str):
         return [{"status": "CREATED", "timestamp": datetime.now(timezone.utc), "description": "Created"}]
 
-    monkeypatch.setattr(GrievanceRepository, "get_by_id", fake_get_by_id)
-    monkeypatch.setattr(GrievanceRepository, "get_timeline", fake_timeline)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_by_id", fake_get_by_id)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_timeline", fake_timeline)
 
     response = client.get("/api/v1/grievances/g-details")
 
@@ -110,12 +101,11 @@ def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.Monk
     assert body["timeline"][0]["status"] == "CREATED"
 
 
-@pytest.mark.integration
 def test_update_grievance_status_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_update_status(self, grievance_id: str, new_status: str, notes: str | None = None):
+    def fake_update_status(grievance_id: str, new_status: str, notes: str | None = None):
         return {"id": grievance_id, "status": new_status, "updated_at": datetime.now(timezone.utc)}
 
-    monkeypatch.setattr("src.api.v1.grievances.GrievanceService.update_status", fake_update_status)
+    monkeypatch.setattr("src.services.grievances.GrievanceService.update_status", fake_update_status)
 
     response = client.patch(
         "/api/v1/grievances/g-2/status",
@@ -128,12 +118,11 @@ def test_update_grievance_status_endpoint(client, monkeypatch: pytest.MonkeyPatc
     assert body["status"] == "IN_PROGRESS"
 
 
-@pytest.mark.integration
 def test_submit_feedback_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_add_feedback(self, grievance_id: str, rating: int, comment: str | None = None, is_satisfied: bool | None = None):
+    def fake_add_feedback(grievance_id: str, rating: int, comment: str | None = None, is_satisfied: bool | None = None):
         return {"id": grievance_id, "updated_at": datetime.now(timezone.utc)}
 
-    monkeypatch.setattr(GrievanceRepository, "add_feedback", fake_add_feedback)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.add_feedback", fake_add_feedback)
 
     response = client.post(
         "/api/v1/grievances/g-3/feedback",
@@ -146,12 +135,11 @@ def test_submit_feedback_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> No
     assert body["rating"] == 5
 
 
-@pytest.mark.integration
 def test_contest_endpoint_triggers_audit(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_mark_contested(self, grievance_id: str, reason: str, evidence_photo: str | None = None, audit_id: str | None = None, audit_task_id: str | None = None):
+    def fake_mark_contested(grievance_id: str, reason: str, evidence_photo: str | None = None, audit_id: str | None = None, audit_task_id: str | None = None):
         return {"id": grievance_id, "status": "CONTESTED"}
 
-    monkeypatch.setattr(GrievanceRepository, "mark_contested", fake_mark_contested)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.mark_contested", fake_mark_contested)
     monkeypatch.setattr("src.api.v1.grievances.dispatch_task", lambda *args, **kwargs: "audit-task-1")
 
     response = client.post(
@@ -166,9 +154,8 @@ def test_contest_endpoint_triggers_audit(client, monkeypatch: pytest.MonkeyPatch
     assert body["audit_task_id"] == "audit-task-1"
 
 
-@pytest.mark.integration
 def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_get_by_grid_id(self, grid_id: str):
+    def fake_get_by_grid_id(grid_id: str):
         return {
             "id": "g-track-1",
             "grid_id": grid_id,
@@ -178,7 +165,7 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
             "assigned_team_id": "team-1",
         }
 
-    async def fake_get_timeline(self, grievance_id: str):
+    def fake_get_timeline(grievance_id: str):
         return [
             {
                 "status": "ASSIGNED",
@@ -187,7 +174,7 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
             }
         ]
 
-    async def fake_get_by_grievance(self, grievance_id: str):
+    def fake_get_by_grievance(grievance_id: str):
         return [
             {
                 "sla_type": "RESPONSE",
@@ -197,15 +184,15 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
         ]
 
     class RedisStub:
-        async def get(self, key: str):
+        def get(self, key: str):
             return '{"latitude": 12.9720, "longitude": 77.5950, "updated_at": "2026-01-01T00:00:00Z"}'
 
-        async def hgetall(self, key: str):
+        def hgetall(self, key: str):
             return {}
 
-    monkeypatch.setattr(GrievanceRepository, "get_by_grid_id", fake_get_by_grid_id)
-    monkeypatch.setattr(GrievanceRepository, "get_timeline", fake_get_timeline)
-    monkeypatch.setattr(SLARepository, "get_by_grievance", fake_get_by_grievance)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_by_grid_id", fake_get_by_grid_id)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_timeline", fake_get_timeline)
+    monkeypatch.setattr("src.repositories.slas.SLARepository.get_by_grievance", fake_get_by_grievance)
     monkeypatch.setattr("src.api.v1.tracking.get_redis_client", lambda: RedisStub())
 
     response = client.get("/api/v1/track/GRI-2026-TRACK01")
@@ -218,9 +205,8 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
     assert body["predicted_eta_minutes"] >= 1
 
 
-@pytest.mark.integration
 def test_clusters_endpoint_returns_cluster_rows(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_list_clusters(self, cluster_type=None, is_active=True, limit=50):
+    def fake_list_clusters(cluster_type=None, is_active=True, limit=50):
         return [
             {
                 "id": "cluster-1",
@@ -235,7 +221,7 @@ def test_clusters_endpoint_returns_cluster_rows(client, monkeypatch: pytest.Monk
             }
         ]
 
-    monkeypatch.setattr(ClusterRepository, "list_clusters", fake_list_clusters)
+    monkeypatch.setattr("src.repositories.clusters.ClusterRepository.list_clusters", fake_list_clusters)
 
     response = client.get("/api/v1/clusters")
 
@@ -245,7 +231,6 @@ def test_clusters_endpoint_returns_cluster_rows(client, monkeypatch: pytest.Monk
     assert body["clusters"][0]["cluster_type"] == "POTHOLE"
 
 
-@pytest.mark.integration
 def test_recluster_endpoint_dispatches_background_task(client, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("src.api.v1.clusters.dispatch_task", lambda *args, **kwargs: "cluster-task-1")
 
@@ -256,9 +241,8 @@ def test_recluster_endpoint_dispatches_background_task(client, monkeypatch: pyte
     assert body["task_id"] == "cluster-task-1"
 
 
-@pytest.mark.integration
 def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_dashboard_payload(self, from_date=None, to_date=None):
+    def fake_dashboard_payload(from_date=None, to_date=None):
         return {
             "summary": {
                 "total_grievances": 100,
@@ -287,7 +271,7 @@ def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.M
         }
 
     monkeypatch.setattr(
-        "src.api.v1.analytics.AnalyticsService.get_dashboard_payload",
+        "src.services.analytics.AnalyticsService.get_dashboard_payload",
         fake_dashboard_payload,
     )
 
@@ -300,9 +284,8 @@ def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.M
     assert body["predictive_alerts"][0]["asset_id"] == "asset-1"
 
 
-@pytest.mark.integration
 def test_admin_sla_breaches_endpoint_returns_items(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_get_breached_slas(self, department_id=None, limit=100):
+    def fake_get_breached_slas(department_id=None, limit=100):
         return [
             {
                 "id": "sla-1",
@@ -318,7 +301,7 @@ def test_admin_sla_breaches_endpoint_returns_items(client, monkeypatch: pytest.M
             }
         ]
 
-    monkeypatch.setattr(SLARepository, "get_breached_slas", fake_get_breached_slas)
+    monkeypatch.setattr("src.repositories.slas.SLARepository.get_breached_slas", fake_get_breached_slas)
 
     response = client.get("/api/v1/admin/sla-breaches")
 
@@ -328,9 +311,8 @@ def test_admin_sla_breaches_endpoint_returns_items(client, monkeypatch: pytest.M
     assert body["items"][0]["escalation_level"] == 2
 
 
-@pytest.mark.integration
 def test_admin_escalations_endpoint_merges_statuses(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_list_grievances(self, status: str | None = None, **kwargs):
+    def fake_list_grievances(status: str | None = None, **kwargs):
         if status == "ESCALATED":
             return [
                 {
@@ -355,7 +337,7 @@ def test_admin_escalations_endpoint_merges_statuses(client, monkeypatch: pytest.
             }
         ]
 
-    monkeypatch.setattr(GrievanceRepository, "list_grievances", fake_list_grievances)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.list_grievances", fake_list_grievances)
 
     response = client.get("/api/v1/admin/escalations")
 
@@ -364,9 +346,8 @@ def test_admin_escalations_endpoint_merges_statuses(client, monkeypatch: pytest.
     assert body["count"] == 2
 
 
-@pytest.mark.integration
 def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_history(self, grievance_id: str):
+    def fake_history(grievance_id: str):
         return [
             {
                 "id": "audit-1",
@@ -379,7 +360,7 @@ def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.Monkey
             }
         ]
 
-    monkeypatch.setattr(AuditLogRepository, "get_grievance_history", fake_history)
+    monkeypatch.setattr("src.repositories.audit_logs.AuditLogRepository.get_grievance_history", fake_history)
 
     response = client.get("/api/v1/admin/grievances/g-5/audit")
 
@@ -389,12 +370,11 @@ def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.Monkey
     assert body["events"][0]["event_type"] == "STATUS_CHANGED"
 
 
-@pytest.mark.integration
 def test_admin_assign_department_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_assign_department(self, grievance_id: str, department_id: str):
+    def fake_assign_department(grievance_id: str, department_id: str):
         return {"id": grievance_id, "status": "ASSIGNED", "assigned_department_id": department_id}
 
-    monkeypatch.setattr(GrievanceRepository, "assign_department", fake_assign_department)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.assign_department", fake_assign_department)
 
     response = client.patch(
         "/api/v1/admin/grievances/g-6/assign-department",
@@ -406,16 +386,15 @@ def test_admin_assign_department_endpoint(client, monkeypatch: pytest.MonkeyPatc
     assert body["department_id"] == "dept-9"
 
 
-@pytest.mark.integration
 def test_voice_process_endpoint_accepts_audio_upload(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_save_upload(self, file, subdir: str):
+    def fake_save_upload(file, subdir: str):
         return "https://cdn.example.com/voice/clip.mp3"
 
-    async def fake_create(self, grievance_payload: dict):
+    def fake_create(grievance_payload: dict):
         return {"id": grievance_payload["id"], "grid_id": grievance_payload["grid_id"], "status": "CREATED"}
 
-    monkeypatch.setattr("src.api.v1.voice.StorageService.save_upload", fake_save_upload)
-    monkeypatch.setattr(GrievanceRepository, "create", fake_create)
+    monkeypatch.setattr("src.services.storage.StorageService.save_upload", fake_save_upload)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.create", fake_create)
     monkeypatch.setattr("src.api.v1.voice.dispatch_task", lambda *args, **kwargs: "voice-task-1")
 
     response = client.post(
@@ -429,12 +408,11 @@ def test_voice_process_endpoint_accepts_audio_upload(client, monkeypatch: pytest
     assert body["audio_url"] == "https://cdn.example.com/voice/clip.mp3"
 
 
-@pytest.mark.integration
 def test_voice_result_endpoint_updates_grievance(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    async def fake_update_voice_result(self, grievance_id: str, payload: dict):
+    def fake_update_voice_result(grievance_id: str, payload: dict):
         return {"id": grievance_id, "status": "PENDING_ASSIGNMENT", "updated_at": datetime.now(timezone.utc)}
 
-    monkeypatch.setattr(GrievanceRepository, "update_voice_result", fake_update_voice_result)
+    monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.update_voice_result", fake_update_voice_result)
 
     response = client.post(
         "/api/v1/voice/g-voice-1/result",

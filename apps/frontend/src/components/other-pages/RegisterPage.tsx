@@ -6,13 +6,31 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import { authService } from "@/services/auth.service";
+
 const RegisterPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "CITIZEN"
+  });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 2000);
+    
+    try {
+      const response = await authService.register(formData);
+      console.log("[REGISTER SUCCESS]", response);
+      localStorage.setItem("token", response.token);
+      window.location.href = "/dashboard";
+    } catch (error) {
+      console.error("[REGISTER ERROR]", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

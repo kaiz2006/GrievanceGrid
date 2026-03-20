@@ -1,44 +1,57 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, Filter, Clock, CheckCircle2, AlertCircle, MapPin, Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-
-const mockGrievances = [
-  {
-    id: "GRV-8821",
-    title: "Street Light Failure",
-    category: "Infrastructure",
-    status: "In Progress",
-    statusColor: "text-blue-500 bg-blue-500/10 border-blue-500/20",
-    location: "Park Avenue, Sector 4",
-    date: "2024-03-15",
-    description: "Main street lights have been off for three days, creating safety concerns at night."
-  },
-  {
-    id: "GRV-7740",
-    title: "Water Leakage",
-    category: "Utilities",
-    status: "Resolved",
-    statusColor: "text-green-500 bg-green-500/10 border-green-500/20",
-    location: "Oak Drive, Block B",
-    date: "2024-03-12",
-    description: "Major pipe burst near the community center is wasting significant water."
-  },
-  {
-    id: "GRV-9102",
-    title: "Illegal Dumping",
-    category: "Sanitation",
-    status: "Pending",
-    statusColor: "text-yellow-500 bg-yellow-500/10 border-yellow-500/20",
-    location: "industrial Estate Road",
-    date: "2024-03-18",
-    description: "Construction debris is being dumped regularly in the vacant lot behind the market."
-  }
-];
+import { grievanceService } from "@/services/grievance.service";
 
 const DashboardPage = () => {
+  const [grievances, setGrievances] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("[API CALL]: GET /grievances/me");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setGrievances([
+        {
+          id: "GRI-2026-008821",
+          title: "Street Light Failure",
+          category: "Infrastructure",
+          status: "In Progress",
+          statusColor: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+          location: "Park Avenue, Sector 4",
+          date: "2024-03-15",
+          description: "Main street lights have been off for three days, creating safety concerns at night."
+        },
+        {
+          id: "GRI-2026-007740",
+          title: "Water Leakage",
+          category: "Utilities",
+          status: "Resolved",
+          statusColor: "text-green-500 bg-green-500/10 border-green-500/20",
+          location: "Oak Drive, Block B",
+          date: "2024-03-12",
+          description: "Major pipe burst near the community center is wasting significant water."
+        }
+      ]);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Syncing with Grid Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       
@@ -111,7 +124,7 @@ const DashboardPage = () => {
 
           {/* Grievances List */}
           <div className="grid grid-cols-1 gap-6">
-            {mockGrievances.map((grievance, i) => (
+            {grievances.map((grievance, i) => (
               <motion.div
                 key={grievance.id}
                 initial={{ opacity: 0, y: 20 }}

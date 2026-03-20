@@ -18,17 +18,37 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const timelineEvents = [
-  { id: 1, title: "Report Submitted", date: "Mar 18, 10:24 AM", description: "Your report has been successfully logged.", status: "completed" },
-  { id: 2, title: "AI Categorization", date: "Mar 18, 10:26 AM", description: "AI verified the issue as Water Leakage and routed it to the Utilities dept.", status: "completed" },
-  { id: 3, title: "Officer Assigned", date: "Mar 18, 10:45 AM", description: "Officer Rajesh Kumar has been dispatched to the location.", status: "completed" },
-  { id: 4, title: "Work in Progress", date: "Mar 19, 09:12 AM", description: "Technical team is currently repairing the pipe burst.", status: "current" },
-  { id: 5, title: "Final Inspection", date: "Pending", description: "A supervisor will verify the resolution before closing the ticket.", status: "pending" }
-];
+import { grievanceService } from "@/services/grievance.service";
 
 const TrackingPage = () => {
   const { grid_id } = useParams();
-  const [slaProgress, setSlaProgress] = useState(65);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (grid_id) {
+        const result = await grievanceService.getTrack(grid_id);
+        setData(result);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [grid_id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Accessing Grid Node...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const timelineEvents = data.timeline;
+  const slaProgress = 65; // Mock progress
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">

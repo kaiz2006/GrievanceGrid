@@ -6,20 +6,29 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+import { authService } from "@/services/auth.service";
+
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [role, setRole] = useState<"citizen" | "admin">("citizen");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Mock login logic
-    setTimeout(() => {
+    try {
+      const response = await authService.login(email, password);
+      console.log("[LOGIN SUCCESS]", response);
+      localStorage.setItem("token", response.token);
       localStorage.setItem("userRole", role);
-      setIsLoading(false);
       window.location.href = "/dashboard";
-    }, 1500);
+    } catch (error) {
+      console.error("[LOGIN ERROR]", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

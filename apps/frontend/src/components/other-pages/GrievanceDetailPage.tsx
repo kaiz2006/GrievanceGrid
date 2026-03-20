@@ -20,29 +20,54 @@ import {
   Globe
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { grievanceService } from "@/services/grievance.service";
 import Shuffle from "../Shuffle";
-
-const mockGrievance = {
-  id: "GRV-1102",
-  reporter: { name: "John Doe", rating: "4.8", reports: 12 },
-  location: { address: "123 Civic Plaza, Downtown", coords: "40.7128° N, 74.0060° W" },
-  details: {
-    category: "Infrastructure",
-    subCategory: "Pothole Repair",
-    submittedAt: "Mar 19, 2024 • 02:45 PM",
-    description: "Deep pothole developed after heavy rain. Posing risk to vehicle suspension at High St intersection.",
-    status: "Escalated",
-    slaRemaining: "02:14:45",
-  },
-  evidence: [
-    "https://images.unsplash.com/photo-1515162816999-a0ca1fa02d4b?q=80&w=2070",
-    "https://images.unsplash.com/photo-1599423300746-b62533397364?q=80&w=2070"
-  ]
-};
 
 const GrievanceDetailPage = () => {
   const { id } = useParams();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [currentPhoto, setCurrentPhoto] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id) {
+        const result = await grievanceService.getDetail(id);
+        setData(result);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Accessing Investigation Node...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const mockGrievance = {
+    id: data.grid_id,
+    reporter: { name: "John Doe", rating: "4.8", reports: 12 },
+    location: { address: data.location.address, coords: `${data.location.latitude}, ${data.location.longitude}` },
+    details: {
+      category: data.category,
+      subCategory: "Pothole Repair",
+      submittedAt: "Mar 19, 2024 • 02:45 PM",
+      description: data.description,
+      status: data.status,
+      slaRemaining: "02:14:45",
+    },
+    evidence: [
+      "https://images.unsplash.com/photo-1515162816999-a0ca1fa02d4b?q=80&w=2070",
+      "https://images.unsplash.com/photo-1599423300746-b62533397364?q=80&w=2070"
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-background text-white flex flex-col">
