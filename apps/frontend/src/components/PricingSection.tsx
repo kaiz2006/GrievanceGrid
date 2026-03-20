@@ -130,7 +130,7 @@ const PricingSection = () => {
               </div>
 
               <a
-                href="#"
+                href="/contact"
                 className={`${
                   plan.highlighted 
                     ? "bg-white hover:bg-white/90 text-black shadow-xl shadow-white/10" 
