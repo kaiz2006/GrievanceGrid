@@ -562,6 +562,30 @@ class GrievanceRepository(BaseRepository):
             )
         return updated
 
+    async def persist_notification_delivery(
+        self,
+        grievance_id: str,
+        status: str,
+        delivery_report: dict[str, Any],
+    ) -> dict[str, Any] | None:
+        """Persist worker notification outcomes as append-only audit metadata."""
+        existing = await self.fetch_one(
+            "SELECT id, status, updated_at FROM grievances WHERE id = :grievance_id",
+            {"grievance_id": grievance_id},
+        )
+        if existing is None:
+            return None
+
+        await self._log_event(
+            grievance_id=grievance_id,
+            event_type="NOTIFICATION_DELIVERY",
+            old_status=None,
+            new_status=status,
+            description=f"Notification delivery attempted for status {status}",
+            metadata=delivery_report,
+        )
+        return existing
+
     async def delete_grievance(self, grievance_id: str) -> bool:
         """Delete a grievance row by id."""
         deleted_count = await self.delete(

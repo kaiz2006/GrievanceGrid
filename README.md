@@ -4,7 +4,8 @@
 
 ## Monorepo Structure
 
-- `apps/web`: Next.js 15 Frontend
+- `apps/frontend`: React + Vite Frontend (Primary)
+- `apps/web`: Next.js 15 Frontend (Secondary/Experimental)
 - `apps/api`: FastAPI Backend
 - `apps/worker`: Celery Background Workers
 - `packages/ui`: Shared UI Components
@@ -18,9 +19,14 @@
    npm install
    ```
 
-2. Run development environment:
+2. Run primary frontend (React + Vite):
    ```bash
    npm run dev
+   ```
+
+3. Optional: run all apps via Turborepo:
+   ```bash
+   npm run dev:all
    ```
 
 ## Documentation

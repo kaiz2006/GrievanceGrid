@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from functools import cached_property
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -24,9 +26,17 @@ class ApiSettings(BaseSettings):
     qdrant_url: str = Field(default="http://localhost:6333", alias="QDRANT_URL")
     jwt_secret: str = Field(default="your-super-secret-key-change-in-production", alias="JWT_SECRET")
     llm_api_url: str = Field(default="http://localhost:8001", alias="LLM_API_URL")
+    cv_api_url: str = Field(default="http://localhost:8002", alias="CV_API_URL")
+    gnn_api_url: str = Field(default="http://localhost:8003", alias="GNN_API_URL")
+
+    cors_allow_origins: str = Field(
+        default="http://localhost:3000,http://localhost:5173",
+        alias="CORS_ALLOW_ORIGINS",
+    )
 
     celery_broker_url: str = Field(default="redis://localhost:6379/0", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(default="redis://localhost:6379/1", alias="CELERY_RESULT_BACKEND")
+    internal_worker_token: str = Field(default="dev-worker-token", alias="INTERNAL_WORKER_TOKEN")
 
     access_token_expire_minutes: int = Field(default=30, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
     refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")
@@ -41,6 +51,14 @@ class ApiSettings(BaseSettings):
     object_storage_provider: str = Field(default="local", alias="OBJECT_STORAGE_PROVIDER")
     object_storage_local_dir: str = Field(default="apps/api/storage", alias="OBJECT_STORAGE_LOCAL_DIR")
     object_storage_public_base_url: str = Field(default="/storage", alias="OBJECT_STORAGE_PUBLIC_BASE_URL")
+
+    @cached_property
+    def parsed_cors_origins(self) -> list[str]:
+        return [
+            origin.strip()
+            for origin in self.cors_allow_origins.split(",")
+            if origin.strip()
+        ]
 
 
 settings = ApiSettings()

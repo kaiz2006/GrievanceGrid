@@ -20,8 +20,8 @@ class AIService:
         max_retries: int = 3,
     ) -> None:
         self.llm_base_url = (llm_base_url or settings.llm_api_url).rstrip("/")
-        self.cv_base_url = (cv_base_url or settings.llm_api_url).rstrip("/")
-        self.gnn_base_url = (gnn_base_url or settings.llm_api_url).rstrip("/")
+        self.cv_base_url = (cv_base_url or settings.cv_api_url).rstrip("/")
+        self.gnn_base_url = (gnn_base_url or settings.gnn_api_url).rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
 

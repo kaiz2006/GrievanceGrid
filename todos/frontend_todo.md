@@ -1,11 +1,20 @@
-# Frontend Todo (apps/web — Next.js 15)
+# Frontend Todo (apps/frontend — React + Vite, Primary)
+
+## Audit Addendum (2026-03-20)
+- [x] Decide and document the single production frontend strategy: `apps/frontend` (React + Vite) is primary, `apps/web` is secondary/experimental.
+- [ ] Replace mock services in `apps/web/src/services/` (`authService.ts`, `grievanceService.ts`, `trackingService.ts`) with real calls to `apps/api`.
+- [ ] Replace mock services in `apps/frontend/src/services/` (`auth.service.ts`, `grievance.service.ts`, `voice.service.ts`, `admin.service.ts`) with real calls to `apps/api`.
+- [ ] Add shared API client module with auth header injection, refresh-token handling, and typed error mapping.
+- [ ] Implement real-time tracking in frontend via `ws/track/{grid_id}` and fallback polling.
+- [ ] Implement map/location components with `react-leaflet` (submission picker + live tracking + cluster heatmap).
+- [ ] Add Playwright E2E flows for submit -> track -> feedback and admin dashboard analytics.
 
 ## 🗂️ Project Setup
-- [ ] Initialize `apps/web` with Next.js 15 and App Router
+- [ ] Harden `apps/frontend` (React + Vite) as the primary production frontend shell
 - [ ] Configure `tailwind.config.ts` with brand color tokens and animation utilities from COMPONENT_SPEC
-- [ ] Set up `tsconfig.json` with path aliases (`@/components/*`, `@/app/*`, `@/lib/*`)
-- [ ] Configure `next.config.js` (image domains, env variables, etc.)
-- [ ] Create `.env.local` with `NEXT_PUBLIC_API_URL` and map tile URL
+- [ ] Set up `tsconfig.json` with path aliases (`@/components/*`, `@/pages/*`, `@/lib/*`)
+- [ ] Configure `vite.config.ts` (proxy, env handling, build targets)
+- [ ] Create `.env` with `VITE_API_URL` and map tile URL
 - [ ] Add ESLint + Prettier config
 
 ---
@@ -33,14 +42,14 @@
 
 ---
 
-## 🏠 Pages & Routing (`apps/web/src/app/`)
-- [ ] `page.tsx` — Landing page with project overview and CTA buttons
-- [ ] `dashboard/page.tsx` — Citizen dashboard showing their submitted grievances
-- [ ] `submit/page.tsx` — Multimodal grievance submission form
-- [ ] `track/[grid_id]/page.tsx` — Package-style tracking page
-- [ ] `admin/dashboard/page.tsx` — Admin command center dashboard
-- [ ] `grievance/[id]/page.tsx` — Full grievance detail view (for officers)
-- [ ] `layout.tsx` — Root layout with nav, theme, and toast provider
+## 🏠 Pages & Routing (`apps/frontend/src/`)
+- [ ] `/` — Landing page with project overview and CTA buttons
+- [ ] `/dashboard` — Citizen dashboard showing their submitted grievances
+- [ ] `/submit` — Multimodal grievance submission form
+- [ ] `/track/:grid_id` — Package-style tracking page
+- [ ] `/admin/dashboard` — Admin command center dashboard
+- [ ] `/grievance/:id` — Full grievance detail view (for officers)
+- [ ] `App.tsx` route shell with nav, theme, and toast provider
 
 ---
 

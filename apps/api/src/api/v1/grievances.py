@@ -99,6 +99,26 @@ class GrievanceStatusUpdateRequest(BaseModel):
 	notes: str | None = Field(default=None, max_length=500)
 
 
+class NotificationDeliveryResultRequest(BaseModel):
+	model_config = ConfigDict(extra="allow")
+
+	grievance_id: str | None = None
+	status: str
+	recipients: list[str] = Field(default_factory=list)
+	delivered: int = 0
+	failed: int = 0
+	skipped: int = 0
+	channels: dict[str, int] = Field(default_factory=dict)
+	results: list[dict[str, Any]] = Field(default_factory=list)
+	generated_at: str | None = None
+
+
+class NotificationDeliveryResultResponse(BaseModel):
+	grievance_id: str
+	status: str
+	updated_at: str
+
+
 class GrievanceFeedbackRequest(BaseModel):
 	rating: int = Field(ge=1, le=5)
 	comment: str | None = Field(default=None, max_length=1000)
@@ -330,6 +350,28 @@ async def update_grievance_status(
 		grievance_id=grievance_id,
 		status=str(updated["status"]),
 		updated_at=_to_iso(updated.get("updated_at")),
+	)
+
+
+@router.post("/{grievance_id}/notification-result", response_model=NotificationDeliveryResultResponse)
+async def receive_notification_delivery_result(
+	grievance_id: str,
+	payload: NotificationDeliveryResultRequest,
+	db: AsyncSession = Depends(get_db_session),
+) -> NotificationDeliveryResultResponse:
+	repo = GrievanceRepository(db)
+	stored = await repo.persist_notification_delivery(
+		grievance_id=grievance_id,
+		status=payload.status,
+		delivery_report=payload.model_dump(),
+	)
+	if stored is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	return NotificationDeliveryResultResponse(
+		grievance_id=grievance_id,
+		status=payload.status,
+		updated_at=_to_iso(stored.get("updated_at") or datetime.now(timezone.utc)),
 	)
 
 

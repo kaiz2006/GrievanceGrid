@@ -15,7 +15,7 @@ def test_health_endpoint(client) -> None:
 def test_create_grievance_dispatches_ai_task(client, monkeypatch: pytest.MonkeyPatch) -> None:
     now = datetime.now(timezone.utc)
 
-    def fake_create(grievance_payload: dict):
+    async def fake_create(self, grievance_payload: dict):
         return {
             "id": grievance_payload["id"],
             "grid_id": grievance_payload["grid_id"],
@@ -49,7 +49,7 @@ def test_create_grievance_dispatches_ai_task(client, monkeypatch: pytest.MonkeyP
 
 
 def test_list_grievances_returns_filtered_rows(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_list_grievances(**kwargs):
+    async def fake_list_grievances(self, **kwargs):
         return [
             {
                 "id": "g-1",
@@ -73,7 +73,7 @@ def test_list_grievances_returns_filtered_rows(client, monkeypatch: pytest.Monke
 
 
 def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_get_by_id(grievance_id: str):
+    async def fake_get_by_id(self, grievance_id: str):
         return {
             "id": grievance_id,
             "grid_id": "GRI-2026-DETAIL1",
@@ -87,7 +87,7 @@ def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.Monk
             "updated_at": datetime.now(timezone.utc),
         }
 
-    def fake_timeline(grievance_id: str):
+    async def fake_timeline(self, grievance_id: str):
         return [{"status": "CREATED", "timestamp": datetime.now(timezone.utc), "description": "Created"}]
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_by_id", fake_get_by_id)
@@ -102,10 +102,10 @@ def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.Monk
 
 
 def test_update_grievance_status_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_update_status(grievance_id: str, new_status: str, notes: str | None = None):
+    async def fake_update_status(self, grievance_id: str, new_status: str, notes: str | None = None):
         return {"id": grievance_id, "status": new_status, "updated_at": datetime.now(timezone.utc)}
 
-    monkeypatch.setattr("src.services.grievances.GrievanceService.update_status", fake_update_status)
+    monkeypatch.setattr("src.services.grievance_service.GrievanceService.update_status", fake_update_status)
 
     response = client.patch(
         "/api/v1/grievances/g-2/status",
@@ -119,7 +119,13 @@ def test_update_grievance_status_endpoint(client, monkeypatch: pytest.MonkeyPatc
 
 
 def test_submit_feedback_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_add_feedback(grievance_id: str, rating: int, comment: str | None = None, is_satisfied: bool | None = None):
+    async def fake_add_feedback(
+        self,
+        grievance_id: str,
+        rating: int,
+        comment: str | None = None,
+        is_satisfied: bool | None = None,
+    ):
         return {"id": grievance_id, "updated_at": datetime.now(timezone.utc)}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.add_feedback", fake_add_feedback)
@@ -136,7 +142,14 @@ def test_submit_feedback_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> No
 
 
 def test_contest_endpoint_triggers_audit(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_mark_contested(grievance_id: str, reason: str, evidence_photo: str | None = None, audit_id: str | None = None, audit_task_id: str | None = None):
+    async def fake_mark_contested(
+        self,
+        grievance_id: str,
+        reason: str,
+        evidence_photo: str | None = None,
+        audit_id: str | None = None,
+        audit_task_id: str | None = None,
+    ):
         return {"id": grievance_id, "status": "CONTESTED"}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.mark_contested", fake_mark_contested)
@@ -155,7 +168,7 @@ def test_contest_endpoint_triggers_audit(client, monkeypatch: pytest.MonkeyPatch
 
 
 def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_get_by_grid_id(grid_id: str):
+    async def fake_get_by_grid_id(self, grid_id: str):
         return {
             "id": "g-track-1",
             "grid_id": grid_id,
@@ -165,7 +178,7 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
             "assigned_team_id": "team-1",
         }
 
-    def fake_get_timeline(grievance_id: str):
+    async def fake_get_timeline(self, grievance_id: str):
         return [
             {
                 "status": "ASSIGNED",
@@ -174,7 +187,7 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
             }
         ]
 
-    def fake_get_by_grievance(grievance_id: str):
+    async def fake_get_by_grievance(self, grievance_id: str):
         return [
             {
                 "sla_type": "RESPONSE",
@@ -184,10 +197,10 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
         ]
 
     class RedisStub:
-        def get(self, key: str):
+        async def get(self, key: str):
             return '{"latitude": 12.9720, "longitude": 77.5950, "updated_at": "2026-01-01T00:00:00Z"}'
 
-        def hgetall(self, key: str):
+        async def hgetall(self, key: str):
             return {}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_by_grid_id", fake_get_by_grid_id)
@@ -206,7 +219,7 @@ def test_tracking_endpoint_returns_sla_and_eta(client, monkeypatch: pytest.Monke
 
 
 def test_clusters_endpoint_returns_cluster_rows(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_list_clusters(cluster_type=None, is_active=True, limit=50):
+    async def fake_list_clusters(self, cluster_type=None, is_active=True, limit=50):
         return [
             {
                 "id": "cluster-1",
@@ -221,7 +234,7 @@ def test_clusters_endpoint_returns_cluster_rows(client, monkeypatch: pytest.Monk
             }
         ]
 
-    monkeypatch.setattr("src.repositories.clusters.ClusterRepository.list_clusters", fake_list_clusters)
+    monkeypatch.setattr("src.repositories.operations.ClusterRepository.list_clusters", fake_list_clusters)
 
     response = client.get("/api/v1/clusters")
 
@@ -242,7 +255,7 @@ def test_recluster_endpoint_dispatches_background_task(client, monkeypatch: pyte
 
 
 def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_dashboard_payload(from_date=None, to_date=None):
+    async def fake_dashboard_payload(self, from_date=None, to_date=None):
         return {
             "summary": {
                 "total_grievances": 100,
@@ -271,7 +284,7 @@ def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.M
         }
 
     monkeypatch.setattr(
-        "src.services.analytics.AnalyticsService.get_dashboard_payload",
+        "src.services.analytics_service.AnalyticsService.get_dashboard_payload",
         fake_dashboard_payload,
     )
 
@@ -285,7 +298,7 @@ def test_analytics_dashboard_endpoint_maps_payload(client, monkeypatch: pytest.M
 
 
 def test_admin_sla_breaches_endpoint_returns_items(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_get_breached_slas(department_id=None, limit=100):
+    async def fake_get_breached_slas(self, department_id=None, limit=100):
         return [
             {
                 "id": "sla-1",
@@ -312,7 +325,7 @@ def test_admin_sla_breaches_endpoint_returns_items(client, monkeypatch: pytest.M
 
 
 def test_admin_escalations_endpoint_merges_statuses(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_list_grievances(status: str | None = None, **kwargs):
+    async def fake_list_grievances(self, status: str | None = None, **kwargs):
         if status == "ESCALATED":
             return [
                 {
@@ -347,7 +360,7 @@ def test_admin_escalations_endpoint_merges_statuses(client, monkeypatch: pytest.
 
 
 def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_history(grievance_id: str):
+    async def fake_history(self, grievance_id: str):
         return [
             {
                 "id": "audit-1",
@@ -360,7 +373,7 @@ def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.Monkey
             }
         ]
 
-    monkeypatch.setattr("src.repositories.audit_logs.AuditLogRepository.get_grievance_history", fake_history)
+    monkeypatch.setattr("src.repositories.operations.AuditLogRepository.get_grievance_history", fake_history)
 
     response = client.get("/api/v1/admin/grievances/g-5/audit")
 
@@ -371,7 +384,7 @@ def test_admin_audit_endpoint_returns_history(client, monkeypatch: pytest.Monkey
 
 
 def test_admin_assign_department_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_assign_department(grievance_id: str, department_id: str):
+    async def fake_assign_department(self, grievance_id: str, department_id: str):
         return {"id": grievance_id, "status": "ASSIGNED", "assigned_department_id": department_id}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.assign_department", fake_assign_department)
@@ -387,13 +400,13 @@ def test_admin_assign_department_endpoint(client, monkeypatch: pytest.MonkeyPatc
 
 
 def test_voice_process_endpoint_accepts_audio_upload(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_save_upload(file, subdir: str):
+    async def fake_save_upload(self, file, subdir: str):
         return "https://cdn.example.com/voice/clip.mp3"
 
-    def fake_create(grievance_payload: dict):
+    async def fake_create(self, grievance_payload: dict):
         return {"id": grievance_payload["id"], "grid_id": grievance_payload["grid_id"], "status": "CREATED"}
 
-    monkeypatch.setattr("src.services.storage.StorageService.save_upload", fake_save_upload)
+    monkeypatch.setattr("src.services.storage_service.StorageService.save_upload", fake_save_upload)
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.create", fake_create)
     monkeypatch.setattr("src.api.v1.voice.dispatch_task", lambda *args, **kwargs: "voice-task-1")
 
@@ -409,7 +422,7 @@ def test_voice_process_endpoint_accepts_audio_upload(client, monkeypatch: pytest
 
 
 def test_voice_result_endpoint_updates_grievance(client, monkeypatch: pytest.MonkeyPatch) -> None:
-    def fake_update_voice_result(grievance_id: str, payload: dict):
+    async def fake_update_voice_result(self, grievance_id: str, payload: dict):
         return {"id": grievance_id, "status": "PENDING_ASSIGNMENT", "updated_at": datetime.now(timezone.utc)}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.update_voice_result", fake_update_voice_result)

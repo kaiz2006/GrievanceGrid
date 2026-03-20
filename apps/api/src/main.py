@@ -18,6 +18,13 @@ app = FastAPI(
     version=settings.app_version,
 )
 
+cors_origins = settings.parsed_cors_origins
+if settings.app_env.lower() == "production" and (not cors_origins or "*" in cors_origins):
+    raise RuntimeError("CORS_ALLOW_ORIGINS must be an explicit allowlist in production")
+
+if not cors_origins:
+    cors_origins = ["http://localhost:3000", "http://localhost:5173"]
+
 if settings.object_storage_provider.lower() == "local":
     storage_path = Path(settings.object_storage_local_dir)
     storage_path.mkdir(parents=True, exist_ok=True)
@@ -31,7 +38,7 @@ app.add_middleware(RedisRateLimitMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

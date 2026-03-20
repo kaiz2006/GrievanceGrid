@@ -1,5 +1,17 @@
 # ML Todo (ai-models/)
 
+## Audit Addendum (2026-03-20)
+- [ ] Replace fallback/stub paths across model services with production-ready inference behavior:
+  - `ai-models/llm/src/voice_processor.py`
+  - `ai-models/cv/src/inference.py`
+  - `ai-models/gnn/src/data_loader.py`
+  - `ai-models/clustering/src/{dbscan.py,lda.py,anomaly.py,maintenance.py}`
+- [ ] Implement a real VLLM-backed inference path for LLM classification/resolution (current implementation is OpenAI/fallback driven).
+- [ ] Replace RL offline training mock transitions in `ai-models/rl_agent/src/train_offline.py` with historical dataset pipeline.
+- [ ] Add model artifact checks on startup (fail-fast if required weights are missing in non-dev mode).
+- [ ] Add API contract tests for `/classify`, `/embeddings`, `/transcribe`, `/severity`, `/route` and integrate in CI.
+- [ ] Produce benchmark reports with pass/fail gates for latency + accuracy targets (not only request timing).
+
 ## ✅ Integration Progress — COMPLETE (implemented in apps/worker)
 - [x] Worker now orchestrates model-service HTTP calls for text classification, voice transcription, CV severity, and route prediction
 - [x] Worker now includes Qdrant integration client and upserts grievance embeddings directly from Celery tasks
@@ -22,7 +34,7 @@
 ## 🤖 1. Multimodal LLM (ai-models/llm)
 **Target: <100ms inference, >90% category accuracy**
 
-- [x] Set up VLLM server (`ai-models/llm/src/client.py`) as HTTP wrapper
+- [ ] Set up VLLM server (`ai-models/llm/src/client.py`) as HTTP wrapper
 - [x] Implement `GrievanceLLMProcessor` class (`processor.py`):
   - Load `meta-llama/Llama-3.1-70B-Instruct` with 4-bit quantization (`q4_K_M`)
   - [x] `process_unstructured_text()` — extract category, priority, summary, department in JSON
@@ -153,10 +165,10 @@
 ---
 
 ## 📈 9. Performance Targets & Benchmarking
-- [x] LLM (Llama-3.1): <100ms, >90% category accuracy
-- [x] CV (ResNet50): <200ms, >85% severity accuracy
-- [x] Whisper STT: <500ms, >95% transcription accuracy
-- [x] GNN Routing: <30ms, >80% optimal route
-- [x] DBSCAN: <1s real-time clustering
-- [x] Vector Search: <50ms top-5 results
+- [ ] LLM (Llama-3.1): <100ms, >90% category accuracy
+- [ ] CV (ResNet50): <200ms, >85% severity accuracy
+- [ ] Whisper STT: <500ms, >95% transcription accuracy
+- [ ] GNN Routing: <30ms, >80% optimal route
+- [ ] DBSCAN: <1s real-time clustering
+- [ ] Vector Search: <50ms top-5 results
 - [x] Create benchmark script (`scripts/benchmark_ml.py`) to validate all targets

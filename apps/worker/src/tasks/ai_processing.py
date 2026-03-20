@@ -19,6 +19,30 @@ vector_client = VectorClient()
 backend_client = BackendClient()
 
 
+def _build_voice_fallback(grievance_id: str, audio_url: str, reason: str) -> dict[str, Any]:
+    short_code = grievance_id.replace("-", "")[:8].upper()
+    transcript = (
+        f"Voice message for grievance {short_code} could not be transcribed reliably. "
+        "A text summary fallback has been generated for manual review."
+    )
+    summary = "Voice grievance received; pending manual transcription review"
+
+    return {
+        "transcription": transcript,
+        "summary": summary,
+        "ai_category": "OTHER",
+        "ai_priority": "MEDIUM",
+        "fallback_used": True,
+        "fallback_reason": reason,
+        "ui_payload": {
+            "title": "Transcription Pending Review",
+            "message": "The audio was received, but automatic transcription confidence was low.",
+            "action": "manual_review_required",
+            "audio_url": audio_url,
+        },
+    }
+
+
 @shared_task(
     bind=True,
     name="src.tasks.ai_processing.process_grievance_ai",
@@ -141,26 +165,41 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
 def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str, Any]:
     """Process voice grievance pipeline (STT + summarization placeholder)."""
     callback_synced = False
+    fallback = _build_voice_fallback(grievance_id, audio_url, reason="dry_run")
 
     if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated voice processing")
-        transcription = "Transcription pipeline placeholder"
-        summary = "Voice grievance summary placeholder"
-        ai_category = "INFRASTRUCTURE"
-        ai_priority = "MEDIUM"
+        logger.info("WORKER_DRY_RUN enabled, returning deterministic voice fallback payload")
+        transcription = fallback["transcription"]
+        summary = fallback["summary"]
+        ai_category = fallback["ai_category"]
+        ai_priority = fallback["ai_priority"]
+        fallback_used = True
+        fallback_reason = fallback["fallback_reason"]
+        ui_payload = fallback["ui_payload"]
     else:
         stt_result = llm_client.transcribe(audio_url) or {}
-        transcription = stt_result.get("transcription", "")
-        summary = stt_result.get("summary", transcription[:280])
+        transcription = str(stt_result.get("transcription") or "").strip()
+        summary = str(stt_result.get("summary") or "").strip()
+        fallback_used = False
+        fallback_reason = None
+        ui_payload = None
 
         if not transcription:
-            transcription = "Unable to transcribe audio"
-        if not summary:
-            summary = transcription[:280]
+            fallback = _build_voice_fallback(grievance_id, audio_url, reason="stt_unavailable")
+            transcription = fallback["transcription"]
+            summary = fallback["summary"]
+            ai_category = fallback["ai_category"]
+            ai_priority = fallback["ai_priority"]
+            fallback_used = True
+            fallback_reason = fallback["fallback_reason"]
+            ui_payload = fallback["ui_payload"]
+        else:
+            if not summary:
+                summary = transcription[:280]
 
-        extracted = llm_client.classify(transcription) if transcription else None
-        ai_category = (extracted or {}).get("category") or "INFRASTRUCTURE"
-        ai_priority = (extracted or {}).get("priority") or "MEDIUM"
+            extracted = llm_client.classify(transcription) if transcription else None
+            ai_category = (extracted or {}).get("category") or "OTHER"
+            ai_priority = (extracted or {}).get("priority") or "MEDIUM"
 
     result = {
         "grievance_id": grievance_id,
@@ -169,6 +208,9 @@ def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str
         "summary": summary,
         "ai_category": ai_category,
         "ai_priority": ai_priority,
+        "fallback_used": fallback_used,
+        "fallback_reason": fallback_reason,
+        "ui_payload": ui_payload,
         "processed_at": datetime.now(timezone.utc).isoformat(),
     }
 

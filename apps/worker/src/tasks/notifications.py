@@ -1,39 +1,153 @@
 from __future__ import annotations
 
-import logging
 import json
+import logging
+import re
 from datetime import datetime, timezone
 from typing import Any
 
+import httpx
 import redis
 from celery import shared_task
 
+from src.clients import BackendClient
 from src.config import settings
 
 logger = logging.getLogger(__name__)
+backend_client = BackendClient()
 
 
 def _redis_client() -> redis.Redis:
     return redis.Redis.from_url(settings.redis_pubsub_url, decode_responses=True)
 
 
+class WebhookNotificationProvider:
+    def __init__(self, channel: str, webhook_url: str | None) -> None:
+        self.channel = channel
+        self.webhook_url = webhook_url
+
+    def send(self, recipient: str, payload: dict[str, Any]) -> dict[str, Any]:
+        if settings.dry_run:
+            return {
+                "status": "delivered",
+                "provider": f"dry-run-{self.channel}",
+                "provider_message_id": f"dry-{self.channel}-{abs(hash(recipient)) % 100000:05d}",
+                "error": None,
+            }
+
+        if not self.webhook_url:
+            return {
+                "status": "skipped",
+                "provider": f"webhook-{self.channel}",
+                "provider_message_id": None,
+                "error": "provider webhook is not configured",
+            }
+
+        try:
+            with httpx.Client(timeout=settings.ml_timeout_seconds) as client:
+                response = client.post(self.webhook_url, json={"recipient": recipient, **payload})
+
+            if response.status_code < 400:
+                body = response.json() if response.headers.get("content-type", "").startswith("application/json") else {}
+                provider_message_id = body.get("message_id") if isinstance(body, dict) else None
+                return {
+                    "status": "delivered",
+                    "provider": f"webhook-{self.channel}",
+                    "provider_message_id": provider_message_id,
+                    "error": None,
+                }
+
+            return {
+                "status": "failed",
+                "provider": f"webhook-{self.channel}",
+                "provider_message_id": None,
+                "error": f"provider returned {response.status_code}",
+            }
+        except Exception as exc:
+            return {
+                "status": "failed",
+                "provider": f"webhook-{self.channel}",
+                "provider_message_id": None,
+                "error": str(exc),
+            }
+
+
+def _resolve_channel(recipient: str) -> tuple[str | None, str]:
+    normalized = recipient.strip()
+    lowered = normalized.lower()
+
+    if lowered.startswith("push:"):
+        token = normalized.split(":", 1)[1].strip()
+        return ("push", token) if token else (None, normalized)
+    if "@" in normalized:
+        return "email", normalized
+    if re.fullmatch(r"\+?[0-9\-\s]{8,20}", normalized):
+        return "sms", normalized
+    return None, normalized
+
+
 @shared_task(name="src.tasks.notifications.send_status_notification")
 def send_status_notification(grievance_id: str, status: str, recipients: list[str]) -> dict[str, Any]:
     """Dispatch push/SMS notification payload for grievance status changes."""
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated notification response")
-        delivered = 0
-    else:
-        # Placeholder delivery accounting until provider adapters are integrated.
-        delivered = len(recipients)
+    providers = {
+        "email": WebhookNotificationProvider("email", settings.email_provider_webhook_url),
+        "sms": WebhookNotificationProvider("sms", settings.sms_provider_webhook_url),
+        "push": WebhookNotificationProvider("push", settings.push_provider_webhook_url),
+    }
+
+    channel_counts = {"email": 0, "sms": 0, "push": 0}
+    delivery_results: list[dict[str, Any]] = []
+    notification_payload = {
+        "grievance_id": grievance_id,
+        "status": status,
+        "sent_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    for recipient in recipients:
+        channel, target = _resolve_channel(recipient)
+        if channel is None:
+            delivery_results.append(
+                {
+                    "recipient": recipient,
+                    "channel": None,
+                    "status": "skipped",
+                    "provider": "none",
+                    "provider_message_id": None,
+                    "error": "unable to infer channel; use email, phone, or push:<token>",
+                }
+            )
+            continue
+
+        channel_counts[channel] += 1
+        provider_result = providers[channel].send(target, notification_payload)
+        delivery_results.append(
+            {
+                "recipient": recipient,
+                "channel": channel,
+                "status": provider_result["status"],
+                "provider": provider_result["provider"],
+                "provider_message_id": provider_result["provider_message_id"],
+                "error": provider_result["error"],
+            }
+        )
+
+    delivered = sum(1 for item in delivery_results if item["status"] == "delivered")
+    failed = sum(1 for item in delivery_results if item["status"] == "failed")
+    skipped = sum(1 for item in delivery_results if item["status"] == "skipped")
 
     result = {
         "grievance_id": grievance_id,
         "status": status,
         "recipients": recipients,
         "delivered": delivered,
+        "failed": failed,
+        "skipped": skipped,
+        "channels": {key: value for key, value in channel_counts.items() if value > 0},
+        "results": delivery_results,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+    result["backend_sync"] = backend_client.post_notification_result(grievance_id, result)
     logger.info("Notification task completed", extra={"result": result})
     return result
 

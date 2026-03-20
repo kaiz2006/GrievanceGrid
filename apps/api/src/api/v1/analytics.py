@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from datetime import date, datetime, timezone
 from typing import Any
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.config import settings
 from src.core.database import get_db_session
 from src.services.analytics_service import AnalyticsService
 
@@ -50,6 +52,16 @@ class DashboardAnalyticsResponse(BaseModel):
 	sla_compliance: SLACompliance
 	heat_map_data: list[HeatMapPoint]
 	predictive_alerts: list[dict[str, Any]]
+
+
+class DailySnapshotRequest(BaseModel):
+	target_day: str | None = None
+
+
+class DailySnapshotResponse(BaseModel):
+	metric_date: str
+	records_written: int
+	generated_at: str
 
 
 @router.get("/dashboard", response_model=DashboardAnalyticsResponse)
@@ -119,4 +131,40 @@ async def get_dashboard_analytics(
 			}
 			for alert in predictive_alerts
 		],
+	)
+
+
+@router.post("/snapshot", response_model=DailySnapshotResponse)
+async def generate_daily_snapshot(
+	payload: DailySnapshotRequest,
+	x_internal_token: str | None = Header(default=None, alias="X-Internal-Token"),
+	db: AsyncSession = Depends(get_db_session),
+) -> DailySnapshotResponse:
+	if x_internal_token != settings.internal_worker_token:
+		raise HTTPException(status_code=401, detail="Invalid internal worker token")
+
+	target = payload.target_day
+	metric_date: datetime | None = None
+	if target:
+		try:
+			if "T" in target:
+				parsed = datetime.fromisoformat(target.replace("Z", "+00:00"))
+				metric_date = parsed.astimezone(timezone.utc)
+			else:
+				parsed_date = date.fromisoformat(target)
+				metric_date = datetime(
+					year=parsed_date.year,
+					month=parsed_date.month,
+					day=parsed_date.day,
+					tzinfo=timezone.utc,
+				)
+		except ValueError as exc:
+			raise HTTPException(status_code=400, detail="target_day must be ISO date or datetime") from exc
+
+	service = AnalyticsService(db)
+	snapshot = await service.generate_daily_snapshot(metric_date=metric_date)
+	return DailySnapshotResponse(
+		metric_date=str(snapshot.get("metric_date") or datetime.now(timezone.utc).isoformat()),
+		records_written=1 if snapshot.get("snapshot") else 0,
+		generated_at=datetime.now(timezone.utc).isoformat(),
 	)

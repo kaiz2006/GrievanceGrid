@@ -1,8 +1,17 @@
 # Final Todo — Integration, DevOps & Deployment
 
+## Audit Addendum (2026-03-20)
+- [x] Finalize canonical frontend architecture: `apps/frontend` (React + Vite) is primary and `apps/web` is secondary/experimental; align integrations/tests/docs to this choice.
+- [ ] Replace mock frontend services with real API integration across whichever frontend(s) stay active.
+- [ ] Add `apps/api/Dockerfile` and `apps/web/Dockerfile` for deployable containers.
+- [ ] Add root-level orchestration compose for full-stack local run (api, worker, redis, postgres, qdrant, ml, frontend).
+- [ ] Create `.github/workflows/ci.yml`, `.github/workflows/deploy-prod.yml`, and `.github/workflows/ml-training.yml` (workflows folder currently empty).
+- [ ] Run and automate full lifecycle E2E validation: submit -> AI processing -> route -> track -> verify -> feedback -> contest.
+- [ ] Enforce non-stub ML readiness checks before production release.
+
 ## 🗂️ Monorepo & Build System
-- [ ] Set up Turborepo (`turbo.json`) with `build`, `dev`, `lint` pipelines and `dependsOn` ordering
-- [ ] Configure `package.json` root scripts: `dev`, `build`, `lint`, `db:push`, `db:migrate`
+- [x] Set up Turborepo (`turbo.json`) with `build`, `dev`, `lint` pipelines and `dependsOn` ordering
+- [x] Configure `package.json` root scripts: `dev`, `build`, `lint`, `db:push`, `db:migrate`
 - [ ] Ensure all packages compile with correct TypeScript (`tsconfig.json` path aliases)
 - [ ] Verify `packages/ui`, `packages/database`, `packages/graphql`, `packages/utils`, `packages/config` are properly linked
 
@@ -12,12 +21,13 @@
 - [ ] Write `Dockerfile` for `apps/web` (Next.js production build)
 - [ ] Write `Dockerfile` for `apps/api` (FastAPI with uvicorn)
 - [x] Write `Dockerfile` for `apps/worker` (Celery worker) — **COMPLETE**
-- [ ] Write Dockerfiles for each AI model service (`ai-models/llm`, `cv`, `gnn`)
-- [x] Write `docker-compose.yml` (core services) — **COMPLETE** with Redis, Qdrant, PostgreSQL, Worker, Beat, Flower
-- [ ] Write `docker-compose.ml.yml` (ML model services):
-  - [ ] `llm-service` (VLLM + Llama-3.1)
-  - [ ] `cv-service` (ResNet50)
-  - [ ] `gnn-service` (GNN routing)
+- [x] Write Dockerfiles for each AI model service (`ai-models/llm`, `cv`, `gnn`)
+- [ ] Write root `docker-compose.yml` (core services for full stack)
+- [x] Worker-scoped compose exists (`apps/worker/docker-compose.yml`) with Redis, Qdrant, PostgreSQL, Worker, Beat, Flower
+- [x] Write `docker-compose.ml.yml` (ML model services):
+  - [x] `llm-service` (VLLM + Llama-3.1)
+  - [x] `cv-service` (ResNet50)
+  - [x] `gnn-service` (GNN routing)
 
 ---
 
@@ -33,7 +43,7 @@
 
 ## 🛠️ Setup Scripts (`scripts/`)
 - [ ] `setup.sh` — Install all dependencies, set up `.env` files, run DB migrations
-- [ ] `seed-db.sh` — Seed departments, teams, and sample grievances
+- [x] `seed-db.sh` — Seed departments, teams, and sample grievances
 - [ ] `migrate-db.sh` — Run Drizzle migrations against target database
 - [ ] `build-docker.sh` — Build all Docker images in correct order
 - [ ] `deploy.sh` — Deploy to production environment

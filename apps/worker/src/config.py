@@ -22,6 +22,10 @@ class WorkerSettings:
     qdrant_url: str
     qdrant_collection: str
     redis_pubsub_url: str
+    internal_worker_token: str
+    email_provider_webhook_url: str | None
+    sms_provider_webhook_url: str | None
+    push_provider_webhook_url: str | None
     embedding_dimension: int
     ml_timeout_seconds: float
     log_level: str
@@ -40,6 +44,10 @@ settings = WorkerSettings(
     qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
     qdrant_collection=os.getenv("QDRANT_COLLECTION", "grievances"),
     redis_pubsub_url=os.getenv("REDIS_PUBSUB_URL", os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")),
+    internal_worker_token=os.getenv("INTERNAL_WORKER_TOKEN", "dev-worker-token"),
+    email_provider_webhook_url=os.getenv("EMAIL_PROVIDER_WEBHOOK_URL"),
+    sms_provider_webhook_url=os.getenv("SMS_PROVIDER_WEBHOOK_URL"),
+    push_provider_webhook_url=os.getenv("PUSH_PROVIDER_WEBHOOK_URL"),
     embedding_dimension=int(os.getenv("EMBEDDING_DIMENSION", "768")),
     ml_timeout_seconds=float(os.getenv("ML_TIMEOUT_SECONDS", "8.0")),
     log_level=os.getenv("WORKER_LOG_LEVEL", "INFO"),

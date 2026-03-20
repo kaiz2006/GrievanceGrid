@@ -140,23 +140,23 @@
 ---
 
 ## 🔄 Background Workers (`apps/worker/`)
-- [ ] **`ai_processing.py`** Celery task:
+- [x] **`ai_processing.py`** Celery task:
   - Call LLM for category + priority extraction
   - Call CV model for image severity score (if photo attached)
   - Generate BERT embedding and index in Qdrant
   - Call GNN for department routing
   - Update grievance record with AI results
-- [ ] **`clustering.py`** Celery periodic task:
+- [x] **`clustering.py`** Celery periodic task:
   - Fetch recent grievances
   - Run DBSCAN and LDA
   - Upsert `geo_clusters` table
-- [ ] **`maintenance.py`** Celery periodic task:
+- [x] **`maintenance.py`** Celery periodic task:
   - Query complaint frequency per asset
   - Update `failure_risk_score` in `infrastructure_assets`
-- [ ] **`notifications.py`** Celery task:
+- [x] **`notifications.py`** Celery task:
   - Send push notifications / SMS on status change
   - Publish Redis pub/sub event for WebSocket clients
-- [ ] **`sla_monitor.py`** Celery beat scheduler:
+- [x] **`sla_monitor.py`** Celery beat scheduler:
   - Poll `sla_timers` every minute
   - Trigger escalation alerts to senior officers if deadline approaching
 
@@ -191,6 +191,14 @@
 ---
 
 ### ⏳ API Backend — Still Needed
+
+## Audit Addendum (2026-03-20)
+- [x] Add `apps/api/Dockerfile` for FastAPI production container builds.
+- [x] Replace placeholder notification delivery accounting in `apps/worker/src/tasks/notifications.py` with provider adapters (SMS/push/email) and delivery status persistence.
+- [x] Replace placeholder daily report scheduler logic in `apps/worker/src/schedulers/report_generator.py` with actual `daily_metrics` persistence.
+- [x] Replace placeholder voice fallback text in `apps/worker/src/tasks/ai_processing.py` with deterministic, structured fallback output suitable for UI rendering.
+- [x] Split AI service endpoints in API config (`LLM`, `CV`, `GNN`) instead of defaulting all services to one base URL in `apps/api/src/services/ai_service.py`.
+- [x] Restrict API CORS from wildcard to environment-based allowlist before production.
 
 ---
 

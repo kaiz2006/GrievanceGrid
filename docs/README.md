@@ -36,7 +36,7 @@ GrievanceGrid is designed around 5 distinct user roles:
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Next.js 15 (RSC), Tailwind CSS, Zustand, TanStack Query, Leaflet.js |
+| Frontend | React + Vite (Primary), Tailwind CSS, Zustand, TanStack Query, Leaflet.js; Next.js 15 kept as secondary |
 | Backend | FastAPI, Uvicorn, Pydantic v2, Apollo GraphQL, Redis, Google Auth, Basic Auth (JWT) |
 | AI/ML | Llama-3.1, Mistral-7B, VLLM, HuggingFace Transformers, BERT NLP |
 | Data | PostgreSQL (Supabase/Neon), Drizzle ORM, Qdrant |
@@ -49,6 +49,9 @@ npm install
 
 # Start development
 npm run dev
+
+# Optional: run all apps in monorepo
+npm run dev:all
 
 # Run ML services
 docker-compose -f docker-compose.ml.yml up
@@ -83,7 +86,7 @@ docker-compose -f docker-compose.ml.yml up
 ## Architecture
 
 GrievanceGrid follows Clean Architecture with 6 layers:
-1. Intelligent Client (Next.js Frontend)
+1. Intelligent Client (React + Vite Frontend primary, Next.js secondary)
 2. API Gateway (GraphQL + REST)
 3. Core Application (Domain Services)
 4. Durable Data (PostgreSQL)
