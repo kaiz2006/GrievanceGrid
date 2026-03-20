@@ -11,23 +11,23 @@
 ---
 
 ## 🗄️ Database (`packages/database`)
-- [ ] Initialize `packages/database` with Drizzle ORM
-- [ ] Enable PostgreSQL extensions: `uuid-ossp`, `postgis`
-- [ ] Write Drizzle schema (`schema.ts`) for all tables:
-  - [ ] `users` (with `google_id` and `password_hash` for dual auth)
-  - [ ] `grievances` (with all AI fields, location, SLA, media columns)
-  - [ ] `sla_timers`
-  - [ ] `departments` and `teams` and `team_members`
-  - [ ] `geo_clusters` and `cluster_members`
-  - [ ] `verifications`
-  - [ ] `audit_logs`
-  - [ ] `vector_references` (Qdrant pointer)
-  - [ ] `infrastructure_assets`
-  - [ ] `daily_metrics`
-- [ ] Create and run initial database migration
-- [ ] Add PostGIS geospatial index on `grievances` table (`GIST` on lat/lng)
-- [ ] Write seed script (`scripts/seed-db.sh`) with departments, teams, and sample data
-- [ ] Export typed `db` client from `packages/database/src/index.ts`
+- [x] Initialize `packages/database` with Drizzle ORM
+- [x] Enable PostgreSQL extensions: `uuid-ossp`, `postgis`
+- [x] Write Drizzle schema (`schema.ts`) for all tables:
+  - [x] `users` (with `google_id` and `password_hash` for dual auth)
+  - [x] `grievances` (with all AI fields, location, SLA, media columns)
+  - [x] `sla_timers`
+  - [x] `departments` and `teams` and `team_members`
+  - [x] `geo_clusters` and `cluster_members`
+  - [x] `verifications`
+  - [x] `audit_logs`
+  - [x] `vector_references` (Qdrant pointer)
+  - [x] `infrastructure_assets`
+  - [x] `daily_metrics`
+- [x] Create and run initial database migration
+- [x] Add PostGIS geospatial index on `grievances` table (`GIST` on lat/lng)
+- [x] Write seed script (`scripts/seed-db.sh`) with departments, teams, and sample data
+- [x] Export typed `db` client from `packages/database/src/index.ts`
 
 ---
 
