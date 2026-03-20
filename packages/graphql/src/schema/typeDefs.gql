@@ -1,0 +1,238 @@
+scalar JSONObject
+
+enum GrievanceStatus {
+  CREATED
+  PENDING_CLASSIFICATION
+  PENDING_ASSIGNMENT
+  ASSIGNED
+  IN_PROGRESS
+  PENDING_VERIFICATION
+  VERIFIED
+  RESOLVED
+  ESCALATED
+  CONTESTED
+  CLOSED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum GrievanceCategory {
+  ROADS
+  WATER_SUPPLY
+  SANITATION
+  ELECTRICITY
+  PUBLIC_TRANSPORT
+  ENVIRONMENT
+  BUILDING_VIOLATION
+  INFRASTRUCTURE
+  OTHER
+}
+
+input GrievanceFilter {
+  status: String
+  category: String
+  priority: String
+  department: String
+  departmentId: String
+}
+
+input GrievanceInput {
+  category: String
+  priority: String
+  title: String!
+  description: String!
+  latitude: Float
+  longitude: Float
+  locationAddress: String
+  locationText: String
+  beforePhotoUrl: String
+  hintCategory: String
+  hintPriority: String
+  hintDepartment: String
+}
+
+type TimelineEvent {
+  status: String!
+  timestamp: String!
+  description: String!
+  metadata: JSONObject
+}
+
+type Grievance {
+  grievanceId: ID!
+  gridId: String!
+  status: String!
+  category: String!
+  priority: String!
+  title: String!
+  description: String!
+  citizenId: String
+  citizenName: String
+  citizenPhone: String
+  latitude: Float
+  longitude: Float
+  locationAddress: String
+  beforePhotoUrl: String
+  afterPhotoUrl: String
+  aiCategory: String
+  aiPriority: String
+  aiSummary: String
+  damageSeverity: Float
+  assignedDepartmentId: String
+  assignedDepartmentName: String
+  assignedTeamId: String
+  assignedTeamName: String
+  submittedAt: String
+  updatedAt: String
+  timeline: [TimelineEvent!]!
+}
+
+type GrievanceConnection {
+  count: Int!
+  items: [Grievance!]!
+}
+
+type TeamLocation {
+  latitude: Float!
+  longitude: Float!
+  updatedAt: String
+}
+
+type TrackingInfo {
+  gridId: String!
+  currentStatus: String!
+  currentSlaType: String
+  slaRemainingSeconds: Int
+  slaDeadlines: JSONObject!
+  timeline: [TimelineEvent!]!
+  assignedTeamLocation: TeamLocation
+  predictedEtaMinutes: Int
+}
+
+type GrievanceSubmission {
+  grievanceId: ID!
+  gridId: String!
+  processingTaskId: String!
+  submittedAt: String!
+  responseDeadline: String!
+  resolutionDeadline: String!
+  status: String!
+}
+
+type FeedbackResult {
+  grievanceId: ID!
+  rating: Int!
+  submittedAt: String!
+  message: String!
+}
+
+type ContestationResult {
+  status: String!
+  auditTriggered: Boolean!
+  auditId: String!
+  auditTaskId: String!
+  message: String!
+}
+
+type GeoCluster {
+  clusterId: ID!
+  clusterType: String!
+  centroidLat: Float!
+  centroidLng: Float!
+  memberCount: Int!
+  crisisScore: Float
+  isActive: Boolean!
+  topics: [String!]
+  metadata: JSONObject
+}
+
+type DashboardSummary {
+  totalGrievances: Int!
+  resolved: Int!
+  pending: Int!
+  escalated: Int!
+  avgResolutionHours: Float
+}
+
+type CategoryMetric {
+  category: String!
+  count: Int!
+  resolved: Int!
+}
+
+type PriorityMetric {
+  priority: String!
+  count: Int!
+  avgResolutionHours: Float
+}
+
+type SLACompliance {
+  responseSlaMet: Float
+  resolutionSlaMet: Float
+}
+
+type HeatMapPoint {
+  lat: Float!
+  lng: Float!
+  intensity: Float!
+}
+
+type DashboardData {
+  summary: DashboardSummary!
+  byCategory: [CategoryMetric!]!
+  byPriority: [PriorityMetric!]!
+  slaCompliance: SLACompliance!
+  heatMapData: [HeatMapPoint!]!
+  predictiveAlerts: [JSONObject!]!
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  role: String!
+  departmentId: String
+  isActive: Boolean!
+  createdAt: String!
+}
+
+type TokenResponse {
+  accessToken: String!
+  refreshToken: String!
+  tokenType: String!
+  expiresIn: Int!
+  user: User!
+}
+
+type AuthResponse {
+  success: Boolean!
+  message: String!
+  data: JSONObject
+}
+
+type Query {
+  grievance(id: ID!): Grievance
+  grievances(filter: GrievanceFilter, limit: Int, offset: Int): GrievanceConnection!
+  track(gridId: String!): TrackingInfo!
+  clusters(activeOnly: Boolean, clusterType: String, limit: Int): [GeoCluster!]!
+  dashboard(from: String, to: String): DashboardData!
+  me: User
+}
+
+type Mutation {
+  register(email: String!, password: String!): TokenResponse!
+  login(email: String!, password: String!): TokenResponse!
+  googleAuth(idToken: String!): TokenResponse!
+  refreshToken(refreshToken: String!): TokenResponse!
+  changePassword(currentPassword: String!, newPassword: String!, confirmPassword: String!): AuthResponse!
+  logout: AuthResponse!
+  submitGrievance(input: GrievanceInput!): GrievanceSubmission!
+  updateStatus(id: ID!, status: GrievanceStatus!, notes: String): Grievance!
+  submitFeedback(grievanceId: ID!, rating: Int!, comment: String, isSatisfied: Boolean): FeedbackResult!
+  contestResolution(grievanceId: ID!, reason: String!, evidencePhoto: String): ContestationResult!
+}

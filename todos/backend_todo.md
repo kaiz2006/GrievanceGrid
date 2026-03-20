@@ -195,13 +195,13 @@
 ---
 
 ## 📐 GraphQL (`packages/graphql`)
-- [ ] Define `typeDefs.gql` with all types from API_SPEC (Grievance, TrackingInfo, GeoCluster, etc.)
-- [ ] Implement resolvers:
-  - [ ] `grievance.ts` — `grievance`, `grievances`, `submitGrievance`, `updateStatus`, `submitFeedback`, `contestResolution`
-  - [ ] `user.ts` — `me`, auth mutations
-  - [ ] `cluster.ts` — `clusters`, `dashboard`
-- [ ] Apollo Server setup in `packages/graphql/src/server.ts`
-- [ ] Code-gen setup (`codegen.yml`) to auto-generate TypeScript types for frontend
+- [x] Define `typeDefs.gql` with all types from API_SPEC (Grievance, TrackingInfo, GeoCluster, etc.)
+- [x] Implement resolvers:
+  - [x] `grievance.ts` — `grievance`, `grievances`, `submitGrievance`, `updateStatus`, `submitFeedback`, `contestResolution`
+  - [x] `user.ts` — `me`, auth mutations
+  - [x] `cluster.ts` — `clusters`, `dashboard`
+- [x] Apollo Server setup in `packages/graphql/src/server.ts`
+- [x] Code-gen setup (`codegen.yml`) to auto-generate TypeScript types for frontend
 
 ---
 

@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./codegen.schema.json
+schema: ./src/schema/typeDefs.gql
+ignoreNoDocuments: true
+documents:
+  - ./src/client/operations/**/*.graphql
+  - ./src/client/operations/**/*.gql
+generates:
+  ./src/client/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+    config:
+      scalars:
+        JSONObject: unknown
+      useTypeImports: true
+      skipTypename: false
