@@ -97,13 +97,15 @@ const AdminDashboardPage = () => {
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <metric.icon className="w-16 h-16" />
                 </div>
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex justify-between items-center mb-4 relative z-10">
                   <div className={`p-3 rounded-xl ${metric.color}`}>
                     <metric.icon className="w-5 h-5" />
                   </div>
-                  <span className={`text-xs font-bold ${metric.trend.startsWith('+') ? 'text-green-500' : 'text-blue-500'}`}>
+                  <div className={`px-2 py-1 rounded-lg text-[10px] font-bold ${
+                    metric.trend.startsWith('+') ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'
+                  } border border-white/5`}>
                     {metric.trend}
-                  </span>
+                  </div>
                 </div>
                 <h4 className="text-muted-foreground text-xs font-bold uppercase tracking-widest mb-1">{metric.label}</h4>
                 <p className="text-3xl font-bold tracking-tight">{metric.value}</p>
