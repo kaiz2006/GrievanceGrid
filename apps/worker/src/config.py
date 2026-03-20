@@ -26,6 +26,11 @@ class WorkerSettings:
     email_provider_webhook_url: str | None
     sms_provider_webhook_url: str | None
     push_provider_webhook_url: str | None
+    smtp_host: str
+    smtp_port: int
+    smtp_user: str | None
+    smtp_password: str | None
+    smtp_from: str
     embedding_dimension: int
     ml_timeout_seconds: float
     log_level: str
@@ -48,9 +53,14 @@ settings = WorkerSettings(
     email_provider_webhook_url=os.getenv("EMAIL_PROVIDER_WEBHOOK_URL"),
     sms_provider_webhook_url=os.getenv("SMS_PROVIDER_WEBHOOK_URL"),
     push_provider_webhook_url=os.getenv("PUSH_PROVIDER_WEBHOOK_URL"),
+    smtp_host=os.getenv("SMTP_HOST", "localhost"),
+    smtp_port=int(os.getenv("SMTP_PORT", "1025")),
+    smtp_user=os.getenv("SMTP_USER"),
+    smtp_password=os.getenv("SMTP_PASSWORD"),
+    smtp_from=os.getenv("SMTP_FROM", "noreply@grievancegrid.gov"),
     embedding_dimension=int(os.getenv("EMBEDDING_DIMENSION", "768")),
     ml_timeout_seconds=float(os.getenv("ML_TIMEOUT_SECONDS", "8.0")),
     log_level=os.getenv("WORKER_LOG_LEVEL", "INFO"),
     timezone=os.getenv("WORKER_TIMEZONE", "UTC"),
-    dry_run=_to_bool(os.getenv("WORKER_DRY_RUN"), default=True),
+    dry_run=_to_bool(os.getenv("WORKER_DRY_RUN"), default=False),
 )

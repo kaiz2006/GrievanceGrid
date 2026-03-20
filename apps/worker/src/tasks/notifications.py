@@ -16,6 +16,49 @@ from src.config import settings
 logger = logging.getLogger(__name__)
 backend_client = BackendClient()
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from uuid import uuid4
+
+class SmtpEmailProvider:
+    def __init__(self) -> None:
+        self.host = settings.smtp_host
+        self.port = settings.smtp_port
+        self.user = settings.smtp_user
+        self.password = settings.smtp_password
+        self.sender = settings.smtp_from
+
+    def send(self, recipient: str, payload: dict[str, Any]) -> dict[str, Any]:
+        """Send a real email via SMTP."""
+        if settings.dry_run:
+            logger.info(f"[DRY-RUN] Would send email to {recipient}: {payload['status']}")
+            return {"status": "delivered", "provider": "dry-run-smtp"}
+
+        msg = MIMEMultipart()
+        msg["From"] = self.sender
+        msg["To"] = recipient
+        msg["Subject"] = f"Grievance Update: {payload['grievance_id']}"
+
+        body = f"The status of your grievance ({payload['grievance_id']}) has been updated to: {payload['status']}."
+        msg.attach(MIMEText(body, "plain"))
+
+        try:
+            with smtplib.SMTP(self.host, self.port) as server:
+                if self.user and self.password:
+                    server.login(self.user, self.password)
+                server.send_message(msg)
+            
+            return {
+                "status": "delivered",
+                "provider": "smtp",
+                "provider_message_id": f"smtp-{uuid4().hex[:8]}", 
+                "error": None,
+            }
+        except Exception as e:
+            logger.error(f"Failed to send email via SMTP to {recipient}: {e}")
+            return {"status": "failed", "provider": "smtp", "error": str(e)}
+
 
 def _redis_client() -> redis.Redis:
     return redis.Redis.from_url(settings.redis_pubsub_url, decode_responses=True)
@@ -89,8 +132,8 @@ def _resolve_channel(recipient: str) -> tuple[str | None, str]:
 @shared_task(name="src.tasks.notifications.send_status_notification")
 def send_status_notification(grievance_id: str, status: str, recipients: list[str]) -> dict[str, Any]:
     """Dispatch push/SMS notification payload for grievance status changes."""
-    providers = {
-        "email": WebhookNotificationProvider("email", settings.email_provider_webhook_url),
+    smtp_provider = SmtpEmailProvider()
+    webhook_providers = {
         "sms": WebhookNotificationProvider("sms", settings.sms_provider_webhook_url),
         "push": WebhookNotificationProvider("push", settings.push_provider_webhook_url),
     }
@@ -119,15 +162,20 @@ def send_status_notification(grievance_id: str, status: str, recipients: list[st
             continue
 
         channel_counts[channel] += 1
-        provider_result = providers[channel].send(target, notification_payload)
+        
+        if channel == "email":
+            provider_result = smtp_provider.send(target, notification_payload)
+        else:
+            provider_result = webhook_providers[channel].send(target, notification_payload)
+            
         delivery_results.append(
             {
                 "recipient": recipient,
                 "channel": channel,
                 "status": provider_result["status"],
                 "provider": provider_result["provider"],
-                "provider_message_id": provider_result["provider_message_id"],
-                "error": provider_result["error"],
+                "provider_message_id": provider_result.get("provider_message_id"),
+                "error": provider_result.get("error"),
             }
         )
 

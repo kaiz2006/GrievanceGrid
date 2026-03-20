@@ -51,9 +51,6 @@ export default function GeneratedPage() {
 <label className="block text-[10px] font-semibold text-gray-500 mb-1.5 tracking-wider uppercase">PASSWORD</label>
 <input className="w-full px-4 py-2.5 bg-gray-50/50 border border-deep-plum/20 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-deep-plum focus:border-deep-plum text-sm transition-all" placeholder="Enter your password" required type="password"/>
 </div>
-<div className="flex justify-end mt-1">
-<Link className="text-xs text-deep-plum font-medium hover:underline" href="#">Forgot password?</Link>
-</div>
 <Link href="/admin/mission-control" className="w-full mt-2 py-3 bg-deep-plum hover:bg-custom-4 focus:ring-4 focus:ring-deep-plum/20 transition-all text-white font-medium text-sm rounded-[6px] tracking-wide" >
             SIGN IN
         </Link>

@@ -89,10 +89,7 @@ export default function LoginPage() {
 
               {/* Password Input */}
               <div className="space-y-1.5">
-                <div className="flex justify-between items-end px-1">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-tertiary opacity-80">Access Key</label>
-                  <a className="text-[10px] font-bold uppercase tracking-widest text-primary-container hover:underline" href="#">Forgot?</a>
-                </div>
                 <div className="relative group">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm group-focus-within:text-primary-container transition-colors">lock</span>
                   <input 

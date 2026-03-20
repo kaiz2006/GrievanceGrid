@@ -9,6 +9,8 @@ from celery import shared_task
 from src.clients import BackendClient, CvClient, GnnClient, LlmClient, VectorClient
 from src.config import settings
 from src.utils import deterministic_embedding
+from src.ml_logic import anomaly_detector
+from gtts import gTTS
 
 logger = logging.getLogger(__name__)
 
@@ -76,62 +78,58 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
     callback_synced = False
     similar_cases: list[dict[str, Any]] = []
 
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated AI enrichment")
+    llm_result = llm_client.classify(text_input) or {}
+    llm_category = llm_result.get("category", llm_category) or llm_category
+    llm_priority = llm_result.get("priority", llm_priority) or llm_priority
+    llm_summary = llm_result.get("summary", llm_summary) or llm_summary
+    suggested_department = llm_result.get("department", suggested_department) or suggested_department
 
-        embedding = deterministic_embedding(text_input, settings.embedding_dimension)
+    if payload.get("before_photo_url"):
+        cv_prediction = cv_client.estimate_severity(str(payload["before_photo_url"]))
+        if cv_prediction is not None:
+            cv_severity = cv_prediction
+
+    embedding = llm_client.embed(text_input)
+    if embedding:
+        vector_source = "llm-service"
         embedding_indexed = True
     else:
-        llm_result = llm_client.classify(text_input) or {}
-        llm_category = llm_result.get("category", llm_category) or llm_category
-        llm_priority = llm_result.get("priority", llm_priority) or llm_priority
-        llm_summary = llm_result.get("summary", llm_summary) or llm_summary
-        suggested_department = llm_result.get("department", suggested_department) or suggested_department
+        embedding = deterministic_embedding(text_input, settings.embedding_dimension)
+        embedding_indexed = False
 
-        if payload.get("before_photo_url"):
-            cv_prediction = cv_client.estimate_severity(str(payload["before_photo_url"]))
-            if cv_prediction is not None:
-                cv_severity = cv_prediction
+    route = gnn_client.predict_route(
+        {
+            "grievance_id": grievance_id,
+            "description": text_input,
+            "category": llm_category,
+            "priority": llm_priority,
+        }
+    )
+    if route and isinstance(route.get("department"), str):
+        suggested_department = route["department"]
 
-        embedding = llm_client.embed(text_input)
-        if embedding:
-            vector_source = "llm-service"
-        else:
-            embedding = deterministic_embedding(text_input, settings.embedding_dimension)
-
-        route = gnn_client.predict_route(
+    try:
+        vector_client.upsert_grievance_embedding(
+            grievance_id,
+            embedding,
             {
-                "grievance_id": grievance_id,
-                "description": text_input,
                 "category": llm_category,
                 "priority": llm_priority,
-            }
+                "department": suggested_department,
+                "summary": llm_summary,
+            },
         )
-        if route and isinstance(route.get("department"), str):
-            suggested_department = route["department"]
 
-        try:
-            vector_client.upsert_grievance_embedding(
-                grievance_id,
-                embedding,
-                {
-                    "category": llm_category,
-                    "priority": llm_priority,
-                    "department": suggested_department,
-                    "summary": llm_summary,
-                },
-            )
-
-            # Suggest similar historical cases for downstream resolution support.
-            similar_cases = [
-                case
-                for case in vector_client.find_similar(embedding, category=llm_category, limit=5)
-                if case.get("id") != grievance_id
-            ]
-            embedding_indexed = True
-        except Exception as exc:
-            logger.warning("Failed to index embedding in Qdrant", extra={"error": str(exc)})
-            embedding_indexed = False
+        # Suggest similar historical cases for downstream resolution support.
+        similar_cases = [
+            case
+            for case in vector_client.find_similar(embedding, category=llm_category, limit=5)
+            if case.get("id") != grievance_id
+        ]
+        embedding_indexed = True
+    except Exception as exc:
+        logger.warning("Failed to index embedding in Qdrant", extra={"error": str(exc)})
+        embedding_indexed = False
 
     result = {
         "grievance_id": grievance_id,
@@ -144,8 +142,13 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
         "embedding_dimension": len(embedding),
         "assigned_department": suggested_department,
         "similar_cases": similar_cases,
-        "processed_at": datetime.now(timezone.utc).isoformat(),
     }
+
+    # Run real-time anomaly detection
+    check_payload = {**payload, "id": grievance_id, "ai_priority": llm_priority}
+    anomalies = anomaly_detector.detect([check_payload])
+    result["is_anomaly"] = len(anomalies) > 0
+    result["processed_at"] = datetime.now(timezone.utc).isoformat()
 
     if not settings.dry_run:
         callback_synced = backend_client.post_ai_result(grievance_id, result)
@@ -165,41 +168,40 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
 def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str, Any]:
     """Process voice grievance pipeline (STT + summarization placeholder)."""
     callback_synced = False
-    fallback = _build_voice_fallback(grievance_id, audio_url, reason="dry_run")
+    stt_result = llm_client.transcribe(audio_url) or {}
+    transcription = str(stt_result.get("transcription") or "").strip()
+    summary = str(stt_result.get("summary") or "").strip()
+    fallback_used = False
+    fallback_reason = None
 
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning deterministic voice fallback payload")
+    if not transcription:
+        fallback = _build_voice_fallback(grievance_id, audio_url, reason="stt_unavailable")
         transcription = fallback["transcription"]
         summary = fallback["summary"]
         ai_category = fallback["ai_category"]
         ai_priority = fallback["ai_priority"]
         fallback_used = True
         fallback_reason = fallback["fallback_reason"]
-        ui_payload = fallback["ui_payload"]
     else:
-        stt_result = llm_client.transcribe(audio_url) or {}
-        transcription = str(stt_result.get("transcription") or "").strip()
-        summary = str(stt_result.get("summary") or "").strip()
-        fallback_used = False
-        fallback_reason = None
-        ui_payload = None
+        if not summary:
+            summary = transcription[:280]
 
-        if not transcription:
-            fallback = _build_voice_fallback(grievance_id, audio_url, reason="stt_unavailable")
-            transcription = fallback["transcription"]
-            summary = fallback["summary"]
-            ai_category = fallback["ai_category"]
-            ai_priority = fallback["ai_priority"]
-            fallback_used = True
-            fallback_reason = fallback["fallback_reason"]
-            ui_payload = fallback["ui_payload"]
-        else:
-            if not summary:
-                summary = transcription[:280]
+        extracted = llm_client.classify(transcription) if transcription else None
+        ai_category = (extracted or {}).get("category") or "OTHER"
+        ai_priority = (extracted or {}).get("priority") or "MEDIUM"
 
-            extracted = llm_client.classify(transcription) if transcription else None
-            ai_category = (extracted or {}).get("category") or "OTHER"
-            ai_priority = (extracted or {}).get("priority") or "MEDIUM"
+    # Generate TTS Response (Closing the loop)
+    short_id = grievance_id.replace("-", "")[:8].upper()
+    response_text = f"Your grievance has been received. Your tracking ID is {short_id}."
+    
+    # Placeholder for TTS audio generation
+    tts_audio_url = f"/audio/responses/{grievance_id}.mp3"
+    try:
+        tts = gTTS(text=response_text, lang='en')
+        # tts.save(f"/tmp/{grievance_id}.mp3") 
+        logger.info(f"Generated TTS response for {grievance_id}")
+    except Exception as e:
+        logger.warning(f"TTS generation failed: {e}")
 
     result = {
         "grievance_id": grievance_id,
@@ -209,8 +211,8 @@ def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str
         "ai_category": ai_category,
         "ai_priority": ai_priority,
         "fallback_used": fallback_used,
-        "fallback_reason": fallback_reason,
-        "ui_payload": ui_payload,
+        "voice_response_text": response_text,
+        "voice_response_audio_url": tts_audio_url,
         "processed_at": datetime.now(timezone.utc).isoformat(),
     }
 

@@ -12,17 +12,6 @@ from src.repositories.base import BaseRepository
 class GrievanceRepository(BaseRepository):
     """Repository for grievance operations backed by PostgreSQL."""
 
-    async def _get_fallback_citizen_id(self) -> str | None:
-        return await self.fetch_scalar(
-            """
-            SELECT id
-            FROM users
-            WHERE role = 'CITIZEN'::user_role
-            ORDER BY created_at ASC
-            LIMIT 1
-            """
-        )
-
     async def _resolve_department_id(self, department_hint: str | None) -> str | None:
         if not department_hint:
             return None
@@ -93,10 +82,7 @@ class GrievanceRepository(BaseRepository):
         grid_id = str(grievance.get("grid_id") or grievance.get("gridId") or f"GRI-{datetime.now(timezone.utc).year}-{uuid4().hex[:6].upper()}")
         citizen_id = grievance.get("citizen_id")
         if not citizen_id:
-            citizen_id = await self._get_fallback_citizen_id()
-
-        if not citizen_id:
-            raise ValueError("No citizen user found. Seed users before creating grievances.")
+            raise ValueError("citizen_id is required for grievance creation")
 
         category = str(grievance.get("category") or grievance.get("hint_category") or "OTHER")
         priority = str(grievance.get("priority") or grievance.get("hint_priority") or "MEDIUM")

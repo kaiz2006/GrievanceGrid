@@ -86,55 +86,38 @@ async def test_tasks():
     }
     
     log(f"\nProcessing grievance: {grievance_id}", "TEST")
-    if settings.dry_run:
-        result_data = process_grievance_ai(grievance_id, test_payload)
-        log(f"Direct Task Result: {result_data['ai_category']}, {result_data['ai_priority']}")
-    else:
-        result = process_grievance_ai.apply_async(
-            args=[grievance_id, test_payload],
-            queue="ai-processing"
-        )
-        log(f"Task ID: {result.id}")
+    result_data = process_grievance_ai(grievance_id, test_payload)
+    log(f"AI Task Result: {result_data.get('ai_category')}, Anomaly: {result_data.get('is_anomaly')}")
     
     # Test clustering
     log("\nTesting clustering task...", "TEST")
     grievances = [
-        {"id": f"test-{i:03d}", "latitude": 40.71+i*0.01, "longitude": -74.01+i*0.01}
-        for i in range(5)
+        {"id": f"test-{i:03d}", "latitude": 13.0+i*0.001, "longitude": 77.5+i*0.001, 
+         "description": "Pothole problem on the road"}
+        for i in range(6)
     ]
-    if settings.dry_run:
-        recluster_recent_grievances(grievances=grievances)
-        log("Clustering logic executed directly")
-    else:
-        result = recluster_recent_grievances.apply_async(
-            kwargs={"grievances": grievances},
-            queue="analytics"
-        )
-        log(f"Clustering task ID: {result.id}")
+    cluster_result = recluster_recent_grievances(grievances=grievances)
+    log(f"Clustering Result: Found {cluster_result.get('clusters_found')} clusters")
+    if cluster_result.get('clusters'):
+        log(f"First Cluster Topics: {cluster_result['clusters'][0].get('topics')}")
     
-    # Test notifications
-    log("\nTesting notification task...", "TEST")
-    result = send_status_notification.apply_async(
-        args=[grievance_id, "IN_PROGRESS", ["citizen@example.com"]],
-        queue="notifications"
-    )
-    log(f"Notification task ID: {result.id}")
-    
-    # Test tracking event
-    log("\nTesting tracking event...", "TEST")
-    result = publish_tracking_event.apply_async(
-        args=[
-            grievance_id,
-            {
-                "event_type": "STATUS_CHANGE",
-                "old_status": "PENDING",
-                "new_status": "IN_PROGRESS",
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            }
-        ],
-        queue="notifications"
-    )
-    log(f"Tracking event task ID: {result.id}")
+    # Test maintenance
+    log("\nTesting maintenance risk task...", "TEST")
+    test_assets = [{
+        "id": "ASSET-001",
+        "complaint_count_7d": 15,
+        "complaint_count_30d": 45,
+        "avg_severity": 0.8,
+        "days_since_last_complaint": 2
+    }]
+    maint_result = update_infrastructure_risk_scores(assets=test_assets)
+    log(f"Maintenance Result: {maint_result.get('assets_processed')} assets processed")
+
+    # Test voice
+    log("\nTesting voice response...", "TEST")
+    voice_result = process_voice_grievance(grievance_id, "https://example.com/audio.mp3")
+    log(f"Voice Response Text: {voice_result.get('voice_response_text')}")
+    log(f"Voice Audio URL: {voice_result.get('voice_response_audio_url')}")
 
 
 def main():

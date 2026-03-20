@@ -1,13 +1,5 @@
-from __future__ import annotations
-
-import logging
-from collections import Counter
-from datetime import datetime, timezone
-from typing import Any
-
-from celery import shared_task
-
 from src.config import settings
+from src.ml_logic import geo_clustering, topic_analysis
 
 logger = logging.getLogger(__name__)
 
@@ -26,32 +18,29 @@ def recluster_recent_grievances(
     min_samples: int = 5,
     grievances: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Periodic clustering task for recent grievances.
-
-    Fallback implementation clusters by rounded lat/lng bins when explicit
-    grievance points are passed in. This keeps worker behavior deterministic
-    before DBSCAN/LDA pipeline is fully wired.
-    """
+    """Periodic clustering task for recent grievances using DBSCAN."""
     grievances = grievances or []
 
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated clustering result")
-
-    clustered_points: list[tuple[float, float]] = []
-    for grievance in grievances:
-        key = _cluster_key(grievance)
-        if key is not None:
-            clustered_points.append(key)
-
-    histogram = Counter(clustered_points)
-    significant_clusters = [k for k, count in histogram.items() if count >= min_samples]
+    # Run DBSCAN
+    clusters = geo_clustering.detect_clusters(grievances)
+    
+    # Extract topics for each cluster if enough text exists
+    for cluster in clusters:
+        cluster_texts = []
+        for g_id in cluster["grievance_ids"]:
+            g_data = next((g for g in grievances if g.get("id") == g_id), {})
+            text = g_data.get("description") or g_data.get("title") or ""
+            if text: cluster_texts.append(text)
+        
+        if cluster_texts:
+            cluster["topics"] = topic_analysis.extract_topics(cluster_texts)
 
     result = {
         "window_hours": window_hours,
         "min_samples": min_samples,
-        "clusters_upserted": len(significant_clusters),
+        "clusters_found": len(clusters),
+        "clusters": clusters,
         "processed_grievances": len(grievances),
-        "candidate_clusters": len(histogram),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
     logger.info("Recluster run complete", extra={"result": result})

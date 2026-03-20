@@ -3,19 +3,24 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, FieldCondition, Filter, MatchValue, PointStruct, VectorParams
+logger = logging.getLogger(__name__)
+
+try:
+    from qdrant_client import QdrantClient
+    from qdrant_client.models import Distance, FieldCondition, Filter, MatchValue, PointStruct, VectorParams
+    HAS_QDRANT = True
+except ImportError:
+    HAS_QDRANT = False
+    logger.warning("qdrant-client not installed. Vector search will be disabled.")
 
 from src.config import settings
-
-logger = logging.getLogger(__name__)
 
 
 class VectorClient:
     def __init__(self) -> None:
         self.collection_name = settings.qdrant_collection
         self.embedding_dim = settings.embedding_dimension
-        self.client = QdrantClient(url=settings.qdrant_url)
+        self.client = QdrantClient(url=settings.qdrant_url) if HAS_QDRANT else None
 
     def ensure_collection(self) -> None:
         existing = self.client.get_collections().collections
