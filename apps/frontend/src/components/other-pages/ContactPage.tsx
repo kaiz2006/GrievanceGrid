@@ -5,7 +5,7 @@ import Shuffle from "../Shuffle";
 const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-grow pt-32 pb-12 px-6 relative">
+      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative">
         {/* Background Effects */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />

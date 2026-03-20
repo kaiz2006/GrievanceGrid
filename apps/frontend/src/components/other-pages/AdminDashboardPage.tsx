@@ -57,7 +57,7 @@ const AdminDashboardPage = () => {
   ];
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-grow pt-32 pb-12 px-6 relative">
+      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative">
         <div className="container mx-auto">
           {/* Dashboard Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">

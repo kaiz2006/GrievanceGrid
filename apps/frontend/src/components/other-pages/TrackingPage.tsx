@@ -55,7 +55,7 @@ const TrackingPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       
-      <main className="flex-grow pt-32 pb-12 px-6 relative overflow-hidden">
+      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
         {/* Ambient Glows */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] pointer-events-none" />

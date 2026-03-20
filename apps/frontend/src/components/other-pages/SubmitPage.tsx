@@ -87,7 +87,7 @@ const SubmitPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       
-      <main className="flex-grow pt-32 pb-24 px-6 relative overflow-hidden">
+      <main className="flex-grow pt-8 lg:pt-32 pb-24 px-6 relative overflow-hidden">
         {/* Decorative Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 

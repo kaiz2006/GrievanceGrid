@@ -116,7 +116,7 @@ const GrievanceDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-white flex flex-col">
-      <main className="flex-grow pt-32 pb-12 px-6 relative overflow-hidden">
+      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
         <div className="container mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">

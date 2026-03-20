@@ -3,7 +3,7 @@ import { Activity, Clock, AlertTriangle, CheckCircle2, TrendingUp, BarChart3 } f
 
 const SLAMonitoringPage = () => {
   return (
-    <div className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-8 lg:pt-32 pb-24 px-6 max-w-7xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

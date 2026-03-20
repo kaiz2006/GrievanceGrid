@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
+import MobileNav from "./MobileNav";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface MainLayoutProps {
@@ -31,9 +32,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden flex-col lg:flex-row">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative bg-[#0a0a0a]">
+      <MobileNav />
+      <main className="flex-1 overflow-y-auto relative bg-[#0a0a0a] pt-16 pb-20 lg:pt-0 lg:pb-0">
         {/* Background mesh for dashboard feel */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(37,99,235,0.03),transparent_70%)] pointer-events-none" />
         

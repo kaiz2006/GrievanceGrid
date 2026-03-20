@@ -37,41 +37,29 @@ const menuItems = [
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const currentRole = localStorage.getItem("userRole") || "citizen";
 
   const filteredItems = menuItems.filter(item => item.roles.includes(currentRole as any));
 
   return (
-    <>
-      <div className="lg:hidden fixed top-4 left-4 z-[60]">
-        <button 
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-foreground"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      <motion.aside
-        initial={false}
-        animate={{ 
-          width: collapsed ? "88px" : "280px",
-          x: mobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -280 : 0)
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`fixed lg:relative inset-y-0 left-0 z-50 bg-sidebar border-r border-sidebar-border flex flex-col shadow-2xl ${mobileOpen ? 'shadow-[0_0_50px_rgba(0,0,0,0.8)]' : ''}`}
+    <motion.aside
+      initial={false}
+      animate={{ 
+        width: collapsed ? "88px" : "280px",
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className={`hidden lg:flex fixed lg:relative inset-y-0 left-0 z-50 bg-sidebar border-r border-sidebar-border flex-col shadow-2xl`}
+    >
+      {/* Interaction Ball / Collapse Toggle */}
+      <button 
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute -right-3 top-10 w-6 h-6 bg-blue-600 rounded-full items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all z-[60]"
       >
-        {/* Interaction Ball / Collapse Toggle */}
-        <button 
-          onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex absolute -right-3 top-10 w-6 h-6 bg-blue-600 rounded-full items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all z-[60]"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4 text-white" /> : <ChevronLeft className="w-4 h-4 text-white" />}
-        </button>
+        {collapsed ? <ChevronRight className="w-4 h-4 text-white" /> : <ChevronLeft className="w-4 h-4 text-white" />}
+      </button>
 
-        <div className="w-full h-full flex flex-col overflow-hidden">
+      <div className="w-full h-full flex flex-col overflow-hidden">
         <div className="h-24 flex items-center px-6 mb-4">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
@@ -139,7 +127,6 @@ const Sidebar = () => {
 
         {/* User / Footer Section */}
         <div className="p-4 mt-auto border-t border-white/5 space-y-2">
-
           <button 
             onClick={() => {
               localStorage.removeItem("userRole");
@@ -162,16 +149,7 @@ const Sidebar = () => {
         </div>
       </div>
     </motion.aside>
-
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div 
-          className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-40"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
-    </>
-  );
+);
 };
 
 export default Sidebar;
