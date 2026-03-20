@@ -12,6 +12,7 @@ from src.core.database import get_db_session
 from src.core.worker import dispatch_task
 from src.core.dependencies import get_current_user, optional_auth
 from src.repositories.grievances import GrievanceRepository
+from src.services.grievance_service import GrievanceService
 
 router = APIRouter()
 
@@ -313,12 +314,15 @@ async def update_grievance_status(
 	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceAIResultResponse:
-	repo = GrievanceRepository(db)
-	updated = await repo.update_status(
-		grievance_id=grievance_id,
-		status=payload.status,
-		notes=payload.notes,
-	)
+	service = GrievanceService(db)
+	try:
+		updated = await service.update_status(
+			grievance_id=grievance_id,
+			new_status=payload.status,
+			notes=payload.notes,
+		)
+	except ValueError as exc:
+		raise HTTPException(status_code=400, detail=str(exc)) from exc
 	if updated is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 

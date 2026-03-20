@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from src.core.config import settings
 
 # JWT Configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-super-secret-key-change-in-production")
+SECRET_KEY = settings.jwt_secret
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
+REFRESH_TOKEN_EXPIRE_DAYS = settings.refresh_token_expire_days
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

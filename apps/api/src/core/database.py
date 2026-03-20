@@ -1,16 +1,13 @@
 """
 Database connection and session management for FastAPI app
 """
-import os
 from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
+from src.core.config import settings
 
 # PostgreSQL async connection string
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+asyncpg://grievances:grievances@localhost:5432/grievances"
-)
+DATABASE_URL = settings.database_url
 
 # Create async engine
 engine = create_async_engine(

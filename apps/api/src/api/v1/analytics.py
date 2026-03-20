@@ -7,8 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.database import get_db_session
-from src.repositories.grievances import GrievanceRepository
-from src.repositories.slas import SLARepository
+from src.services.analytics_service import AnalyticsService
 
 router = APIRouter()
 
@@ -59,15 +58,14 @@ async def get_dashboard_analytics(
 	to_date: str | None = Query(default=None, alias="to"),
 	db: AsyncSession = Depends(get_db_session),
 ) -> DashboardAnalyticsResponse:
-	grievance_repo = GrievanceRepository(db)
-	sla_repo = SLARepository(db)
-
-	summary = await grievance_repo.get_dashboard_summary(from_date=from_date, to_date=to_date)
-	by_category = await grievance_repo.get_counts_by_category(from_date=from_date, to_date=to_date)
-	by_priority = await grievance_repo.get_counts_by_priority(from_date=from_date, to_date=to_date)
-	sla_compliance = await sla_repo.get_sla_compliance()
-	heat_map_data = await grievance_repo.get_heat_map_data(limit=200)
-	predictive_alerts = await grievance_repo.get_predictive_alerts(risk_threshold=0.75, limit=20)
+	service = AnalyticsService(db)
+	payload = await service.get_dashboard_payload(from_date=from_date, to_date=to_date)
+	summary = payload["summary"]
+	by_category = payload["by_category"]
+	by_priority = payload["by_priority"]
+	sla_compliance = payload["sla_compliance"]
+	heat_map_data = payload["heat_map_data"]
+	predictive_alerts = payload["predictive_alerts"]
 
 	return DashboardAnalyticsResponse(
 		summary=SummaryBlock(

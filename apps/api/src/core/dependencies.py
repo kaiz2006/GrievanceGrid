@@ -10,6 +10,7 @@ from fastapi.security import HTTPBearer
 from starlette.authentication import AuthenticationError
 
 from src.core.auth import verify_token, decode_token
+from src.core.session_store import is_token_session_active
 from src.repositories.users import UserRepository
 from src.core.database import get_db_session
 from src.schemas.auth import RoleEnum, JWTPayload
@@ -48,6 +49,14 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Reject tokens that were explicitly revoked from Redis-backed session store.
+    if not await is_token_session_active(token, "access"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session expired or revoked",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -132,6 +141,9 @@ async def optional_auth(
     payload = verify_token(token)
     
     if not payload:
+        return None
+
+    if not await is_token_session_active(token, "access"):
         return None
     
     user_id: str = payload.get("sub")

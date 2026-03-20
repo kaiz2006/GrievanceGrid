@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.config import settings
 from src.core.database import get_db_session
-from src.core.auth import create_access_token, create_refresh_token, verify_token, get_password_hash
+from src.core.auth import create_access_token, create_refresh_token, verify_token
 from src.core.dependencies import get_current_user, optional_auth
+from src.core.session_store import is_token_session_active, revoke_token_session, store_token_session
 from src.repositories.users import UserRepository
 from src.services.google_oauth import GoogleOAuthService
 from src.schemas.auth import (
@@ -25,6 +27,38 @@ from src.schemas.auth import (
 
 
 router = APIRouter(tags=["Authentication"])
+
+
+async def _issue_tokens(user: dict, auth_type: str) -> dict:
+    token_data = {
+        "sub": user["id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "auth_type": auth_type,
+    }
+    access_token = create_access_token(token_data)
+    refresh_token = create_refresh_token(token_data)
+
+    access_ttl = max(1, settings.access_token_expire_minutes * 60)
+    refresh_ttl = max(1, settings.refresh_token_expire_days * 24 * 60 * 60)
+    await store_token_session(access_token, user["id"], "access", access_ttl)
+    await store_token_session(refresh_token, user["id"], "refresh", refresh_ttl)
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "expires_in": access_ttl,
+        "user": {
+            "id": user["id"],
+            "email": user["email"],
+            "name": user["name"],
+            "role": user["role"],
+            "is_active": user["is_active"],
+            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
+        },
+    }
 
 
 @router.post("/auth/register", response_model=TokenResponse)
@@ -60,31 +94,7 @@ async def register(
         auth_type="BASIC",
     )
     
-    # Generate tokens
-    token_data = {
-        "sub": user["id"],
-        "email": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-        "auth_type": "BASIC",
-    }
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token(token_data)
-    
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "expires_in": 1800,  # 30 minutes
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
-        },
-    }
+    return await _issue_tokens(user, "BASIC")
 
 
 @router.post("/auth/login", response_model=TokenResponse)
@@ -112,31 +122,7 @@ async def login(
             detail="Invalid email or password",
         )
     
-    # Generate tokens
-    token_data = {
-        "sub": user["id"],
-        "email": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-        "auth_type": "BASIC",
-    }
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token(token_data)
-    
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "expires_in": 1800,
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
-        },
-    }
+    return await _issue_tokens(user, "BASIC")
 
 
 @router.post("/auth/google", response_model=TokenResponse)
@@ -178,31 +164,7 @@ async def google_oauth(
             auth_type="GOOGLE_OAUTH",
         )
     
-    # Generate tokens
-    token_data = {
-        "sub": user["id"],
-        "email": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-        "auth_type": "GOOGLE_OAUTH",
-    }
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token(token_data)
-    
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "expires_in": 1800,
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
-        },
-    }
+    return await _issue_tokens(user, "GOOGLE_OAUTH")
 
 
 @router.post("/auth/refresh", response_model=TokenResponse)
@@ -226,6 +188,12 @@ async def refresh_access_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",
         )
+
+    if not await is_token_session_active(request.refresh_token, "refresh"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh session expired or revoked",
+        )
     
     user_repo = UserRepository(db_session)
     user = await user_repo.get_by_id(payload.get("sub"))
@@ -236,31 +204,8 @@ async def refresh_access_token(
             detail="User not found",
         )
     
-    # Generate new tokens
-    token_data = {
-        "sub": user["id"],
-        "email": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-        "auth_type": payload.get("auth_type", "BASIC"),
-    }
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token(token_data)
-    
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "expires_in": 1800,
-        "user": {
-            "id": user["id"],
-            "email": user["email"],
-            "name": user["name"],
-            "role": user["role"],
-            "is_active": user["is_active"],
-            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
-        },
-    }
+    await revoke_token_session(request.refresh_token, "refresh")
+    return await _issue_tokens(user, str(payload.get("auth_type", "BASIC")))
 
 
 @router.post("/auth/change-password", response_model=AuthResponse)
@@ -333,6 +278,7 @@ async def get_current_user_info(
 
 @router.post("/auth/logout", response_model=AuthResponse)
 async def logout(
+    request: Request,
     current_user: dict = Depends(get_current_user),
 ) -> dict:
     """
@@ -344,8 +290,11 @@ async def logout(
     Returns:
         Success confirmation
     """
-    # Logout is handled client-side by discarding tokens
-    # This endpoint can be used for logging, audit trails, etc.
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        access_token = auth_header.split(" ", 1)[1]
+        await revoke_token_session(access_token, "access")
+
     return {
         "success": True,
         "message": f"User {current_user['email']} logged out successfully",

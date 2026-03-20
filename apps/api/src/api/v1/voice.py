@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database import get_db_session
 from src.core.worker import dispatch_task
 from src.repositories.grievances import GrievanceRepository
+from src.services.storage_service import StorageService
 
 router = APIRouter()
 
@@ -21,6 +22,8 @@ class VoiceProcessResponse(BaseModel):
 	grid_id: str
 	processing_task_id: str
 	file_name: str
+	audio_url: str
+	transcription_preview: str
 	received_at: str
 	status: str
 
@@ -63,14 +66,16 @@ async def process_voice(
 		)
 
 	repo = GrievanceRepository(db)
+	storage = StorageService()
 	grievance_id = str(uuid4())
 	grid_id = _build_grid_id()
 	received_at = datetime.now(timezone.utc).isoformat()
+	stored_audio_url = await storage.save_upload(file, subdir="voice")
 
 	task_id = dispatch_task(
 		"src.tasks.ai_processing.process_voice_grievance",
 		grievance_id,
-		file_name,
+		stored_audio_url,
 	)
 
 	try:
@@ -83,7 +88,7 @@ async def process_voice(
 				"category": "OTHER",
 				"priority": "MEDIUM",
 				"voice_recorded": True,
-				"voice_url": file_name,
+				"voice_url": stored_audio_url,
 			}
 		)
 	except ValueError as exc:
@@ -94,6 +99,8 @@ async def process_voice(
 		grid_id=grid_id,
 		processing_task_id=task_id,
 		file_name=file_name,
+		audio_url=stored_audio_url,
+		transcription_preview="Audio received. Automatic transcription is in progress.",
 		received_at=received_at,
 		status="CREATED",
 	)

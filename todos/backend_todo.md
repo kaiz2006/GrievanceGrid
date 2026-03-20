@@ -1,11 +1,11 @@
 # Backend Todo (apps/api — FastAPI + apps/worker — Celery)
 
 ## 🗂️ Project Setup
-- [ ] Initialize `apps/api` with FastAPI and `pyproject.toml`
+- [x] Initialize `apps/api` with FastAPI and `pyproject.toml`
 - [x] Set up `requirements.txt` (fastapi, uvicorn, pydantic, sqlalchemy, drizzle-equivalent, redis, celery, etc.)
-- [ ] Configure `apps/api/src/core/config.py` with Pydantic Settings (env loading)
-- [ ] Configure `apps/api/src/core/logging.py` with structured JSON logging
-- [ ] Set up `.env` with `DATABASE_URL`, `REDIS_URL`, `QDRANT_URL`, `JWT_SECRET`, `LLM_API_URL`
+- [x] Configure `apps/api/src/core/config.py` with Pydantic Settings (env loading)
+- [x] Configure `apps/api/src/core/logging.py` with structured JSON logging
+- [x] Set up `.env` with `DATABASE_URL`, `REDIS_URL`, `QDRANT_URL`, `JWT_SECRET`, `LLM_API_URL`
 - [x] Initialize `apps/worker` with Celery and `celery_app.py`
 
 ---
@@ -38,8 +38,8 @@
 - [x] Generate JWT on successful auth with payload: `sub`, `email`, `name`, `role`, `auth_type`, `exp`
 - [x] JWT validation middleware (`verify_token` dependency) — `get_current_user`
 - [x] Role-based access control (RBAC) guards for CITIZEN, OFFICER, ADMIN, AUDITOR — `require_admin`, `require_officer`, `require_auditor`
-- [ ] Redis session management (store and invalidate tokens)
-- [ ] Rate limiter middleware (per-IP, using Redis)
+- [x] Redis session management (store and invalidate tokens)
+- [x] Rate limiter middleware (per-IP, using Redis)
 - [x] POST /auth/register — New user registration
 - [x] POST /auth/login — User login with email/password
 - [x] POST /auth/google — Google OAuth authentication
@@ -67,24 +67,24 @@
 ---
 
 ## 📡 Tracking Endpoint (`api/v1/tracking.py`)
-- [ ] `GET /track/{grid_id}` — Public endpoint (no auth required):
+- [x] `GET /track/{grid_id}` — Public endpoint (no auth required):
   - [x] Fetch grievance by Grid ID
   - [x] Query `audit_logs` to build timeline
   - [x] Calculate SLA remaining time
-  - [ ] Fetch assigned team's live location from Redis
-  - [ ] Return ML-predicted ETA
-- [ ] WebSocket endpoint `/ws/track/{grid_id}` for live updates:
+  - [x] Fetch assigned team's live location from Redis
+  - [x] Return ML-predicted ETA
+- [x] WebSocket endpoint `/ws/track/{grid_id}` for live updates:
   - Subscribe to Redis pub/sub channel for the grievance
   - Push updates when status changes
 
 ---
 
 ## 🎤 Voice Endpoint (`api/v1/voice.py`)
-- [ ] `POST /voice/process` — Accept multipart audio file:
+- [x] `POST /voice/process` — Accept multipart audio file:
   - [x] Validate audio format (.wav, .mp3)
-  - [ ] Store file to object storage (S3 / Supabase Storage)
+  - [x] Store file to local filesystem storage (hackathon mode)
   - [x] Dispatch `process_voice_grievance` Celery task
-  - [ ] Return transcription preview + created Grid ID
+  - [x] Return transcription preview + created Grid ID
 
 ---
 
@@ -107,26 +107,26 @@
 ---
 
 ## 🔧 Core Services (`services/`)
-- [ ] **`grievance_service.py`**:
+- [x] **`grievance_service.py`**:
   - CRUD operations
   - Status lifecycle validation (enforce valid transitions)
   - Grid ID generation logic
-- [ ] **`sla_service.py`**:
+- [x] **`sla_service.py`**:
   - SLA timer creation with correct deadlines per category/priority
   - Escalation threshold calculation
   - `check_and_escalate()` function for background polling
-- [ ] **`routing_service.py`**:
+- [x] **`routing_service.py`**:
   - Receive GNN-predicted department
   - Find nearest available team by GeoJSON service area
   - Priority queue management
-- [ ] **`verification_service.py`**:
+- [x] **`verification_service.py`**:
   - Validate geo-tagged photo distance from incident (tolerance: 50m)
   - Update grievance status to PENDING_VERIFICATION / VERIFIED
-- [ ] **`analytics_service.py`**:
+- [x] **`analytics_service.py`**:
   - KPI aggregation queries
   - Heatmap data preparation
   - Scheduled `daily_metrics` snapshot generation
-- [ ] **`ai_service.py`**:
+- [x] **`ai_service.py`**:
   - HTTP client wrappers for LLM, CV, GNN microservices
   - Retry logic and fallback handling
 
