@@ -86,29 +86,31 @@ async def test_tasks():
     }
     
     log(f"\nProcessing grievance: {grievance_id}", "TEST")
-    result = process_grievance_ai.apply_async(
-        args=[grievance_id, test_payload],
-        queue="ai-processing"
-    )
-    log(f"Task ID: {result.id}")
-    log(f"Task status: {result.status}")
+    if settings.dry_run:
+        result_data = process_grievance_ai(grievance_id, test_payload)
+        log(f"Direct Task Result: {result_data['ai_category']}, {result_data['ai_priority']}")
+    else:
+        result = process_grievance_ai.apply_async(
+            args=[grievance_id, test_payload],
+            queue="ai-processing"
+        )
+        log(f"Task ID: {result.id}")
     
     # Test clustering
     log("\nTesting clustering task...", "TEST")
     grievances = [
-        {
-            "id": f"test-{i:03d}",
-            "latitude": 40.7128 + i * 0.001,
-            "longitude": -74.0060 + i * 0.001,
-            "description": f"Issue {i}"
-        }
-        for i in range(10)
+        {"id": f"test-{i:03d}", "latitude": 40.71+i*0.01, "longitude": -74.01+i*0.01}
+        for i in range(5)
     ]
-    result = recluster_recent_grievances.apply_async(
-        kwargs={"grievances": grievances},
-        queue="analytics"
-    )
-    log(f"Clustering task ID: {result.id}")
+    if settings.dry_run:
+        recluster_recent_grievances(grievances=grievances)
+        log("Clustering logic executed directly")
+    else:
+        result = recluster_recent_grievances.apply_async(
+            kwargs={"grievances": grievances},
+            queue="analytics"
+        )
+        log(f"Clustering task ID: {result.id}")
     
     # Test notifications
     log("\nTesting notification task...", "TEST")
@@ -151,8 +153,12 @@ def main():
     print("\n" + "="*60)
     
     try:
-        asyncio.run(test_clients())
-        print("\n" + "="*60 + "\n")
+        if not settings.dry_run:
+            asyncio.run(test_clients())
+            print("\n" + "="*60 + "\n")
+        else:
+            log("Skipping network client tests (Dry-Run enabled)", "INFO")
+            
         asyncio.run(test_tasks())
         
         print("\n" + "="*60)

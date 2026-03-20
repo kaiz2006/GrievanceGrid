@@ -364,7 +364,62 @@ Authorization: Bearer <admin_token>
 
 ---
 
-### 9. Citizen Feedback
+### 9. Infrastructure Assets (Internal)
+
+Fetch all active assets for processing.
+
+**Endpoint:** `GET /analytics/infrastructure/assets`
+
+```http
+GET /analytics/infrastructure/assets
+X-Internal-Token: <internal_token>
+```
+
+**Response:** `200 OK`
+```json
+[
+  {
+    "id": "asset_123",
+    "asset_type": "STREET_LIGHT",
+    "asset_name": "SL-45",
+    "complaint_count_7d": 5,
+    "complaint_count_30d": 12,
+    "unresolved_count": 2
+  }
+]
+```
+
+---
+
+### 10. Infrastructure Risk Update (Internal)
+
+Batch update failure risk scores for assets.
+
+**Endpoint:** `POST /analytics/infrastructure/risk-update`
+
+```http
+POST /analytics/infrastructure/risk-update
+X-Internal-Token: <internal_token>
+Content-Type: application/json
+
+{
+  "updates": [
+    { "asset_id": "asset_123", "failure_risk_score": 0.85 }
+  ]
+}
+```
+
+**Response:** `200 OK`
+```json
+{
+  "updated_count": 1,
+  "timestamp": "2026-03-20T23:45:00Z"
+}
+```
+
+---
+
+### 11. Citizen Feedback
 
 Submit satisfaction rating after resolution.
 
