@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import LogoMarquee from "@/components/LogoMarquee";
 import StatsSection from "@/components/StatsSection";
@@ -10,25 +9,22 @@ import PricingSection from "@/components/PricingSection";
 import ComparisonSection from "@/components/ComparisonSection";
 import FAQSection from "@/components/FAQSection";
 import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-white">
-      <Navbar />
-      <HeroSection />
+    <>
+      <div id="home"><HeroSection /></div>
       <LogoMarquee />
-      <StatsSection />
-      <HowItWorks />
-      <FeaturesSection />
+      <div id="impact"><StatsSection /></div>
+      <div id="monitoring"><HowItWorks /></div>
+      <div id="solutions"><FeaturesSection /></div>
       <WhyChooseUs />
       <TestimonialsSection />
-      <PricingSection />
+      <div id="pricing"><PricingSection /></div>
       <ComparisonSection />
-      <FAQSection />
+      <div id="resources"><FAQSection /></div>
       <CTASection />
-      <Footer />
-    </div>
+    </>
   );
 };
 

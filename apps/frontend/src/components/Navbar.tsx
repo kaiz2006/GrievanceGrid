@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import Shuffle from "./Shuffle";
 
-const navLinks = ["Home", "Solutions", "Impact", "SLA Monitoring", "Resource Center", "Dashboard"];
+const navLinks = ["Home", "Solutions", "Impact", "SLA Monitoring", "Resource Center"];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -10,7 +11,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
       <div className="container mx-auto flex items-center justify-between h-20 px-6">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Shuffle 
             text="GrievanceGrid"
             tag="span"
@@ -20,24 +21,31 @@ const Navbar = () => {
             stagger={0.05}
             scrambleCharset="ABCDEFGHIJKLMOPQRSTUVWXYZ0123456789"
           />
-        </div>
+        </Link>
 
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase().replace(/\s/g, "-")}`}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            let sectionId = link.toLowerCase().replace(/\s/g, "-").replace("sla-monitoring", "monitoring").replace("resource-center", "resources");
+            if (link === "Solutions") sectionId = "pricing";
+            
+            const href = `${window.location.pathname === "/" ? "" : "/"}\#${sectionId}`;
+            
+            return (
+              <a
+                key={link}
+                href={href}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link}
+              </a>
+            );
+          })}
         </div>
 
         <div className="hidden lg:block">
-          <a href="#pricing" className="cta-button-primary text-xs px-6 py-3">
+          <Link to="/login" className="cta-button-primary text-xs px-6 py-3">
             GET STARTED
-          </a>
+          </Link>
         </div>
 
         <button
@@ -50,19 +58,30 @@ const Navbar = () => {
 
       {mobileOpen && (
         <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/30 px-6 py-6 space-y-4">
-          {navLinks.map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase().replace(/\s/g, "-")}`}
-              className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              {link}
-            </a>
-          ))}
-          <a href="#pricing" className="cta-button-primary text-xs px-6 py-3 w-full justify-center">
+          {navLinks.map((link) => {
+            let sectionId = link.toLowerCase().replace(/\s/g, "-").replace("sla-monitoring", "monitoring").replace("resource-center", "resources");
+            if (link === "Solutions") sectionId = "pricing";
+            
+            const href = `${window.location.pathname === "/" ? "" : "/"}\#${sectionId}`;
+            
+            return (
+              <a
+                key={link}
+                href={href}
+                className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                onClick={() => setMobileOpen(false)}
+              >
+                {link}
+              </a>
+            );
+          })}
+          <Link 
+            to="/login" 
+            className="cta-button-primary text-xs px-6 py-3 w-full justify-center"
+            onClick={() => setMobileOpen(false)}
+          >
             GET STARTED
-          </a>
+          </Link>
         </div>
       )}
     </nav>

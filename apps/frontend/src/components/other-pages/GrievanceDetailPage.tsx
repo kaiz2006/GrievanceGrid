@@ -1,0 +1,210 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useParams, Link } from "react-router-dom";
+import { 
+  MapPin, 
+  User, 
+  Calendar, 
+  Clock, 
+  ShieldCheck, 
+  CheckCircle2, 
+  AlertCircle,
+  MoreVertical,
+  Navigation,
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
+  Camera,
+  Search,
+  FileText,
+  Globe
+} from "lucide-react";
+import { Label } from "@/components/ui/label";
+import Shuffle from "../Shuffle";
+
+const mockGrievance = {
+  id: "GRV-1102",
+  reporter: { name: "John Doe", rating: "4.8", reports: 12 },
+  location: { address: "123 Civic Plaza, Downtown", coords: "40.7128° N, 74.0060° W" },
+  details: {
+    category: "Infrastructure",
+    subCategory: "Pothole Repair",
+    submittedAt: "Mar 19, 2024 • 02:45 PM",
+    description: "Deep pothole developed after heavy rain. Posing risk to vehicle suspension at High St intersection.",
+    status: "Escalated",
+    slaRemaining: "02:14:45",
+  },
+  evidence: [
+    "https://images.unsplash.com/photo-1515162816999-a0ca1fa02d4b?q=80&w=2070",
+    "https://images.unsplash.com/photo-1599423300746-b62533397364?q=80&w=2070"
+  ]
+};
+
+const GrievanceDetailPage = () => {
+  const { id } = useParams();
+  const [currentPhoto, setCurrentPhoto] = useState(0);
+
+  return (
+    <div className="min-h-screen bg-background text-white flex flex-col">
+      <main className="flex-grow pt-32 pb-12 px-6 relative overflow-hidden">
+        <div className="container mx-auto">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+            <div className="flex items-center gap-6">
+              <Link to="/admin/dashboard" className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                <ChevronLeft className="w-5 h-5 text-muted-foreground" />
+              </Link>
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-xs font-black text-blue-500 uppercase tracking-[0.2em]">{id || mockGrievance.id}</span>
+                  <span className="px-2 py-0.5 rounded bg-blue-600/20 text-blue-400 text-[10px] font-bold uppercase border border-blue-600/30">
+                    High Priority
+                  </span>
+                </div>
+                <h1 className="text-4xl font-bold tracking-tight">Grievance Investigation</h1>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                Transfer Case
+              </button>
+              <button className="px-8 py-4 rounded-2xl bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.4)] text-sm font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
+                Assign to Team
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* Left Column: Evidence & Map */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Evidence Carousel */}
+              <div className="relative aspect-[16/10] rounded-[3rem] overflow-hidden bg-white/5 border border-white/5 group">
+                <AnimatePresence mode="wait">
+                  <motion.img 
+                    key={currentPhoto}
+                    src={mockGrievance.evidence[currentPhoto]} 
+                    className="w-full h-full object-cover"
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.7 }}
+                  />
+                </AnimatePresence>
+                
+                {/* Carousel Controls */}
+                <div className="absolute inset-x-0 bottom-0 p-8 flex justify-between items-center bg-gradient-to-t from-black/80 to-transparent">
+                  <span className="text-xs font-bold text-white uppercase tracking-widest">
+                    Evidence Image 0{currentPhoto + 1} / 0{mockGrievance.evidence.length}
+                  </span>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setCurrentPhoto(prev => (prev > 0 ? prev - 1 : mockGrievance.evidence.length - 1))}
+                      className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => setCurrentPhoto(prev => (prev < mockGrievance.evidence.length - 1 ? prev + 1 : 0))}
+                      className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-colors"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Location & Map */}
+              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col md:flex-row gap-8 items-center">
+                <div className="flex-1 w-full">
+                  <div className="flex items-center gap-3 mb-4">
+                    <MapPin className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-xl font-bold">Scene Location</h3>
+                  </div>
+                  <p className="text-muted-foreground mb-1 font-medium">{mockGrievance.location.address}</p>
+                  <p className="text-xs font-bold text-blue-500 tracking-widest uppercase mb-6">{mockGrievance.location.coords}</p>
+                  <button className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                    <Navigation className="w-4 h-4 text-blue-500" />
+                    Open GPS Navigation
+                  </button>
+                </div>
+                <div className="w-full md:w-64 aspect-square rounded-[2rem] bg-white/5 border border-dashed border-white/10 flex items-center justify-center relative group cursor-pointer overflow-hidden">
+                   <Globe className="w-12 h-12 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-700" />
+                   <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Info & Action */}
+            <div className="space-y-8">
+              {/* Reporter Info */}
+              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
+                <div className="flex items-center gap-3 mb-6">
+                  <User className="w-5 h-5 text-blue-500" />
+                  <h3 className="text-xl font-bold">Reporter Profile</h3>
+                </div>
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-blue-600/20 border border-blue-600/20 flex items-center justify-center font-bold text-blue-500">
+                    JD
+                  </div>
+                  <div>
+                    <p className="font-bold">{mockGrievance.reporter.name}</p>
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground/60 tracking-widest">Verified Resident</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Reputation</p>
+                    <p className="font-black text-blue-500 tracking-tighter">{mockGrievance.reporter.rating} ★</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/5">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Reports</p>
+                    <p className="font-black text-blue-500 tracking-tighter">{mockGrievance.reporter.reports}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resolution Hub */}
+              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
+                <div className="flex items-center gap-3 mb-8">
+                  <ShieldCheck className="w-5 h-5 text-blue-500" />
+                  <h3 className="text-xl font-bold">Officer Hub</h3>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-[0.2em] ml-1">Resolution Status</Label>
+                    <div className="p-4 rounded-2xl bg-blue-600 text-white font-bold flex items-center gap-3">
+                      <Clock className="w-5 h-5" />
+                      <span>SLA: {mockGrievance.details.slaRemaining}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-[0.2em] ml-1">Investigation Notes</Label>
+                    <textarea 
+                      placeholder="Add investigation details, required materials, or team notes..." 
+                      className="w-full h-32 bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium resize-none"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                      <Camera className="w-4 h-4 text-blue-500" />
+                      Capture After-Resolution Photo
+                    </button>
+                    <button className="w-full py-4 rounded-2xl bg-white/[0.05] border border-white/5 text-xs font-bold text-blue-500 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">
+                      Confirm Resolution
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default GrievanceDetailPage;
