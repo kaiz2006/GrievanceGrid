@@ -14,7 +14,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       console.log("[API CALL]: GET /grievances/me");
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 200));
       setGrievances([
         {
           id: "GRI-2026-008821",

@@ -64,6 +64,29 @@ class DailySnapshotResponse(BaseModel):
 	generated_at: str
 
 
+class InfrastructureAssetResponse(BaseModel):
+	id: str
+	asset_type: str
+	asset_name: str
+	complaint_count_7d: int
+	complaint_count_30d: int
+	unresolved_count: int
+
+
+class InfrastructureRiskUpdate(BaseModel):
+	asset_id: str
+	failure_risk_score: float
+
+
+class InfrastructureRiskUpdateRequest(BaseModel):
+	updates: list[InfrastructureRiskUpdate]
+
+
+class InfrastructureRiskUpdateResponse(BaseModel):
+	updated_count: int
+	timestamp: str
+
+
 @router.get("/dashboard", response_model=DashboardAnalyticsResponse)
 async def get_dashboard_analytics(
 	from_date: str | None = Query(default=None, alias="from"),
@@ -167,4 +190,44 @@ async def generate_daily_snapshot(
 		metric_date=str(snapshot.get("metric_date") or datetime.now(timezone.utc).isoformat()),
 		records_written=1 if snapshot.get("snapshot") else 0,
 		generated_at=datetime.now(timezone.utc).isoformat(),
+	)
+
+
+@router.get("/infrastructure/assets", response_model=list[InfrastructureAssetResponse])
+async def list_infrastructure_assets(
+	x_internal_token: str | None = Header(default=None, alias="X-Internal-Token"),
+	db: AsyncSession = Depends(get_db_session),
+) -> list[InfrastructureAssetResponse]:
+	if x_internal_token != settings.internal_worker_token:
+		raise HTTPException(status_code=401, detail="Invalid internal worker token")
+
+	service = AnalyticsService(db)
+	assets = await service.list_infrastructure_assets()
+	return [
+		InfrastructureAssetResponse(
+			id=str(a["id"]),
+			asset_type=str(a["asset_type"]),
+			asset_name=str(a["asset_name"]),
+			complaint_count_7d=int(a.get("complaint_count_7d") or 0),
+			complaint_count_30d=int(a.get("complaint_count_30d") or 0),
+			unresolved_count=int(a.get("unresolved_count") or 0),
+		)
+		for a in assets
+	]
+
+
+@router.post("/infrastructure/risk-update", response_model=InfrastructureRiskUpdateResponse)
+async def update_infrastructure_risk_scores(
+	payload: InfrastructureRiskUpdateRequest,
+	x_internal_token: str | None = Header(default=None, alias="X-Internal-Token"),
+	db: AsyncSession = Depends(get_db_session),
+) -> InfrastructureRiskUpdateResponse:
+	if x_internal_token != settings.internal_worker_token:
+		raise HTTPException(status_code=401, detail="Invalid internal worker token")
+
+	service = AnalyticsService(db)
+	updated_count = await service.update_infrastructure_risk_scores(payload.updates)
+	return InfrastructureRiskUpdateResponse(
+		updated_count=updated_count,
+		timestamp=datetime.now(timezone.utc).isoformat(),
 	)

@@ -27,7 +27,7 @@ const MobileNav = () => {
   return (
     <>
       {/* Top Header */}
-      <header className="lg:hidden fixed top-0 inset-x-0 h-16 bg-sidebar/80 backdrop-blur-xl border-b border-sidebar-border z-[100] flex items-center justify-between px-6">
+      <header className="lg:hidden fixed top-0 inset-x-0 h-16 bg-sidebar/80 backdrop-blur-xl border-b border-sidebar-border z-[100] flex items-center justify-between px-8">
         <div className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-blue-500 fill-blue-500/20" />
           <span className="font-display font-bold text-sm tracking-tight">GrievanceGrid</span>

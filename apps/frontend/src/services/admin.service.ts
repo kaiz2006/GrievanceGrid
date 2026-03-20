@@ -3,7 +3,7 @@
 export const adminService = {
   getDashboard: async () => {
     console.log(`[API CALL]: GET /analytics/dashboard`);
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return {
       summary: {
         total_grievances: 1250,
@@ -35,7 +35,7 @@ export const adminService = {
 
   getClusters: async () => {
     console.log(`[API CALL]: GET /clusters?type=DBSCAN&active=true`);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     return {
       clusters: [
         {

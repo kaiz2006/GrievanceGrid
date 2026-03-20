@@ -55,7 +55,7 @@ const TrackingPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       
-      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
+      <main className="flex-grow pt-12 lg:pt-32 pb-12 px-6 relative overflow-hidden">
         {/* Ambient Glows */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] pointer-events-none" />
@@ -73,14 +73,14 @@ const TrackingPage = () => {
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Tracking Resolution</h1>
             </div>
             
-            <div className="flex items-center gap-4">
-              <Button variant="outline" className="h-14 px-8 border-white/10 bg-white/[0.03] hover:bg-white/[0.06]">
-                <MessageSquare className="mr-2 h-5 w-5" />
-                Contact Support
+            <div className="grid grid-cols-2 md:flex items-center gap-4">
+              <Button variant="outline" className="h-12 sm:h-14 px-4 sm:px-8 border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-xs sm:text-sm uppercase tracking-widest font-bold">
+                <MessageSquare className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                Contact
               </Button>
-              <Button className="cta-button-primary h-14 px-8 shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-                Escalate Ticket
-                <AlertCircle className="ml-2 h-5 w-5" />
+              <Button className="cta-button-primary h-12 sm:h-14 px-4 sm:px-8 shadow-[0_0_20px_rgba(59,130,246,0.3)] text-xs sm:text-sm uppercase tracking-widest font-bold">
+                Escalate
+                <AlertCircle className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
