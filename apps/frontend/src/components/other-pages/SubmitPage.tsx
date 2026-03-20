@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   MapPin, 
@@ -45,38 +45,80 @@ const categories = [
 
 const SubmitPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [locationType, setLocationType] = useState("current");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     location: { latitude: 28.6139, longitude: 77.2090, address: "" }
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [locationType, setLocationType] = useState("current");
+  const [submittedData, setSubmittedData] = useState<any>(null);
+  const [locationSelected, setLocationSelected] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleMapClick = (lat: number, lng: number) => {
     setFormData(prev => ({
       ...prev,
       location: { ...prev.location, latitude: lat, longitude: lng, address: `Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}` }
     }));
+    setLocationSelected(true);
   };
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 0:
+        return locationSelected;
+      case 1:
+        return formData.title.trim().length > 3 && formData.description.trim().length > 10;
+      case 2:
+        return formData.category !== "";
+      case 3:
+        return !!selectedFile || !!audioURL;
+      default:
+        return false;
+    }
+  };
+
+  const nextStep = () => {
+    if (isStepValid()) {
+      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+    }
+  };
+
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const toggleRecording = () => {
+    if (!isRecording) {
+      setIsRecording(true);
+      // Simulate recording
+      setTimeout(() => {
+        setIsRecording(false);
+        setAudioURL("mock-audio-url");
+      }, 3000);
+    } else {
+      setIsRecording(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isStepValid()) return;
     setIsSubmitting(true);
     
     try {
-      // If there was a voice recording, we would normally append it to a FormData
-      // For this mock, we'll just log the call
       const response = await grievanceService.submit(formData);
       console.log("[SUBMIT SUCCESS]", response);
-      
-      // Navigate to tracking
-      window.location.href = `/track/${response.grid_id}`;
+      setSubmittedData(response);
     } catch (error) {
       console.error("[SUBMIT ERROR]", error);
     } finally {
@@ -84,9 +126,56 @@ const SubmitPage = () => {
     }
   };
 
+  if (submittedData) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="glass-card max-w-xl w-full p-12 text-center border-white/5 bg-white/[0.01] space-y-8"
+        >
+          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+            <Check className="w-10 h-10 text-white" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold mb-3">Grievance Submitted Successfully</h2>
+            <p className="text-muted-foreground">Your report has been logged in the City Command Center. Incident ID: <span className="text-blue-500 font-mono font-bold">{submittedData.grid_id}</span></p>
+          </div>
+          
+          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-left space-y-4">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Status</span>
+              <Badge className="bg-blue-600/20 text-blue-500 border-blue-500/20">Initial Intake</Badge>
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Priority</span>
+              <Badge className="bg-amber-600/20 text-amber-500 border-amber-500/20">Awaiting AI Audit</Badge>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <Button 
+              className="cta-button-primary h-14 w-full text-base bg-blue-600 hover:bg-blue-500"
+              onClick={() => window.location.href = `/track/${submittedData.grid_id}`}
+            >
+              Track Status Now
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="h-14 w-full text-muted-foreground hover:text-foreground"
+              onClick={() => window.location.href = '/'}
+            >
+              Back to Home
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      
       <main className="flex-grow pt-8 lg:pt-32 pb-24 px-6 relative overflow-hidden">
         {/* Decorative Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
@@ -142,15 +231,12 @@ const SubmitPage = () => {
                     <div className="space-y-4">
                       <Label className="text-lg font-bold">Where is the issue located?</Label>
                       <Tabs defaultValue="current" className="w-full" onValueChange={setLocationType}>
-                        <TabsList className="grid grid-cols-3 bg-white/5 border border-white/10 h-14 p-1 rounded-2xl">
+                        <TabsList className="grid grid-cols-2 bg-white/5 border border-white/10 h-14 p-1 rounded-2xl">
                           <TabsTrigger value="current" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Current Location
                           </TabsTrigger>
                           <TabsTrigger value="map" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Choose on Map
-                          </TabsTrigger>
-                          <TabsTrigger value="address" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
-                            Enter Address
                           </TabsTrigger>
                         </TabsList>
                       </Tabs>
@@ -160,19 +246,22 @@ const SubmitPage = () => {
                       <MapComponent 
                         center={[formData.location.latitude, formData.location.longitude]} 
                         zoom={15}
-                        markers={[{ 
+                        markers={locationSelected ? [{ 
                           position: [formData.location.latitude, formData.location.longitude],
                           popupContent: "Grievance Location"
-                        }]}
+                        }] : []}
                         onMapClick={handleMapClick}
                         className="w-full h-[400px]"
                       />
                       <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                         <p className="text-xs font-mono text-blue-400">
-                          LAT: {formData.location.latitude.toFixed(6)} | LNG: {formData.location.longitude.toFixed(6)}
+                          {locationSelected ? `LAT: ${formData.location.latitude.toFixed(6)} | LNG: ${formData.location.longitude.toFixed(6)}` : "Please click on the map to set location"}
                         </p>
                       </div>
                     </div>
+                    {!locationSelected && (
+                      <p className="text-xs text-red-500 font-medium">Please mark the location on the map to continue.</p>
+                    )}
                   </motion.div>
                 )}
 
@@ -185,26 +274,34 @@ const SubmitPage = () => {
                     className="space-y-6"
                   >
                     <div className="space-y-4">
-                      <Label htmlFor="title" className="text-lg font-bold">Issue Title</Label>
+                      <Label htmlFor="title" className="text-lg font-bold">Issue Title (Required)</Label>
                       <Input 
                         id="title" 
+                        required
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         placeholder="e.g., Broken water pipe near main gate" 
                         className="h-14 bg-white/5 border-white/10 focus:border-blue-500/50"
                       />
+                      {formData.title.length > 0 && formData.title.length <= 3 && (
+                        <p className="text-[10px] text-red-500">Title must be at least 4 characters.</p>
+                      )}
                     </div>
                     <div className="space-y-4">
-                      <Label htmlFor="description" className="text-lg font-bold">Detailed Description</Label>
+                      <Label htmlFor="description" className="text-lg font-bold">Detailed Description (Required)</Label>
                       <Textarea 
                         id="description" 
+                        required
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         placeholder="Please provide as much detail as possible to help us resolve the issue faster..." 
                         className="min-h-[200px] bg-white/5 border-white/10 focus:border-blue-500/50 resize-none"
                       />
-                      <div className="flex justify-end">
-                        <span className="text-xs text-muted-foreground/60 font-mono">0 / 500 characters</span>
+                      <div className="flex justify-between items-center mt-1">
+                        {formData.description.length > 0 && formData.description.length <= 10 ? (
+                          <p className="text-[10px] text-red-500">Description must be at least 11 characters.</p>
+                        ) : <div />}
+                        <span className="text-xs text-muted-foreground/60 font-mono">{formData.description.length} / 500 characters</span>
                       </div>
                     </div>
                   </motion.div>
@@ -219,7 +316,7 @@ const SubmitPage = () => {
                     className="space-y-8"
                   >
                     <div className="space-y-4">
-                      <Label className="text-lg font-bold">Select Category</Label>
+                      <Label className="text-lg font-bold">Select Category (Required)</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {categories.map((cat) => (
                           <div 
@@ -260,15 +357,49 @@ const SubmitPage = () => {
                     <div className="grid md:grid-cols-2 gap-8">
                       <div className="space-y-4">
                         <Label className="text-lg font-bold">Upload Photos</Label>
-                        <div className="aspect-square rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-4 hover:border-blue-500/50 transition-colors group cursor-pointer">
-                          <div className="w-16 h-16 rounded-full bg-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-all">
-                            <Camera className="w-8 h-8 text-muted-foreground group-hover:text-blue-500" />
-                          </div>
-                          <div className="text-center">
-                            <p className="font-bold">Add Photo</p>
-                            <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB</p>
-                          </div>
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          ref={fileInputRef} 
+                          onChange={handleFileChange}
+                          accept="image/*"
+                        />
+                        <div 
+                          onClick={() => fileInputRef.current?.click()}
+                          className="aspect-square rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-4 hover:border-blue-500/50 transition-colors group cursor-pointer overflow-hidden relative"
+                        >
+                          {selectedFile ? (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm z-10 transition-opacity opacity-0 hover:opacity-100">
+                               <p className="text-white font-bold">Change Photo</p>
+                            </div>
+                          ) : null}
+                          
+                          {selectedFile ? (
+                              <img 
+                                src={URL.createObjectURL(selectedFile)} 
+                                alt="Preview" 
+                                className="absolute inset-0 w-full h-full object-cover"
+                              />
+                          ) : (
+                            <>
+                              <div className="w-16 h-16 rounded-full bg-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-all">
+                                <Camera className="w-8 h-8 text-muted-foreground group-hover:text-blue-500" />
+                              </div>
+                              <div className="text-center">
+                                <p className="font-bold">Add Photo</p>
+                                <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB</p>
+                              </div>
+                            </>
+                          )}
                         </div>
+                        {selectedFile && (
+                          <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10">
+                            <span className="text-xs font-mono truncate max-w-[150px]">{selectedFile.name}</span>
+                            <button type="button" onClick={() => setSelectedFile(null)} className="p-1 hover:text-red-500 transition-colors">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-4">
@@ -276,11 +407,13 @@ const SubmitPage = () => {
                         <div className="aspect-square rounded-3xl border border-white/10 bg-white/[0.02] flex flex-col items-center justify-center gap-6 p-8">
                           <button
                             type="button"
-                            onClick={() => setIsRecording(!isRecording)}
+                            onClick={toggleRecording}
                             className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-500 relative ${
                               isRecording 
                                 ? "bg-red-500 shadow-[0_0_30px_rgba(239,68,68,0.4)]" 
-                                : "bg-blue-600 shadow-[0_0_30px_rgba(37,99,235,0.3)]"
+                                : audioURL 
+                                  ? "bg-green-600 shadow-[0_0_30px_rgba(34,197,94,0.3)]"
+                                  : "bg-blue-600 shadow-[0_0_30px_rgba(37,99,235,0.3)]"
                             }`}
                           >
                             {isRecording && (
@@ -290,11 +423,15 @@ const SubmitPage = () => {
                                 transition={{ repeat: Infinity, duration: 1.5 }}
                               />
                             )}
-                            <Mic className="w-10 h-10 text-white" />
+                            {audioURL && !isRecording ? <Check className="w-10 h-10 text-white" /> : <Mic className="w-10 h-10 text-white" />}
                           </button>
                           <div className="text-center">
-                            <p className="font-bold">{isRecording ? "Recording..." : "Hold to Record"}</p>
-                            <p className="text-xs text-muted-foreground mt-1">Multi-language AI transcription</p>
+                            <p className="font-bold">
+                              {isRecording ? "Recording..." : audioURL ? "Recording Saved" : "Tap to Record"}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {audioURL && !isRecording ? "Voice data successfully attached" : "Multi-language AI transcription"}
+                            </p>
                           </div>
                           
                           {isRecording && (
@@ -308,6 +445,12 @@ const SubmitPage = () => {
                                 />
                               ))}
                             </div>
+                          )}
+
+                          {audioURL && !isRecording && (
+                            <button type="button" onClick={() => setAudioURL(null)} className="text-xs text-red-400 hover:text-red-300 font-bold uppercase tracking-wider">
+                              Discard Voice Draft
+                            </button>
                           )}
                         </div>
                       </div>
@@ -333,37 +476,38 @@ const SubmitPage = () => {
                   <Button
                     type="button"
                     onClick={nextStep}
-                    className="cta-button-primary h-14 px-12 text-base"
+                    disabled={!isStepValid()}
+                    className={`h-14 px-12 text-base transition-all duration-300 ${isStepValid() ? 'cta-button-primary bg-blue-600 hover:bg-blue-500 opacity-100' : 'bg-white/5 text-muted-foreground border border-white/10 opacity-50 cursor-not-allowed'}`}
                   >
                     Continue
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Report
-                        <Send className="ml-2 h-5 w-5" />
-                      </>
-                    )}
-                  </Button>
+                  (selectedFile || audioURL) && (
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !isStepValid()}
+                      className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500 animate-in fade-in zoom-in duration-300"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          Submit Report
+                          <Send className="ml-2 h-5 w-5" />
+                        </>
+                      )}
+                    </Button>
+                  )
                 )}
               </div>
             </form>
           </div>
         </div>
       </main>
-
-      
     </div>
   );
 };

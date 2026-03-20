@@ -16,7 +16,9 @@ import {
   Home,
   Zap,
   Layout,
-  Globe
+  Globe,
+  Cpu,
+  Users
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -26,6 +28,15 @@ const menuItems = [
   // Admin prioritized items
   { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["admin"] },
   { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring", roles: ["admin"] },
+  { icon: Cpu, label: "AI Audit", href: "/admin/ai-audit", roles: ["admin"] },
+  { icon: Globe, label: "Transparency", href: "/admin/transparency", roles: ["admin"] },
+  { icon: Search, label: "Forensic", href: "/admin/forensic", roles: ["admin"] },
+  { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox", roles: ["admin"] },
+  { icon: ShieldCheck, label: "Fraud Detection", href: "/admin/fraud-detection", roles: ["admin"] },
+  { icon: Layout, label: "Mission Control", href: "/admin/mission-control", roles: ["admin"] },
+  { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["admin"] },
+  { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["admin"] },
+  { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["admin"] },
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },
@@ -106,10 +117,10 @@ const Sidebar = () => {
                 )}
                 <item.icon className={`shrink-0 w-5 h-5 ${isActive ? "text-blue-500" : "group-hover:text-foreground"}`} />
                 <motion.span
-                  animate={{ 
-                    width: collapsed ? 0 : "auto", 
+                  animate={{
+                    width: collapsed ? 0 : "auto",
                     opacity: collapsed ? 0 : 1,
-                    marginLeft: collapsed ? 0 : 12 
+                    marginLeft: collapsed ? 0 : 12
                   }}
                   className="text-sm font-bold tracking-wide uppercase whitespace-nowrap overflow-hidden"
                 >
