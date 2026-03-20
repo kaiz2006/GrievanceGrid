@@ -1,44 +1,87 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
 import { 
   MapPin, 
   User, 
-  Calendar, 
   Clock, 
   ShieldCheck, 
   CheckCircle2, 
-  AlertCircle,
-  MoreVertical,
   Navigation,
-  MessageSquare,
   ChevronLeft,
   ChevronRight,
   Camera,
-  Search,
-  FileText,
-  Globe
+  Loader2,
+  Map as MapIcon
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { grievanceService } from "@/services/grievance.service";
-import Shuffle from "../Shuffle";
+import MapComponent from "../map/MapComponent";
+import { calculateDistance } from "@/utils/geo.utils";
+import { toast } from "sonner";
 
 const GrievanceDetailPage = () => {
   const { id } = useParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [currentPhoto, setCurrentPhoto] = useState(0);
+  const [gpsVerifying, setGpsVerifying] = useState(false);
+  const [gpsVerified, setGpsVerified] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (id) {
-        const result = await grievanceService.getDetail(id);
-        setData(result);
-        setLoading(false);
+        try {
+          const result = await grievanceService.getDetail(id);
+          setData(result);
+        } catch (error) {
+          console.error("Failed to fetch grievance details", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
     fetchData();
   }, [id]);
+
+  const handleCapturePhoto = () => {
+    setGpsVerifying(true);
+    toast.info("Verifying device coordinates...");
+    
+    setTimeout(() => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const distance = calculateDistance(
+              position.coords.latitude,
+              position.coords.longitude,
+              data.location.latitude,
+              data.location.longitude
+            );
+            
+            console.log(`[GPS CHECK] Distance from site: ${distance.toFixed(2)}m`);
+            
+            if (distance <= 150) { // 150m radius for demo
+              setGpsVerified(true);
+              toast.success("GPS Verified: You are at the resolution site.");
+            } else {
+              toast.error(`Verification Failed: You are ${distance.toFixed(0)}m away from the site.`);
+            }
+            setGpsVerifying(false);
+          },
+          (error) => {
+            console.error(error);
+            setGpsVerified(true); 
+            toast.warning("GPS blocked. Bypassing for demo purposes.");
+            setGpsVerifying(false);
+          }
+        );
+      } else {
+        toast.error("Geolocation is not supported by this browser.");
+        setGpsVerifying(false);
+      }
+    }, 1500);
+  };
 
   if (loading) {
     return (
@@ -50,6 +93,8 @@ const GrievanceDetailPage = () => {
       </div>
     );
   }
+
+  if (!data) return <div>Grievance not found.</div>;
 
   const mockGrievance = {
     id: data.grid_id,
@@ -140,7 +185,7 @@ const GrievanceDetailPage = () => {
               </div>
 
               {/* Location & Map */}
-              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col md:flex-row gap-8 items-center">
+              <div className="p-8 rounded-[2.5rem] bg-card border border-border flex flex-col md:flex-row gap-8 items-center shadow-2xl">
                 <div className="flex-1 w-full">
                   <div className="flex items-center gap-3 mb-4">
                     <MapPin className="w-5 h-5 text-blue-500" />
@@ -153,9 +198,13 @@ const GrievanceDetailPage = () => {
                     Open GPS Navigation
                   </button>
                 </div>
-                <div className="w-full md:w-64 aspect-square rounded-[2rem] bg-white/5 border border-dashed border-white/10 flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                   <Globe className="w-12 h-12 text-muted-foreground/30 group-hover:scale-110 transition-transform duration-700" />
-                   <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-full md:w-64 aspect-square rounded-[2rem] bg-black border border-white/10 overflow-hidden relative group">
+                   <MapComponent 
+                      center={[data.location.latitude, data.location.longitude]} 
+                      zoom={16}
+                      markers={[{ position: [data.location.latitude, data.location.longitude], popupContent: "Grievance Site" }]}
+                      className="w-full h-full"
+                   />
                 </div>
               </div>
             </div>
@@ -163,7 +212,7 @@ const GrievanceDetailPage = () => {
             {/* Right Column: Info & Action */}
             <div className="space-y-8">
               {/* Reporter Info */}
-              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5">
+              <div className="p-8 rounded-[2.5rem] bg-card border border-border shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
                   <User className="w-5 h-5 text-blue-500" />
                   <h3 className="text-xl font-bold">Reporter Profile</h3>
@@ -190,7 +239,7 @@ const GrievanceDetailPage = () => {
               </div>
 
               {/* Resolution Hub */}
-              <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.3)]">
+              <div className="p-8 rounded-[2.5rem] bg-card border border-border shadow-[0_20px_60px_rgba(0,0,0,0.5)] border-blue-500/10">
                 <div className="flex items-center gap-3 mb-8">
                   <ShieldCheck className="w-5 h-5 text-blue-500" />
                   <h3 className="text-xl font-bold">Officer Hub</h3>
@@ -214,11 +263,40 @@ const GrievanceDetailPage = () => {
                   </div>
 
                   <div className="flex flex-col gap-3">
-                    <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
-                      <Camera className="w-4 h-4 text-blue-500" />
-                      Capture After-Resolution Photo
+                    <button 
+                      onClick={handleCapturePhoto}
+                      disabled={gpsVerifying || gpsVerified}
+                      className={`w-full flex items-center justify-center gap-3 px-6 py-4 border rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${
+                        gpsVerified 
+                          ? "bg-green-600/20 border-green-500 text-green-500" 
+                          : "bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                      }`}
+                    >
+                      {gpsVerifying ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          Verifying GPS...
+                        </>
+                      ) : gpsVerified ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          Photo Captured (GPS Valid)
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="w-4 h-4 text-blue-500" />
+                          Capture After-Resolution Photo
+                        </>
+                      )}
                     </button>
-                    <button className="w-full py-4 rounded-2xl bg-white/[0.05] border border-white/5 text-xs font-bold text-blue-500 uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all">
+                    <button 
+                      disabled={!gpsVerified}
+                      className={`w-full py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${
+                        gpsVerified 
+                          ? "bg-blue-600 text-white hover:scale-105" 
+                          : "bg-white/[0.05] border border-white/5 text-muted-foreground/40"
+                      }`}
+                    >
                       Confirm Resolution
                     </button>
                   </div>

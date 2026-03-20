@@ -31,7 +31,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground overflow-hidden">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
       <Sidebar />
       <main className="flex-1 overflow-y-auto relative bg-[#0a0a0a]">
         {/* Background mesh for dashboard feel */}

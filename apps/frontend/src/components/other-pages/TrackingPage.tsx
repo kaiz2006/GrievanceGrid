@@ -19,11 +19,13 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { grievanceService } from "@/services/grievance.service";
+import MapComponent from "../map/MapComponent";
 
 const TrackingPage = () => {
   const { grid_id } = useParams();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,11 +195,33 @@ const TrackingPage = () => {
                       <Phone className="mr-2 h-4 w-4 text-blue-500" />
                       Call
                     </Button>
-                    <Button variant="outline" className="h-12 border-white/10 bg-white/[0.03] hover:bg-white/[0.06]">
+                    <Button 
+                      variant={showMap ? "default" : "outline"} 
+                      onClick={() => setShowMap(!showMap)}
+                      className={`h-12 border-white/10 ${showMap ? "bg-blue-600" : "bg-white/[0.03] hover:bg-white/[0.06]"}`}
+                    >
                       <MapPin className="mr-2 h-4 w-4 text-blue-500" />
-                      Live Map
+                      {showMap ? "Close Map" : "Live Map"}
                     </Button>
                   </div>
+                  
+                  {showMap && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="pt-4"
+                    >
+                      <MapComponent 
+                        center={[28.6139, 77.2090]} 
+                        zoom={15}
+                        markers={[
+                          { position: [28.6139, 77.2090], popupContent: "Grievance Location" },
+                          { position: [28.6145, 77.2105], popupContent: "Officer Rajesh (En Route)" }
+                        ]}
+                        className="w-full h-[250px] rounded-xl overflow-hidden"
+                      />
+                    </motion.div>
+                  )}
                 </CardContent>
               </Card>
 

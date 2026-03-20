@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
   LayoutDashboard, 
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { adminService } from "@/services/admin.service";
 import Shuffle from "../Shuffle";
+import MapComponent from "../map/MapComponent";
 
 const AdminDashboardPage = () => {
   const [data, setData] = useState<any>(null);
@@ -124,18 +126,18 @@ const AdminDashboardPage = () => {
                 </div>
               </div>
               
-              {/* Map UI Elements */}
-              <div className="absolute inset-0 bg-[#0a0a0a] flex items-center justify-center">
-                <div className="w-full h-full opacity-20 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-                {/* Random heatmap dots */}
-                <div className="absolute top-1/4 left-1/3 w-32 h-32 bg-red-500/20 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl" />
-                <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-amber-500/20 rounded-full blur-3xl animate-pulse" />
-                
-                <div className="relative z-10 flex flex-col items-center gap-4">
-                  <Globe className="w-12 h-12 text-muted-foreground/30 animate-spin-slow" />
-                  <p className="text-muted-foreground text-sm font-medium tracking-wide italic">Rendering City Vector Map Alpha...</p>
-                </div>
+              {/* Live Heatmap */}
+              <div className="absolute inset-0 bg-[#0a0a0a]">
+                <MapComponent 
+                  center={[19.0760, 72.8777]} // Example: Mumbai
+                  zoom={12}
+                  markers={[
+                    { position: [19.0760, 72.8777], popupContent: "Critical: Pothole (GRV-1105)" },
+                    { position: [19.0860, 72.8877], popupContent: "Elevated: Power Outage (GRV-1102)" },
+                    { position: [19.0660, 72.8677], popupContent: "New: Water Leak (GRV-1108)" },
+                  ]}
+                  className="w-full h-full"
+                />
               </div>
             </div>
 
@@ -163,7 +165,7 @@ const AdminDashboardPage = () => {
                     </div>
                   ))}
                 </div>
-                <button className="w-full mt-8 py-4 px-6 rounded-2xl bg-blue-600/10 border border-blue-600/20 text-blue-500 text-sm font-bold uppercase tracking-[0.2em] hover:bg-blue-600 text-white transition-all">
+                <button className="w-full mt-8 py-4 px-6 rounded-2xl bg-blue-600/10 border border-blue-600/20 text-blue-500 text-sm font-bold uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all">
                   View Full Queue
                 </button>
               </div>

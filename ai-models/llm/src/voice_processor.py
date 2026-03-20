@@ -1,6 +1,7 @@
 import os
 import uuid
 import logging
+from pathlib import Path
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -23,9 +24,19 @@ class VoiceProcessor:
     def __init__(self):
         self.use_gpu = os.getenv("USE_GPU", "true").lower() == "true"
         self.device = "cuda" if self.use_gpu else "cpu"
+        self.app_env = os.getenv("APP_ENV", "development").lower()
+        self.strict_startup = os.getenv("STRICT_MODEL_STARTUP", "false").lower() in {"1", "true", "yes", "on"}
+        self.whisper_model_path = os.getenv("WHISPER_MODEL_PATH")
         self.model = None
         self.tts_output_dir = os.getenv("TTS_OUTPUT_DIR", "/app/models/audio_out")
         os.makedirs(self.tts_output_dir, exist_ok=True)
+
+        if (self.strict_startup or self.app_env in {"production", "staging"}) and self.whisper_model_path:
+            if not Path(self.whisper_model_path).exists():
+                raise RuntimeError(f"Required Whisper artifact missing: {self.whisper_model_path}")
+
+        if (self.strict_startup or self.app_env in {"production", "staging"}) and not HAS_WHISPER:
+            raise RuntimeError("Whisper dependency is required in strict startup mode")
         
         if HAS_WHISPER:
             try:
@@ -58,13 +69,16 @@ class VoiceProcessor:
             except Exception as e:
                 logger.error(f"Whisper transcription failed: {e}")
                 
-        # Fallback stub
-        logger.warning(f"Returning stub transcription for {audio_path_or_url}")
+        # Deterministic fallback for unavailable audio/model paths.
+        logger.warning(f"Returning fallback transcription payload for {audio_path_or_url}")
+        fallback_id = f"GRD-{uuid.uuid5(uuid.NAMESPACE_URL, str(audio_path_or_url)).hex[:8].upper()}"
         return {
-            "transcription": "Transcription unavailable due to missing audio file or model.",
-            "summary": "Voice note received.",
-            "response_message": "System couldn't process voice. Grid ID XXXXXX.",
-            "tts_audio_path": None
+            "transcription": "Automatic transcription unavailable; manual review required.",
+            "summary": "Voice grievance captured and queued for manual transcription.",
+            "response_message": f"Your grievance has been received. Temporary Grid ID is {fallback_id}.",
+            "tts_audio_path": None,
+            "confidence": 0.0,
+            "fallback_reason": "missing_audio_or_model",
         }
         
     def _generate_tts(self, text: str, lang: str = "en") -> str:

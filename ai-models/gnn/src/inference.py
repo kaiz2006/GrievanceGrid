@@ -18,11 +18,20 @@ except ImportError:
 class GNNRouter:
     def __init__(self):
         self.use_gpu = os.getenv("USE_GPU", "true").lower() == "true"
-        self.device = "cuda" if self.use_gpu and HAS_PYG and torch.cuda.is_available() else "cpu"
+        self.app_env = os.getenv("APP_ENV", "development").lower()
+        self.strict_startup = os.getenv("STRICT_MODEL_STARTUP", "false").lower() in {"1", "true", "yes", "on"}
+        can_use_cuda = bool(HAS_PYG and "torch" in globals() and torch.cuda.is_available())
+        self.device = "cuda" if self.use_gpu and can_use_cuda else "cpu"
         self.model_path = os.getenv("GNN_MODEL_PATH", "/app/models/department_gnn.pth")
         
         self.num_features = 10 # 5 severity types + 5 priority levels as a simple feature vector
         self.model = None
+
+        if (self.strict_startup or self.app_env in {"production", "staging"}) and not HAS_PYG:
+            raise RuntimeError("torch_geometric dependencies are required in strict startup mode")
+
+        if (self.strict_startup or self.app_env in {"production", "staging"}) and not os.path.exists(self.model_path):
+            raise RuntimeError(f"Required GNN model artifact missing: {self.model_path}")
         
         if HAS_PYG:
             try:
@@ -33,7 +42,9 @@ class GNNRouter:
                     self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
                     logger.info(f"Loaded GNN Routing model from {self.model_path}")
                 else:
-                    logger.warning(f"GNN model weights not found at {self.model_path}. Using uninitialized network.")
+                    logger.warning(f"GNN model weights not found at {self.model_path}. Using fallback routing.")
+                    self.model = None
+                    return
                     
                 self.model = self.model.to(self.device)
                 self.model.eval()
@@ -97,10 +108,11 @@ class GNNRouter:
 
     def _fallback_route(self, payload: Dict[str, Any]) -> tuple[str, List[str]]:
         """A simple non-ML fallback based on category text matching."""
-        cat = str(payload.get("category", "")).upper()
+        cat = str(payload.get("category", "")).upper().strip()
         
         routes = {
             "ROADS": ["PWD", "TRANSPORT", "SANITATION"],
+            "INFRASTRUCTURE": ["PWD", "TRANSPORT", "WATER"],
             "WATER_SUPPLY": ["WATER", "HEALTH", "ENVIRONMENT"],
             "ELECTRICITY": ["ELECTRICITY", "FIRE", "DISASTER"],
             "SANITATION": ["SANITATION", "HEALTH", "WATER"],

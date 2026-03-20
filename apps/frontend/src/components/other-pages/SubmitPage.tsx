@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { grievanceService } from "@/services/grievance.service";
 import { voiceService } from "@/services/voice.service";
+import MapComponent from "../map/MapComponent";
 
 const steps = [
   { id: "location", title: "Location", icon: MapPin },
@@ -53,6 +54,13 @@ const SubmitPage = () => {
     category: "",
     location: { latitude: 28.6139, longitude: 77.2090, address: "" }
   });
+
+  const handleMapClick = (lat: number, lng: number) => {
+    setFormData(prev => ({
+      ...prev,
+      location: { ...prev.location, latitude: lat, longitude: lng, address: `Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}` }
+    }));
+  };
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
@@ -135,26 +143,34 @@ const SubmitPage = () => {
                       <Label className="text-lg font-bold">Where is the issue located?</Label>
                       <Tabs defaultValue="current" className="w-full" onValueChange={setLocationType}>
                         <TabsList className="grid grid-cols-3 bg-white/5 border border-white/10 h-14 p-1 rounded-2xl">
-                          <TabsTrigger value="current" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white h-full">
+                          <TabsTrigger value="current" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Current Location
                           </TabsTrigger>
-                          <TabsTrigger value="map" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white h-full">
+                          <TabsTrigger value="map" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Choose on Map
                           </TabsTrigger>
-                          <TabsTrigger value="address" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white h-full">
+                          <TabsTrigger value="address" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Enter Address
                           </TabsTrigger>
                         </TabsList>
                       </Tabs>
                     </div>
 
-                    <div className="h-64 rounded-3xl bg-white/[0.03] border border-white/10 flex items-center justify-center overflow-hidden relative group">
-                      <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="text-center space-y-4">
-                        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto border border-blue-500/20 group-hover:scale-110 transition-transform">
-                          <MapPin className="w-8 h-8 text-blue-500" />
-                        </div>
-                        <p className="text-muted-foreground font-medium">Map view placeholder</p>
+                    <div className="rounded-3xl border border-white/10 overflow-hidden relative group shadow-2xl">
+                      <MapComponent 
+                        center={[formData.location.latitude, formData.location.longitude]} 
+                        zoom={15}
+                        markers={[{ 
+                          position: [formData.location.latitude, formData.location.longitude],
+                          popupContent: "Grievance Location"
+                        }]}
+                        onMapClick={handleMapClick}
+                        className="w-full h-[400px]"
+                      />
+                      <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+                        <p className="text-xs font-mono text-blue-400">
+                          LAT: {formData.location.latitude.toFixed(6)} | LNG: {formData.location.longitude.toFixed(6)}
+                        </p>
                       </div>
                     </div>
                   </motion.div>
@@ -211,8 +227,8 @@ const SubmitPage = () => {
                             onClick={() => setFormData({ ...formData, category: cat })}
                             className={`p-6 rounded-2xl border transition-all flex flex-col items-center gap-3 group cursor-pointer ${
                               formData.category === cat 
-                                ? "bg-blue-600/20 border-blue-500" 
-                                : "bg-white/[0.02] border-white/10 hover:bg-white/[0.05] hover:border-blue-500/50"
+                                ? "bg-blue-600/20 border-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.15)]" 
+                                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 shadow-lg"
                             }`}
                           >
                             <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform">

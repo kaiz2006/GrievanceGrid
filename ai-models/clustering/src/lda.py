@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
@@ -9,7 +10,13 @@ try:
     HAS_SKLEARN = True
 except ImportError:
     HAS_SKLEARN = False
-    logger.warning("scikit-learn not available. Falling back to stub topic extraction.")
+    logger.warning("scikit-learn not available. Falling back to deterministic topic extraction.")
+
+
+STOPWORDS = {
+    "the", "and", "for", "with", "from", "that", "this", "there", "near", "road", "area", "issue",
+    "have", "been", "were", "your", "their", "into", "over", "under", "after", "before", "about",
+}
 
 class TopicAnalysisService:
     def __init__(self, n_topics=1, n_top_words=5):
@@ -22,14 +29,13 @@ class TopicAnalysisService:
             return []
             
         if not HAS_SKLEARN or len(texts) < 3:
-            # Fallback for small batches or missing dependencies
-            words = " ".join(texts).split()
-            # Extremely naive word counting ignoring stopwords
+            joined = " ".join(texts).lower()
+            words = re.findall(r"[a-z][a-z0-9_]{2,}", joined)
             counts = {}
             for w in words:
-                w = w.lower()
-                if len(w) > 4:
-                    counts[w] = counts.get(w, 0) + 1
+                if w in STOPWORDS:
+                    continue
+                counts[w] = counts.get(w, 0) + 1
             sorted_words = sorted(counts.items(), key=lambda x: x[1], reverse=True)
             return [w for w, count in sorted_words[:self.n_top_words]]
 

@@ -60,14 +60,31 @@ const Sidebar = () => {
           width: collapsed ? "88px" : "280px",
           x: mobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -280 : 0)
         }}
-        className={`fixed lg:static inset-y-0 left-0 z-50 bg-[#050505] border-r border-white/5 flex flex-col transition-all duration-300 ease-in-out overflow-x-hidden ${mobileOpen ? 'shadow-[0_0_50px_rgba(0,0,0,0.8)]' : ''}`}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className={`fixed lg:relative inset-y-0 left-0 z-50 bg-sidebar border-r border-sidebar-border flex flex-col shadow-2xl ${mobileOpen ? 'shadow-[0_0_50px_rgba(0,0,0,0.8)]' : ''}`}
       >
+        {/* Interaction Ball / Collapse Toggle */}
+        <button 
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex absolute -right-3 top-10 w-6 h-6 bg-blue-600 rounded-full items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all z-[60]"
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4 text-white" /> : <ChevronLeft className="w-4 h-4 text-white" />}
+        </button>
+
+        <div className="w-full h-full flex flex-col overflow-hidden">
         <div className="h-24 flex items-center px-6 mb-4">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            {!collapsed && (
+            <motion.div 
+              animate={{ 
+                width: collapsed ? 0 : "auto", 
+                opacity: collapsed ? 0 : 1,
+                marginLeft: collapsed ? 0 : 12 
+              }}
+              className="overflow-hidden"
+            >
               <Shuffle 
                 text="GrievanceGrid"
                 tag="span"
@@ -76,7 +93,7 @@ const Sidebar = () => {
                 shuffleTimes={1}
                 stagger={0.03}
               />
-            )}
+            </motion.div>
           </Link>
         </div>
 
@@ -100,11 +117,16 @@ const Sidebar = () => {
                   />
                 )}
                 <item.icon className={`shrink-0 w-5 h-5 ${isActive ? "text-blue-500" : "group-hover:text-foreground"}`} />
-                {!collapsed && (
-                  <span className="text-sm font-bold tracking-wide uppercase transition-opacity duration-300">
-                    {item.label}
-                  </span>
-                )}
+                <motion.span
+                  animate={{ 
+                    width: collapsed ? 0 : "auto", 
+                    opacity: collapsed ? 0 : 1,
+                    marginLeft: collapsed ? 0 : 12 
+                  }}
+                  className="text-sm font-bold tracking-wide uppercase whitespace-nowrap overflow-hidden"
+                >
+                  {item.label}
+                </motion.span>
                 {collapsed && (
                   <div className="absolute left-full ml-4 px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 border border-white/10 whitespace-nowrap">
                     {item.label}
@@ -125,19 +147,21 @@ const Sidebar = () => {
             }}
             className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-muted-foreground hover:text-red-500 hover:bg-red-500/5 transition-all group"
           >
-            <LogOut className="shrink-0 w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
-            {!collapsed && <span className="text-sm font-bold tracking-wide uppercase">Sign Out</span>}
-          </button>
-          
-          <button 
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex w-full items-center gap-3 px-4 py-3.5 rounded-2xl text-muted-foreground hover:text-foreground hover:bg-white/[0.03] transition-all"
-          >
-            {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            {!collapsed && <span className="text-sm font-bold tracking-wide uppercase">Collapse Sidebar</span>}
+            <LogOut className={`shrink-0 w-5 h-5 group-hover:rotate-180 transition-transform duration-500 ${collapsed ? "mx-auto" : ""}`} />
+            <motion.span
+              animate={{ 
+                width: collapsed ? 0 : "auto", 
+                opacity: collapsed ? 0 : 1,
+                marginLeft: collapsed ? 0 : 12 
+              }}
+              className="text-sm font-bold tracking-wide uppercase whitespace-nowrap overflow-hidden"
+            >
+              Sign Out
+            </motion.span>
           </button>
         </div>
-      </motion.aside>
+      </div>
+    </motion.aside>
 
       {/* Mobile Overlay */}
       {mobileOpen && (

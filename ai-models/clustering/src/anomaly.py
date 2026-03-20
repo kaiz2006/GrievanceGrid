@@ -9,7 +9,7 @@ try:
     HAS_SKLEARN = True
 except ImportError:
     HAS_SKLEARN = False
-    logger.warning("scikit-learn not available. Falling back to stub anomaly detector.")
+    logger.warning("scikit-learn not available. Falling back to deterministic anomaly detector.")
 
 class AnomalyDetector:
     def __init__(self, contamination=0.05):
@@ -26,9 +26,6 @@ class AnomalyDetector:
         Find isolated, high-severity grievances that do not fit local cluster patterns.
         Expected grievance keys: id, lat, lng, priority
         """
-        if not HAS_SKLEARN or len(grievances) < 10:
-            return []
-            
         priority_map = {"MINOR": 0, "LOW": 1, "MODERATE": 2, "HIGH": 3, "CRITICAL": 4}
         
         valid_grievances = []
@@ -45,6 +42,36 @@ class AnomalyDetector:
             return []
             
         X = np.array(features)
+
+        if not HAS_SKLEARN:
+            if len(X) < 5:
+                return []
+
+            means = X.mean(axis=0)
+            stds = np.maximum(X.std(axis=0), 1e-6)
+            z = np.abs((X - means) / stds)
+            # Heavier weight on severity dimension (index 2).
+            risk = z[:, 0] * 0.3 + z[:, 1] * 0.3 + z[:, 2] * 0.8
+            threshold = np.quantile(risk, max(0.5, 1.0 - self.contamination))
+
+            anomalies: list[dict[str, Any]] = []
+            for idx, score in enumerate(risk):
+                if score < threshold:
+                    continue
+                grievance = valid_grievances[idx]
+                anomalies.append(
+                    {
+                        "grievance_id": grievance.get("id"),
+                        "lat": grievance.get("lat"),
+                        "lng": grievance.get("lng"),
+                        "priority": grievance.get("priority"),
+                        "anomaly_score": round(float(score), 4),
+                        "reason": "Statistically isolated grievance with elevated severity",
+                    }
+                )
+
+            anomalies.sort(key=lambda item: item["anomaly_score"], reverse=True)
+            return anomalies
         
         # Fit and predict (-1 for outliers, 1 for inliers)
         preds = self.model.fit_predict(X)
