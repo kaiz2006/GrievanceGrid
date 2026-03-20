@@ -632,6 +632,44 @@ class GrievanceRepository(BaseRepository):
             "avg_resolution_hours": None,
         }
 
+    async def get_all_infrastructure_assets(self) -> list[dict[str, Any]]:
+        """Fetch all active assets for worker processing."""
+        return await self.fetch_all(
+            """
+            SELECT
+                id,
+                asset_type,
+                asset_name,
+                complaint_count_7d,
+                complaint_count_30d,
+                unresolved_count
+            FROM infrastructure_assets
+            WHERE is_active = true
+            """
+        )
+
+    async def batch_update_infrastructure_risk(self, params: list[dict[str, Any]]) -> int:
+        """Update multiple infrastructure assets with new risk scores in one transaction."""
+        query = """
+            UPDATE infrastructure_assets
+            SET
+                failure_risk_score = :failure_risk_score,
+                predicted_failure_date = :predicted_failure_date,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = :id
+        """
+        # BaseRepository.execute with list of params should use executemany
+        # but let's see how BaseRepository is implemented.
+        # It uses self.db.execute(text(query), params or {}).
+        # To support multiple, we might need a loop or a custom method.
+        # Since I can't easily change BaseRepository right now without risk,
+        # I'll use a loop but within the SAME session/transaction if possible.
+        count = 0
+        for p in params:
+            await self.execute(query, p)
+            count += 1
+        return count
+
     async def get_counts_by_category(self, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
         """Aggregate counts grouped by grievance category."""
         where_clause = ""

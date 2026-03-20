@@ -23,7 +23,7 @@ if settings.app_env.lower() == "production" and (not cors_origins or "*" in cors
     raise RuntimeError("CORS_ALLOW_ORIGINS must be an explicit allowlist in production")
 
 if not cors_origins:
-    cors_origins = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins = ["*"]
 
 if settings.object_storage_provider.lower() == "local":
     storage_path = Path(settings.object_storage_local_dir)

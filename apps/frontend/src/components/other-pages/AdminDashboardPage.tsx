@@ -57,7 +57,7 @@ const AdminDashboardPage = () => {
   ];
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative">
+      <main className="flex-grow pt-12 lg:pt-32 pb-12 px-6 relative">
         <div className="container mx-auto">
           {/* Dashboard Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
@@ -69,16 +69,16 @@ const AdminDashboardPage = () => {
               <h1 className="text-4xl font-bold tracking-tight">City Intelligence Dashboard</h1>
             </div>
             
-            <div className="flex gap-4">
-              <div className="relative group">
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <div className="relative group w-full sm:w-auto">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-blue-500 transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Query ticket ID or location..."
-                  className="bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-6 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
+                  placeholder="Query ticket ID..."
+                  className="bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-6 text-sm w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
                 />
               </div>
-              <button className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+              <button className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors w-12 sm:w-auto flex items-center justify-center">
                 <Filter className="w-5 h-5" />
               </button>
             </div>

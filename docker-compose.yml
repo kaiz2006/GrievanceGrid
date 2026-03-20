@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # Infrastructure
+  postgres:
+    image: postgres:16-alpine
+    container_name: grievance-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: grievances
+      POSTGRES_USER: grievances
+      POSTGRES_PASSWORD: grievances
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grievances"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: grievance-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: grievance-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application Tier
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: grievance-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://grievances:grievances@postgres:5432/grievances
+      REDIS_URL: redis://redis:6379/0
+      INTERNAL_WORKER_TOKEN: ${INTERNAL_WORKER_TOKEN:-dev-secret-token}
+      ML_LLM_URL: http://llm-service:8001
+      ML_CV_URL: http://cv-service:8002
+      ML_GNN_URL: http://gnn-service:8003
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  worker:
+    build:
+      context: ./apps/worker
+      dockerfile: Dockerfile
+    container_name: grievance-worker
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      POSTGRES_URL: postgresql://grievances:grievances@postgres:5432/grievances
+      QDRANT_URL: http://qdrant:6333
+      API_BASE_URL: http://api:8000
+      INTERNAL_WORKER_TOKEN: ${INTERNAL_WORKER_TOKEN:-dev-secret-token}
+      ML_LLM_URL: http://llm-service:8001
+      ML_CV_URL: http://cv-service:8002
+      ML_GNN_URL: http://gnn-service:8003
+    volumes:
+      - ./apps/worker/src:/app/src
+
+  # ML Tier
+  llm-service:
+    build:
+      context: ./ai-models/llm
+      dockerfile: Dockerfile
+    container_name: grievance-ml-llm
+    ports:
+      - "8001:8001"
+    environment:
+      PORT: 8001
+      MODEL_PATH: /models/llama-3.1-8b
+
+  cv-service:
+    build:
+      context: ./ai-models/cv
+      dockerfile: Dockerfile
+    container_name: grievance-ml-cv
+    ports:
+      - "8002:8002"
+    environment:
+      PORT: 8002
+
+  gnn-service:
+    build:
+      context: ./ai-models/gnn
+      dockerfile: Dockerfile
+    container_name: grievance-ml-gnn
+    ports:
+      - "8003:8003"
+    environment:
+      PORT: 8003
+
+volumes:
+  postgres-data:
+  redis-data:
+  qdrant-data:
+
+networks:
+  default:
+    name: grievance-network

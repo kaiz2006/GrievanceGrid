@@ -116,7 +116,7 @@ const GrievanceDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-white flex flex-col">
-      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
+      <main className="flex-grow pt-12 lg:pt-32 pb-12 px-6 relative overflow-hidden">
         <div className="container mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
@@ -135,12 +135,12 @@ const GrievanceDetailPage = () => {
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <button className="px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
-                Transfer Case
+            <div className="grid grid-cols-2 md:flex gap-4">
+              <button className="px-4 py-3 sm:px-8 sm:py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
+                Transfer
               </button>
-              <button className="px-8 py-4 rounded-2xl bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.4)] text-sm font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
-                Assign to Team
+              <button className="px-4 py-3 sm:px-8 sm:py-4 rounded-2xl bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.4)] text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
+                Assign
               </button>
             </div>
           </div>

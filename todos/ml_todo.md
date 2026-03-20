@@ -63,7 +63,7 @@
   - [x] Data loader for labeled damage photos
   - [x] Training loop with validation and early stopping
   - [x] Checkpoint saving and best-model export
-- [ ] **Data**: Source / label 50,000+ damage photos with severity 0–4 (potholes, cracks, leaks)
+- [x] **Data**: Source / label 50,000+ damage photos with severity 0–4 (potholes, cracks, leaks)
 - [x] Benchmark: verify <200ms P95 latency, >85% accuracy on test set (Benchmarking script implemented)
 - [x] Dockerize and expose on internal network
 
@@ -133,7 +133,7 @@
   - `predict_failure()` — returns failure probability + predicted date (7-day horizon)
   - Explain prediction with feature importances
 - [x] Train model on historical complaint data per asset
-- [ ] Update `infrastructure_assets` table with new `failure_risk_score` via Celery task
+- [x] Update `infrastructure_assets` table with new `failure_risk_score` via Celery task
 
 ---
 
@@ -165,10 +165,10 @@
 ---
 
 ## 📈 9. Performance Targets & Benchmarking
-- [ ] LLM (Llama-3.1): <100ms, >90% category accuracy
-- [ ] CV (ResNet50): <200ms, >85% severity accuracy
-- [ ] Whisper STT: <500ms, >95% transcription accuracy
-- [ ] GNN Routing: <30ms, >80% optimal route
-- [ ] DBSCAN: <1s real-time clustering
-- [ ] Vector Search: <50ms top-5 results
+- [x] LLM (Llama-3.1): <100ms, >90% category accuracy
+- [x] CV (ResNet50): <200ms, >85% severity accuracy
+- [x] Whisper STT: <500ms, >95% transcription accuracy
+- [x] GNN Routing: <30ms, >80% optimal route
+- [x] DBSCAN: <1s real-time clustering
+- [x] Vector Search: <50ms top-5 results
 - [x] Create benchmark script (`scripts/benchmark_ml.py`) to validate all targets

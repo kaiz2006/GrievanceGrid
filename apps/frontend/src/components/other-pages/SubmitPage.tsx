@@ -209,8 +209,9 @@ const SubmitPage = () => {
                 >
                   <step.icon className={`w-6 h-6 ${i <= currentStep ? "text-white" : "text-muted-foreground"}`} />
                 </motion.div>
-                <span className={`text-xs font-bold uppercase tracking-widest ${i <= currentStep ? "text-foreground" : "text-muted-foreground"}`}>
-                  {step.title}
+                <span className={`text-[9px] md:text-xs font-bold uppercase tracking-wider md:tracking-widest ${i <= currentStep ? "text-foreground" : "text-muted-foreground"}`}>
+                  <span className="md:hidden">{step.title.slice(0, 4)}.</span>
+                  <span className="hidden md:inline">{step.title}</span>
                 </span>
               </div>
             ))}
@@ -235,7 +236,7 @@ const SubmitPage = () => {
                           <TabsTrigger value="current" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Current Location
                           </TabsTrigger>
-                          <TabsTrigger value="map" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
+                          <TabsTrigger value="map" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-10 sm:h-full transition-all text-xs">
                             Choose on Map
                           </TabsTrigger>
                         </TabsList>

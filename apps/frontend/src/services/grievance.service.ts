@@ -5,7 +5,7 @@ import { GrievanceDetail, GrievanceStatus } from "@/types";
 export const grievanceService = {
   submit: async (data: any) => {
     console.log(`[API CALL]: POST /grievances`, data);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return {
       grid_id: `GRI-2026-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`,
       status: "CREATED",
@@ -16,8 +16,7 @@ export const grievanceService = {
   },
 
   getTrack: async (gridId: string): Promise<any> => {
-    console.log(`[API CALL]: GET /track/${gridId}`);
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     return {
       grid_id: gridId,
       current_status: "IN_PROGRESS",
@@ -35,8 +34,7 @@ export const grievanceService = {
   },
 
   getDetail: async (id: string): Promise<GrievanceDetail> => {
-    console.log(`[API CALL]: GET /grievances/${id}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return {
       id,
       grid_id: "GRI-2026-000102",
@@ -55,20 +53,18 @@ export const grievanceService = {
   },
 
   updateStatus: async (id: string, status: GrievanceStatus, notes: string) => {
-    console.log(`[API CALL]: PATCH /grievances/${id}/status`, { status, notes });
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     return { success: true };
   },
 
   submitFeedback: async (id: string, feedback: any) => {
-    console.log(`[API CALL]: POST /grievances/${id}/feedback`, feedback);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return { success: true };
   },
 
   contest: async (id: string, reason: string) => {
     console.log(`[API CALL]: POST /grievances/${id}/contest`, { reason });
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 400));
     return { status: "CONTESTED", audit_triggered: true };
   }
 };

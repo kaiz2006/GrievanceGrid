@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
 
@@ -37,6 +37,24 @@ class AnalyticsService:
             "heat_map_data": heat_map_data,
             "predictive_alerts": predictive_alerts,
         }
+
+    async def list_infrastructure_assets(self) -> list[dict[str, Any]]:
+        """Fetch all active infrastructure assets for worker processing."""
+        return await self.grievance_repo.get_all_infrastructure_assets()
+
+    async def update_infrastructure_risk_scores(self, updates: list[Any]) -> int:
+        """Apply batch risk score updates from worker results."""
+        # Convert Pydantic models to dict if necessary
+        params = [
+            {
+                "id": str(u.asset_id),
+                "failure_risk_score": u.failure_risk_score,
+                "predicted_failure_date": datetime.now(timezone.utc) + timedelta(days=7)
+                if u.failure_risk_score >= 0.7 else None
+            }
+            for u in updates
+        ]
+        return await self.grievance_repo.batch_update_infrastructure_risk(params)
 
     async def generate_daily_snapshot(self, metric_date: datetime | None = None) -> dict[str, Any]:
         snapshot_date = metric_date or datetime.now(timezone.utc)

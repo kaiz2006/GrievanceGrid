@@ -1,0 +1,34 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build and Push API
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/api
+          push: true
+          tags: user/grievance-api:latest
+
+      - name: Build and Push Worker
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/worker
+          push: true
+          tags: user/grievance-worker:latest
+
+      # Placeholder for actual deployment (SSH, K8s, etc)
+      - name: Deploy to Production
+        run: echo "Deploying to production server..."
