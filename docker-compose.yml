@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Infrastructure
   postgres:
@@ -96,11 +94,11 @@ services:
     volumes:
       - ./apps/worker/src:/app/src
 
-  # ML Tier
+  # ML Tier - using ai-models as context to access shared requirements.txt
   llm-service:
     build:
-      context: ./ai-models/llm
-      dockerfile: Dockerfile
+      context: ./ai-models
+      dockerfile: llm/Dockerfile
     container_name: grievance-ml-llm
     ports:
       - "8001:8001"
@@ -110,8 +108,8 @@ services:
 
   cv-service:
     build:
-      context: ./ai-models/cv
-      dockerfile: Dockerfile
+      context: ./ai-models
+      dockerfile: cv/Dockerfile
     container_name: grievance-ml-cv
     ports:
       - "8002:8002"
@@ -120,8 +118,8 @@ services:
 
   gnn-service:
     build:
-      context: ./ai-models/gnn
-      dockerfile: Dockerfile
+      context: ./ai-models
+      dockerfile: gnn/Dockerfile
     container_name: grievance-ml-gnn
     ports:
       - "8003:8003"
