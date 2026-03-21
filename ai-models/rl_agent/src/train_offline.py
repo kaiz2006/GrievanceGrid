@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import torch
 import csv
 import os
+import random
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +62,7 @@ def _state_from_row(row: dict[str, Any], size: int) -> np.ndarray:
 def _load_historical_dataset(dataset_path: Path) -> list[dict[str, Any]]:
     if not dataset_path.exists():
         raise FileNotFoundError(
-            f"Historical RL dataset not found at {dataset_path}. Set RL_DATASET_PATH to a CSV export."
+            f"Historical RL dataset not found at {dataset_path}. Run build_rl_dataset.py first."
         )
 
     with dataset_path.open("r", encoding="utf-8") as handle:
@@ -71,11 +73,21 @@ def _load_historical_dataset(dataset_path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def train_rl_agent(epochs: int = 20, batch_size: int = 64) -> None:
-    dataset_path = Path(
-        os.getenv("RL_DATASET_PATH", "ai-models/rl_agent/data/historical_grievances.csv")
-    ).resolve()
+def train_rl_agent(epochs: int = 20, batch_size: int = 64, limit: int | None = None) -> None:
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using device: {device}")
+    
+    # Resolve paths relative to script
+    script_dir = Path(__file__).parent.resolve()
+    default_dataset = script_dir.parent / "data" / "historical_grievances.csv"
+    
+    dataset_path = Path(os.getenv("RL_DATASET_PATH", str(default_dataset))).resolve()
+    print(f"Loading RL data from {dataset_path}...")
     rows = _load_historical_dataset(dataset_path)
+
+    if limit:
+        print(f"Limiting dataset to first {limit} rows.")
+        rows = rows[:limit]
 
     observed_departments = sorted(
         {
@@ -87,9 +99,10 @@ def train_rl_agent(epochs: int = 20, batch_size: int = 64) -> None:
     departments = observed_departments if observed_departments else DEFAULT_DEPARTMENTS
 
     env = GrievanceEnv(departments)
-    agent = RoutingRLAgent(state_size=env.state_size, action_size=env.action_size)
+    agent = RoutingRLAgent(state_size=env.state_size, action_size=env.action_size, device=device)
     dept_to_idx = {dept: idx for idx, dept in enumerate(departments)}
 
+    print("Preparing dataset...")
     prepared = [
         {
             "state": _state_from_row(row, env.state_size),
@@ -104,30 +117,62 @@ def train_rl_agent(epochs: int = 20, batch_size: int = 64) -> None:
         for row in rows
     ]
 
+    update_freq = 1
+    target_update_freq = 1000
+
+    print("Converting dataset to tensors (this will save hours of training time)...")
+    all_states = torch.FloatTensor(np.array([s["state"] for s in prepared])).to(device)
+    all_actions = torch.LongTensor([s["action"] for s in prepared]).to(device)
+    all_rewards = torch.FloatTensor([env.get_reward(s["action"], s["meta"]) for s in prepared]).to(device)
+    all_next_states = torch.roll(all_states, -1, dims=0)
+    all_dones = torch.zeros(len(prepared)).to(device)
+    all_dones[-1] = 1.0
+
+    print(f"Starting optimized training for {epochs} epochs...")
+    num_samples = len(prepared)
     for epoch in range(epochs):
-        for idx, sample in enumerate(prepared):
-            state = sample["state"]
-            action = int(sample["action"])
-            reward = env.get_reward(action, sample["meta"])
+        indices = torch.randperm(num_samples)
+        total_loss = 0
+        batch_count = 0
+        
+        for i in range(0, num_samples, batch_size):
+            batch_idx = indices[i : i + batch_size]
+            if len(batch_idx) < batch_size:
+                continue
+                
+            loss = agent.train_step(
+                all_states[batch_idx],
+                all_actions[batch_idx],
+                all_rewards[batch_idx],
+                all_next_states[batch_idx],
+                all_dones[batch_idx]
+            )
+            total_loss += loss
+            batch_count += 1
+            
+            if (i // batch_size) % 100 == 0:
+                print(f"  Epoch {epoch+1} Progress: {i}/{num_samples} ({(i/num_samples*100):.1f}%)", end="\r")
 
-            next_state = prepared[(idx + 1) % len(prepared)]["state"]
-            done = idx == len(prepared) - 1
+        if epoch % 10 == 0 or epoch == epochs - 1:
+            agent.update_target_model()
 
-            agent.remember(state, action, reward, next_state, done)
-            if len(agent.memory) >= batch_size:
-                agent.replay(batch_size)
+        avg_loss = total_loss / batch_count if batch_count > 0 else 0
+        print(f"Epoch: {epoch+1}/{epochs}, Avg Loss: {avg_loss:.4f}, Epsilon: {agent.epsilon:.3f}")
 
-        agent.update_target_model()
-        if epoch % 5 == 0:
-            print(f"Epoch: {epoch}/{epochs}, Epsilon: {agent.epsilon:.3f}")
-
-    output_path = Path(
-        os.getenv("RL_MODEL_OUTPUT_PATH", "ai-models/rl_agent/models/routing_rl_model.pth")
-    ).resolve()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_dir = script_dir.parent / "models"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "routing_rl_model.pth"
+    
     agent.save(str(output_path))
-    print(f"RL Agent trained from historical dataset and saved to {output_path}")
+    print(f"RL Agent trained and saved to {output_path}")
 
 
 if __name__ == "__main__":
-    train_rl_agent()
+    import argparse
+    parser = argparse.ArgumentParser(description="Train the RL routing agent.")
+    parser.add_argument("--epochs", type=int, default=100, help="Number of epochs to train.")
+    parser.add_argument("--batch-size", type=int, default=64, help="Batch size for replay.")
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of dataset rows.")
+    args = parser.parse_args()
+    
+    train_rl_agent(epochs=args.epochs, batch_size=args.batch_size, limit=args.limit)

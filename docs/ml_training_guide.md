@@ -29,26 +29,47 @@ The CV model is a ResNet50-based image classifier.
 
 ## 🕸️ 2. Training the GNN Model
 
-The GNN model uses Graph Attention Networks (GAT) for routing.
+The GNN model uses Graph Attention Networks (GAT) for automated grievance routing based on a graph of city departments.
 
--   **Training Script**: `ai-models/gnn/src/trainer.py`
--   **How to Train**:
-    ```bash
-    docker compose run --rm ml-gnn python src/trainer.py
-    ```
--   **Data**: This model typically pulls data from the backend database or a pre-processed graph dataset.
+### **GNN Data Sourcing**
+For the best results, use historical 311 service request data which contains "Complaint Type" and "Agency" (Target).
+
+*   **[NYC 311 Service Requests (Kaggle)](https://www.kaggle.com/datasets/new-york-city/nyc-311-service-requests)**: Standard source for urban requests.
+*   **[Chicago 311 Service Requests (Data.gov)](https://catalog.data.gov/dataset/311-service-requests)**: High-quality urban service data.
+
+### **Preprocessing for GNN**
+Use the included `preprocess_311.py` script to map 311 agencies (like NYPD, DEP) to GrievanceGrid departments (POLICE, WATER) and vectorize the text.
+
+```bash
+# Example preprocessing command
+python ai-models/gnn/src/preprocess_311.py --input nyc_311.csv --output ai-models/gnn/data/preprocessed.pt
+```
+
+### **How to Train the GNN**
+```bash
+docker compose run --rm ml-gnn python src/trainer.py --data data/preprocessed.pt
+```
 
 ---
 
 ## 🎯 3. Training the RL Agent
 
-The RL agent is trained offline to learn optimal department routing policies.
+The RL Agent uses Off-policy Reinforcement Learning to optimize grievance routing based on historical resolution times and citizen satisfaction.
 
--   **Training Script**: `ai-models/rl_agent/src/train_offline.py`
--   **How to Train**:
-    ```bash
-    docker compose run --rm ml-llm python src/rl_agent/train_offline.py
-    ```
+### **RL Data Sourcing**
+This model requires a special `historical_grievances.csv` that includes resolution times and satisfaction scores.
+
+### **Building the RL Dataset**
+You can build this dataset using the **NYC 311** data you already downloaded! Use the included `build_rl_dataset.py` to derive the necessary metrics.
+
+```bash
+python ai-models/rl_agent/src/build_rl_dataset.py --input ai-models/gnn/data/nyc_311.csv --output ai-models/rl_agent/data/historical_grievances.csv
+```
+
+### **How to Train the RL Agent**
+```bash
+docker compose run --rm ml-rl-agent python src/train_offline.py
+```
 
 ---
 

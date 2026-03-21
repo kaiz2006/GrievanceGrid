@@ -1,1 +1,24 @@
-train/
+# Core AI Data & Models
+**/data/*.csv
+**/data/*.pt
+**/data/*.pth
+**/models/*.pth
+**/models/*.pt
+
+# CV Image Data
+cv/data/train/
+cv/data/test/
+cv/data/val/
+
+# Python Environment
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local Environment
+.env
+.env.local
+.env.*.local

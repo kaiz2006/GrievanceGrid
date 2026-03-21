@@ -18,24 +18,25 @@ class QNetwork(nn.Module):
         return self.fc3(x)
 
 class RoutingRLAgent:
-    def __init__(self, state_size, action_size, learning_rate=0.001, gamma=0.95, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.01):
+    def __init__(self, state_size, action_size, device="cpu", learning_rate=0.001, gamma=0.95, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.01):
         self.state_size = state_size
         self.action_size = action_size
         self.gamma = gamma
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.epsilon_min = epsilon_min
-        self.memory = deque(maxlen=2000)
+        self.device = device
+        self.memory = deque(maxlen=10000)  # Increased memory for offline training
         
-        self.model = QNetwork(state_size, action_size)
-        self.target_model = QNetwork(state_size, action_size)
+        self.model = QNetwork(state_size, action_size).to(self.device)
+        self.target_model = QNetwork(state_size, action_size).to(self.device)
         self.target_model.load_state_dict(self.model.state_dict())
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
 
     def get_action(self, state):
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_size)
-        state = torch.FloatTensor(state).unsqueeze(0)
+        state = torch.FloatTensor(state).unsqueeze(0).to(self.device)
         with torch.no_grad():
             action_values = self.model(state)
         return torch.argmax(action_values).item()
@@ -43,28 +44,26 @@ class RoutingRLAgent:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def replay(self, batch_size):
-        if len(self.memory) < batch_size:
-            return
+    def train_step(self, states, actions, rewards, next_states, dones):
+        # Already tensors on the correct device
+        with torch.no_grad():
+            next_q_values = self.target_model(next_states)
+            max_next_q_values = torch.max(next_q_values, dim=1)[0]
+            targets = rewards + (1 - dones) * self.gamma * max_next_q_values
+            
+        current_q_values = self.model(states)
+        q_values_for_actions = current_q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
         
-        minibatch = random.sample(self.memory, batch_size)
-        for state, action, reward, next_state, done in minibatch:
-            state = torch.FloatTensor(state).unsqueeze(0)
-            next_state = torch.FloatTensor(next_state).unsqueeze(0)
-            target = reward
-            if not done:
-                target = reward + self.gamma * torch.max(self.target_model(next_state)).item()
-            
-            target_f = self.model(state)
-            target_f[0][action] = target
-            
-            self.optimizer.zero_grad()
-            loss = nn.MSELoss()(self.model(state), target_f)
-            loss.backward()
-            self.optimizer.step()
+        loss = nn.MSELoss()(q_values_for_actions, targets)
+        
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
         
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
+            
+        return loss.item()
 
     def update_target_model(self):
         self.target_model.load_state_dict(self.model.state_dict())
@@ -73,5 +72,5 @@ class RoutingRLAgent:
         torch.save(self.model.state_dict(), path)
 
     def load(self, path):
-        self.model.load_state_dict(torch.load(path))
+        self.model.load_state_dict(torch.load(path, map_location=self.device))
         self.target_model.load_state_dict(self.model.state_dict())
