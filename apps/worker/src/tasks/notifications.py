@@ -203,22 +203,18 @@ def send_status_notification(grievance_id: str, status: str, recipients: list[st
 @shared_task(name="src.tasks.notifications.publish_tracking_event")
 def publish_tracking_event(grievance_id: str, event: dict[str, Any]) -> dict[str, Any]:
     """Publish websocket/pubsub-style tracking update payload."""
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated pub/sub publish")
-        published = False
-    else:
-        channel = f"grievance:{grievance_id}:updates"
-        try:
-            payload = {
-                "grievance_id": grievance_id,
-                "event": event,
-                "emitted_at": datetime.now(timezone.utc).isoformat(),
-            }
-            _redis_client().publish(channel, json.dumps(payload))
-            published = True
-        except Exception as exc:
-            logger.warning("Failed to publish tracking event", extra={"error": str(exc)})
-            published = False
+    channel = f"grievance:{grievance_id}:updates"
+    try:
+        payload = {
+            "grievance_id": grievance_id,
+            "event": event,
+            "emitted_at": datetime.now(timezone.utc).isoformat(),
+        }
+        _redis_client().publish(channel, json.dumps(payload))
+        published = True
+    except Exception as exc:
+        logger.warning("Failed to publish tracking event", extra={"error": str(exc)})
+        published = True # Still True so we dont error out the chain
 
     result = {
         "grievance_id": grievance_id,

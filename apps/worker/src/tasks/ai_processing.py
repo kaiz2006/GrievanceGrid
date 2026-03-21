@@ -150,8 +150,7 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
     result["is_anomaly"] = len(anomalies) > 0
     result["processed_at"] = datetime.now(timezone.utc).isoformat()
 
-    if not settings.dry_run:
-        callback_synced = backend_client.post_ai_result(grievance_id, result)
+    callback_synced = backend_client.post_ai_result(grievance_id, result)
     result["backend_sync"] = callback_synced
 
     logger.info("Processed grievance AI enrichment", extra={"task": self.name, "result": result})
@@ -216,8 +215,7 @@ def process_voice_grievance(self, grievance_id: str, audio_url: str) -> dict[str
         "processed_at": datetime.now(timezone.utc).isoformat(),
     }
 
-    if not settings.dry_run:
-        callback_synced = backend_client.post_voice_result(grievance_id, result)
+    callback_synced = backend_client.post_voice_result(grievance_id, result)
     result["backend_sync"] = callback_synced
 
     logger.info("Processed voice grievance", extra={"task": self.name, "result": result})
@@ -241,16 +239,15 @@ def run_contestation_audit(
     """Run a lightweight AI audit workflow for contested grievances."""
     audit_id = audit_id or f"audit_{grievance_id[:8]}"
 
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated contest audit")
-        risk_score = 0.5
-        recommendation = "Manual officer review required"
-        evidence_severity = None
-    else:
-        classification = llm_client.classify(reason) or {}
-        recommendation = classification.get("summary") or "Manual officer review required"
-        risk_score = 0.7 if classification.get("priority") == "HIGH" else 0.45
-        evidence_severity = cv_client.estimate_severity(evidence_photo) if evidence_photo else None
+    classification = llm_client.classify(reason) or {}
+    risk_score = classification.get("risk_score", 0.5)
+    recommendation = classification.get("summary") or classification.get("recommendation") or "Manual officer review required"
+    
+    evidence_severity = None
+    if evidence_photo:
+        evidence_severity = cv_client.estimate_severity(evidence_photo)
+        if evidence_severity is not None:
+             risk_score = 0.7 if evidence_severity > 0.6 else 0.4
 
     result = {
         "audit_id": audit_id,
