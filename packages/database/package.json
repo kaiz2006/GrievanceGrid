@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
+    "install:deps": "npm install",
     "db:push": "drizzle-kit push:pg",
     "db:migrate": "drizzle-kit up:pg",
     "db:generate": "drizzle-kit generate:pg",

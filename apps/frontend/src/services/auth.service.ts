@@ -28,7 +28,7 @@ const mockUser: User = {
 export const authService = {
   // POST /auth/login - Login with email/password
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    return apiClient.post("/auth/login", { email, password: "***" }, async () => {
+    const response = await apiClient.post("/auth/login", { email, password }, async () => {
       await mockDelay(1000);
       return {
         token: "mock_jwt_token_" + Date.now(),
@@ -36,11 +36,16 @@ export const authService = {
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
     });
+    // Store token for subsequent requests
+    if (response.token) {
+      localStorage.setItem("auth_token", response.token);
+    }
+    return response;
   },
 
   // POST /auth/register - Register new user
   register: async (data: { email: string; password: string; name: string; phone?: string }): Promise<AuthResponse> => {
-    return apiClient.post("/auth/register", { ...data, password: "***" }, async () => {
+    const response = await apiClient.post("/auth/register", { ...data }, async () => {
       await mockDelay(1200);
       return {
         token: "mock_jwt_token_" + Date.now(),
@@ -48,6 +53,11 @@ export const authService = {
         expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
     });
+    // Store token for subsequent requests
+    if (response.token) {
+      localStorage.setItem("auth_token", response.token);
+    }
+    return response;
   },
 
   // GET /auth/me - Get current user
@@ -60,10 +70,13 @@ export const authService = {
 
   // POST /auth/logout - Logout user
   logout: async (): Promise<{ success: boolean }> => {
-    return apiClient.post("/auth/logout", {}, async () => {
+    const response = await apiClient.post("/auth/logout", {}, async () => {
       await mockDelay(300);
       return { success: true };
     });
+    // Clear token on logout
+    localStorage.removeItem("auth_token");
+    return response;
   },
 
   // POST /auth/google - Google OAuth login

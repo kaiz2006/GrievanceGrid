@@ -5,6 +5,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "install:deps": "npm install",
     "lint": "eslint \"src/**/*.ts*\""
   },
   "dependencies": {

@@ -1,0 +1,11 @@
+{
+  "name": "@grievancegrid/api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:deps": "python -m venv venv 2>nul || echo venv already exists && .\\venv\\Scripts\\pip install -r requirements.txt",
+    "dev": ".\\venv\\Scripts\\uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload",
+    "start": ".\\venv\\Scripts\\uvicorn src.main:app --host 0.0.0.0 --port 8000",
+    "test": ".\\venv\\Scripts\\pytest"
+  }
+}

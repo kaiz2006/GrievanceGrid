@@ -198,3 +198,17 @@ export const apiClient: ApiClient = {
 // =============================================================================
 
 export { API_BASE_URL, USE_MOCK_API };
+
+// Health check helper
+export const checkBackendHealth = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE_URL.replace('/api/v1', '')}/health`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Backend health check failed:', error);
+    return false;
+  }
+};
