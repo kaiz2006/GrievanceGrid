@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "react-router-dom";
 import { 
   CheckCircle2, 
@@ -11,14 +11,19 @@ import {
   ChevronRight,
   TrendingUp,
   ShieldCheck,
-  ArrowUpRight
+  ArrowUpRight,
+  Wifi,
+  WifiOff,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { grievanceService } from "@/services/grievance.service";
+import { useMockTrackingWebSocket } from "@/hooks/useWebSocket";
 import MapComponent from "../map/MapComponent";
 
 const TrackingPage = () => {
@@ -26,6 +31,15 @@ const TrackingPage = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showMap, setShowMap] = useState(false);
+
+  // WebSocket for real-time updates
+  const { 
+    isConnected, 
+    isConnecting, 
+    liveUpdates, 
+    eta, 
+    teamLocation 
+  } = useMockTrackingWebSocket(grid_id || null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +83,24 @@ const TrackingPage = () => {
                   ACTIVE CASE
                 </Badge>
                 <span className="text-muted-foreground font-mono text-sm">{grid_id || "GRV-9901"}</span>
+                {/* WebSocket Connection Status */}
+                <Badge 
+                  className={`${
+                    isConnected 
+                      ? "bg-green-500/10 text-green-500 border-green-500/20" 
+                      : isConnecting 
+                      ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                      : "bg-red-500/10 text-red-500 border-red-500/20"
+                  } border text-xs`}
+                >
+                  {isConnected ? (
+                    <><Wifi className="w-3 h-3 mr-1" /> Live</>
+                  ) : isConnecting ? (
+                    <><Clock className="w-3 h-3 mr-1 animate-spin" /> Connecting</>
+                  ) : (
+                    <><WifiOff className="w-3 h-3 mr-1" /> Offline</>
+                  )}
+                </Badge>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Tracking Resolution</h1>
             </div>
@@ -93,6 +125,40 @@ const TrackingPage = () => {
                   <TrendingUp className="text-blue-500" />
                   Status Timeline
                 </h3>
+
+                {/* Live Updates Feed */}
+                <AnimatePresence>
+                  {liveUpdates.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mb-8 p-4 rounded-2xl bg-green-500/5 border border-green-500/10"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <Zap className="w-4 h-4 text-green-500" />
+                        <span className="text-sm font-medium text-green-500">Live Updates</span>
+                      </div>
+                      <ScrollArea className="h-32">
+                        <div className="space-y-2">
+                          {liveUpdates.map((update, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="flex items-center gap-3 text-sm"
+                            >
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(update.timestamp).toLocaleTimeString()}
+                              </span>
+                              <span className="text-foreground">{update.message}</span>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <div className="relative space-y-0">
                   <div className="absolute left-[27px] top-2 bottom-2 w-0.5 bg-white/5" />
@@ -152,8 +218,12 @@ const TrackingPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="text-center py-4">
-                    <p className="text-5xl font-bold tracking-tighter mb-2">08:42:15</p>
-                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-[0.2em]">Estimated Resolution Time</p>
+                    <p className="text-5xl font-bold tracking-tighter mb-2">
+                      {eta || "08:42:15"}
+                    </p>
+                    <p className="text-sm text-muted-foreground font-medium uppercase tracking-[0.2em]">
+                      {eta ? "Live ETA" : "Estimated Resolution Time"}
+                    </p>
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
@@ -188,6 +258,12 @@ const TrackingPage = () => {
                     <div>
                       <h4 className="font-bold text-lg">Rajesh Kumar</h4>
                       <p className="text-sm text-muted-foreground">Lead Technical Officer</p>
+                      {isConnected && (
+                        <Badge className="mt-1 bg-green-500/10 text-green-500 border-0 text-xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1 animate-pulse" />
+                          Online
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -212,14 +288,22 @@ const TrackingPage = () => {
                       className="pt-4"
                     >
                       <MapComponent 
-                        center={[28.6139, 77.2090]} 
+                        center={teamLocation ? [teamLocation.lat, teamLocation.lng] : [28.6139, 77.2090]} 
                         zoom={15}
                         markers={[
                           { position: [28.6139, 77.2090], popupContent: "Grievance Location" },
-                          { position: [28.6145, 77.2105], popupContent: "Officer Rajesh (En Route)" }
+                          { 
+                            position: teamLocation ? [teamLocation.lat, teamLocation.lng] : [28.6145, 77.2105], 
+                            popupContent: "Officer Rajesh (Live Location)" 
+                          }
                         ]}
                         className="w-full h-[250px] rounded-xl overflow-hidden"
                       />
+                      {teamLocation && (
+                        <p className="text-xs text-muted-foreground mt-2 text-center">
+                          Live: {teamLocation.lat.toFixed(4)}, {teamLocation.lng.toFixed(4)}
+                        </p>
+                      )}
                     </motion.div>
                   )}
                 </CardContent>

@@ -6,7 +6,7 @@
 // CONFIGURATION
 // =============================================================================
 
-const USE_MOCK_API = true; // Set to false when backend is ready
+const USE_MOCK_API = false; // Set to true to use mock data instead of real backend
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
 

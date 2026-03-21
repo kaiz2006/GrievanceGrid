@@ -36,6 +36,15 @@ import EscalationManagementPage from "./components/other-pages/EscalationManagem
 import AuditHistoryPage from "./components/other-pages/AuditHistoryPage";
 import SimilarCasesPage from "./components/other-pages/SimilarCasesPage";
 import PendingAuditsPage from "./components/other-pages/PendingAuditsPage";
+// New citizen-facing pages
+import MyGrievancesPage from "./components/other-pages/MyGrievancesPage";
+import FeedbackPage from "./components/other-pages/FeedbackPage";
+import ContestationPage from "./components/other-pages/ContestationPage";
+import VoiceSubmitPage from "./components/other-pages/VoiceSubmitPage";
+import ProfilePage from "./components/other-pages/ProfilePage";
+// New officer workflow pages
+import FieldVerificationPage from "./components/other-pages/FieldVerificationPage";
+import OfficerWorkflowPage from "./components/other-pages/OfficerWorkflowPage";
 import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
@@ -73,6 +82,14 @@ const App = () => (
             <Route path="/admin/audit-history" element={<AuditHistoryPage />} />
             <Route path="/admin/similar-cases" element={<SimilarCasesPage />} />
             <Route path="/admin/pending-audits" element={<PendingAuditsPage />} />
+            {/* Citizen-facing pages */}
+            <Route path="/my-grievances" element={<MyGrievancesPage />} />
+            <Route path="/feedback/:grievanceId" element={<FeedbackPage />} />
+            <Route path="/contest/:grievanceId" element={<ContestationPage />} />
+            <Route path="/submit-voice" element={<VoiceSubmitPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/verify/:grievanceId" element={<FieldVerificationPage />} />
+            <Route path="/officer/workflow" element={<OfficerWorkflowPage />} />
             <Route path="/grievance/:id" element={<GrievanceDetailPage />} />
             <Route path="/solutions" element={<SolutionsPage />} />
             <Route path="/impact" element={<ImpactPage />} />

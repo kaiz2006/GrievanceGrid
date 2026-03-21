@@ -16,7 +16,10 @@ import {
   GitCompare,
   History,
   Clock,
-  AlertOctagon
+  AlertOctagon,
+  List,
+  Mic,
+  User
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -44,6 +47,16 @@ const adminSubmenuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits" },
 ];
 
+// Citizen submenu items for mobile
+const citizenSubmenuItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: List, label: "My Grievances", href: "/my-grievances" },
+  { icon: Send, label: "Submit", href: "/submit" },
+  { icon: Mic, label: "Voice Submit", href: "/submit-voice" },
+  { icon: Search, label: "Track", href: "/track/GRV-9901" },
+  { icon: User, label: "Profile", href: "/profile" },
+];
+
 const MobileNav = () => {
   const location = useLocation();
   const currentRole = localStorage.getItem("userRole") || "citizen";
@@ -63,7 +76,7 @@ const MobileNav = () => {
           <Zap className="w-5 h-5 text-blue-500 fill-blue-500/20" />
           <span className="font-display font-bold text-sm tracking-tight">GrievanceGrid</span>
         </div>
-        {isAdmin && (
+        {(
           <button 
             onClick={() => setShowAdminMenu(!showAdminMenu)}
             className="w-9 h-9 rounded-full bg-blue-600/10 border border-blue-600/20 flex items-center justify-center group active:scale-95 transition-all"
@@ -71,19 +84,16 @@ const MobileNav = () => {
             {showAdminMenu ? <X className="w-4 h-4 text-blue-500" /> : <Menu className="w-4 h-4 text-blue-500" />}
           </button>
         )}
-        {!isAdmin && (
-          <div className="w-9 h-9 rounded-full bg-blue-600/10 border border-blue-600/20 flex items-center justify-center group active:scale-95 transition-all">
-            <UserIcon className="w-4 h-4 text-blue-500" />
-          </div>
-        )}
       </header>
 
-      {/* Admin Submenu Overlay */}
-      {isAdmin && showAdminMenu && (
+      {/* Submenu Overlay */}
+      {showAdminMenu && (
         <div className="lg:hidden fixed top-16 inset-x-0 bottom-20 bg-background/95 backdrop-blur-xl z-[99] overflow-y-auto p-4">
-          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">Admin Portal</h3>
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
+            {isAdmin ? "Admin Portal" : "Menu"}
+          </h3>
           <div className="grid grid-cols-2 gap-3">
-            {adminSubmenuItems.map((item) => {
+            {(isAdmin ? adminSubmenuItems : citizenSubmenuItems).map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link

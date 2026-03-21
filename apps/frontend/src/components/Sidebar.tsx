@@ -31,7 +31,14 @@ import {
   AlertOctagon,
   MapPin,
   Route,
-  Lightbulb
+  Lightbulb,
+  // Citizen page icons
+  List,
+  Mic,
+  User,
+  // Officer workflow icons
+  CheckCircle,
+  RefreshCw
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -67,6 +74,15 @@ const menuItems = [
   // NEW: Audit Management (P3 Priority)
   { icon: History, label: "Audit History", href: "/admin/audit-history", roles: ["admin"] },
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["admin"] },
+  
+  // NEW: Officer Workflow Pages
+  { icon: CheckCircle, label: "Field Verification", href: "/officer/workflow", roles: ["admin"] },
+  { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["admin"] },
+  
+  // Citizen-specific pages
+  { icon: List, label: "My Grievances", href: "/my-grievances", roles: ["citizen"] },
+  { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["citizen"] },
+  { icon: User, label: "My Profile", href: "/profile", roles: ["citizen", "admin"] },
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },

@@ -15,3 +15,4 @@ venv
 .ds_store
 .agent
 .agents
+.qoder
