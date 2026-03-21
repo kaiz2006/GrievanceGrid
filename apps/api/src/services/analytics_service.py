@@ -49,8 +49,7 @@ class AnalyticsService:
             {
                 "id": str(u.asset_id),
                 "failure_risk_score": u.failure_risk_score,
-                "predicted_failure_date": datetime.now(timezone.utc) + timedelta(days=7)
-                if u.failure_risk_score >= 0.7 else None
+                "predicted_failure_date": u.predicted_failure_date if hasattr(u, 'predicted_failure_date') else None
             }
             for u in updates
         ]

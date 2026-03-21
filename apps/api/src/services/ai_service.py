@@ -52,30 +52,31 @@ class AIService:
 
         return None
 
-    async def classify_grievance(self, text: str) -> dict[str, Any]:
+    async def classify_grievance(self, text: str) -> dict[str, Any] | None:
         payload = {"text": text}
         result = await self._request_with_retry(self.llm_base_url, "/classify", payload)
         if result is not None:
             return result
-        return {
-            "category": "OTHER",
-            "priority": "MEDIUM",
-            "summary": text[:280],
-            "source": "fallback",
-        }
+        # Fake-free: No hardcoded fallbacks for classification
+        logger.error(f"LLM classification failed for text: {text[:50]}...")
+        return None
 
-    async def evaluate_image_severity(self, image_url: str) -> dict[str, Any]:
+    async def evaluate_image_severity(self, image_url: str) -> dict[str, Any] | None:
         payload = {"image_url": image_url}
         result = await self._request_with_retry(self.cv_base_url, "/severity", payload)
         if result is not None:
             return result
-        return {"severity": None, "source": "fallback"}
+        # Fake-free: No hardcoded fallbacks for severity
+        logger.error(f"CV severity evaluation failed for image: {image_url}")
+        return None
 
-    async def predict_department(self, grievance_payload: dict[str, Any]) -> dict[str, Any]:
+    async def predict_department(self, grievance_payload: dict[str, Any]) -> dict[str, Any] | None:
         result = await self._request_with_retry(self.gnn_base_url, "/route", grievance_payload)
         if result is not None:
             return result
-        return {"department": "PUBLIC_WORKS", "source": "fallback"}
+        # Fake-free: No hardcoded fallbacks for department routing
+        logger.error(f"GNN department prediction failed for payload: {str(grievance_payload)[:100]}...")
+        return None
 
     async def enrich_grievance(
         self,
