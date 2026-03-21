@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from celery import shared_task
 
@@ -19,14 +19,7 @@ def monitor_sla_and_escalate(lookahead_minutes: int = 60) -> dict[str, int | str
     
     Scheduled by Celery Beat every minute.
     """
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, returning simulated SLA monitoring result")
-        return {
-            "lookahead_minutes": lookahead_minutes,
-            "near_breach_count": 0,
-            "escalated_count": 0,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-        }
+    # REAL: Removed dry-run bypass
 
     # Fetch active timers from backend
     try:

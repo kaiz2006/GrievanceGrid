@@ -110,15 +110,7 @@ class GrievanceLLMProcessor:
             except Exception as exc:
                 logger.error("OpenAI fallback failed", extra={"error": str(exc)})
 
-        lowered = text.lower()
-        category = "ROADS" if any(token in lowered for token in ("road", "pothole", "street")) else "OTHER"
-        priority = "HIGH" if any(token in lowered for token in ("urgent", "danger", "collapsed")) else "MODERATE"
-        return {
-            "category": category,
-            "priority": priority,
-            "summary": f"Extracted from text: {text[:80]}",
-            "department": "PWD" if category == "ROADS" else "GENERAL",
-        }
+        raise RuntimeError("LLM processing failed. No valid classification from vLLM or OpenAI in fake-free mode.")
 
     def generate_embedding(self, text: str) -> list[float]:
         if self.embedder is not None:
@@ -138,6 +130,7 @@ class GrievanceLLMProcessor:
             except Exception as exc:
                 logger.error("OpenAI embedding fallback failed", extra={"error": str(exc)})
 
+        # We keep deterministic hash only as a last resort technical fallback, not a "fake" inference
         return _deterministic_embedding(text)
 
     def suggest_resolution(self, grievance: dict[str, Any]) -> str:
@@ -181,7 +174,7 @@ class GrievanceLLMProcessor:
             except Exception as exc:
                 logger.error("Resolution synthesis failed", extra={"error": str(exc)})
 
-        return "1. Dispatch assessment crew\n2. Secure area if hazardous\n3. Execute standard repairs for category."
+        raise RuntimeError("LLM resolution synthesis failed. No valid output from vLLM or OpenAI.")
 
 
 processor = GrievanceLLMProcessor()

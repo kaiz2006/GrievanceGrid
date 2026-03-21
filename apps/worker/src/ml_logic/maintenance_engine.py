@@ -40,10 +40,10 @@ class PredictiveMaintenanceEngine:
         recency = float(asset_data.get("days_since_last_complaint", 365))
 
         if not HAS_SKLEARN or not self._is_trained:
-            # Enhanced heuristic fallback
-            score = (min(1.0, c7 / 10.0) * 0.5 + min(1.0, c30 / 40.0) * 0.2 + sev * 0.3)
-            prob = round(max(0.0, min(1.0, score)), 3)
-            factors = ["Heuristic high frequency"] if prob > 0.6 else []
+            # Fake-free mode: no heuristic fallback
+            logger.warning("Predictive maintenance model not trained. Returning 0.0 risk score.")
+            prob = 0.0
+            factors = ["Model not trained"]
         else:
             features = self.extract_features(asset_data)
             prob = float(self.model.predict(np.array([features]))[0])

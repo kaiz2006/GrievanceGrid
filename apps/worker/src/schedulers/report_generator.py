@@ -18,13 +18,9 @@ def generate_daily_report_snapshot(target_day: str | None = None) -> dict[str, s
     report_day = target_day or date.today().isoformat()
     records_written = 0
 
-    if settings.dry_run:
-        logger.info("WORKER_DRY_RUN enabled, simulating daily snapshot persistence")
-        records_written = 1
-        persisted = False
-    else:
-        persisted = backend_client.post_daily_report_snapshot(report_day)
-        records_written = 1 if persisted else 0
+    # REAL: Removed dry-run bypass
+    persisted = backend_client.post_daily_report_snapshot(report_day)
+    records_written = 1 if persisted else 0
 
     result = {
         "report_day": report_day,

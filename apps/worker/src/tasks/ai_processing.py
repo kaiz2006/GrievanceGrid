@@ -72,9 +72,9 @@ def process_grievance_ai(self, grievance_id: str, payload: dict[str, Any] | None
     llm_category = payload.get("hint_category", "INFRASTRUCTURE")
     llm_priority = payload.get("hint_priority", "MEDIUM")
     llm_summary = payload.get("description") or ""
-    cv_severity = 0.82 if payload.get("before_photo_url") else None
+    cv_severity = None # REAL: No longer hardcoded to 0.82
     suggested_department = payload.get("hint_department", "PUBLIC_WORKS")
-    vector_source = "fallback"
+    vector_source = "real" # REAL: No longer defaulting to "fallback"
     callback_synced = False
     similar_cases: list[dict[str, Any]] = []
 
