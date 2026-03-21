@@ -3,7 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from src.api.v1 import grievances, voice, tracking, clusters, admin, analytics, auth, operations
+from src.api.v1 import grievances, voice, tracking, clusters, admin, analytics, auth, operations, verification, audits
 from src.core.config import settings
 from src.core.database import close_db
 from src.core.logging import configure_logging
@@ -62,4 +62,6 @@ app.include_router(clusters.router, prefix="/api/v1/clusters", tags=["Clusters"]
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"])
 app.include_router(operations.router, prefix="/api/v1/operations", tags=["Operations"])
+app.include_router(verification.router, prefix="/api/v1/verify", tags=["Verification"])
+app.include_router(audits.router, prefix="/api/v1/audits", tags=["Audits"])
 app.add_api_websocket_route("/ws/track/{grid_id}", tracking.tracking_ws_handler)

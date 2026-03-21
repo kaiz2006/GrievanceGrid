@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
@@ -434,3 +435,141 @@ async def contest_grievance(
 		audit_task_id=audit_task_id,
 		message="Contestation received. AI audit initiated. You will be contacted within 24 hours.",
 	)
+
+
+# =============================================================================
+# MY GRIEVANCES ENDPOINT
+# =============================================================================
+
+class MyGrievanceItem(BaseModel):
+	id: str
+	grid_id: str
+	title: str
+	category: str
+	status: str
+	priority: str
+	description: str
+	location_address: str | None = None
+	created_at: str
+	resolved_at: str | None = None
+	can_feedback: bool
+	can_contest: bool
+
+
+class MyGrievancesResponse(BaseModel):
+	count: int
+	items: list[MyGrievanceItem]
+
+
+@router.get("/me", response_model=MyGrievancesResponse)
+async def get_my_grievances(
+	limit: int = Query(default=20, ge=1, le=100),
+	offset: int = Query(default=0, ge=0),
+	current_user: dict = Depends(get_current_user),
+	db: AsyncSession = Depends(get_db_session),
+) -> MyGrievancesResponse:
+	"""Get grievances submitted by the current user."""
+	repo = GrievanceRepository(db)
+	rows = await repo.list_grievances_by_citizen(
+		citizen_id=current_user["id"],
+		limit=limit,
+		offset=offset,
+	)
+
+	items = []
+	for row in rows:
+		status = str(row["status"])
+		can_feedback = status == "RESOLVED"
+		can_contest = status in ("RESOLVED", "CONTESTED")
+
+		items.append(
+			MyGrievanceItem(
+				id=str(row["id"]),
+				grid_id=str(row["grid_id"]),
+				title=str(row["title"]),
+				category=str(row["category"]),
+				status=status,
+				priority=str(row["priority"]),
+				description=str(row["description"]),
+				location_address=row.get("location_address"),
+				created_at=_to_iso(row["created_at"]),
+				resolved_at=_to_iso(row["resolved_at"]) if row.get("resolved_at") else None,
+				can_feedback=can_feedback,
+				can_contest=can_contest,
+			)
+		)
+
+	return MyGrievancesResponse(count=len(items), items=items)
+
+
+# =============================================================================
+# SIMILAR CASES ENDPOINT
+# =============================================================================
+
+class SimilarCaseItem(BaseModel):
+	grid_id: str
+	title: str
+	similarity_score: float
+	resolution_summary: str | None = None
+	resolution_time_hours: float | None = None
+	department: str | None = None
+
+
+class SimilarCasesResponse(BaseModel):
+	count: int
+	cases: list[SimilarCaseItem]
+
+
+@router.get("/{grievance_id}/similar", response_model=SimilarCasesResponse)
+async def get_similar_cases(
+	grievance_id: str,
+	limit: int = Query(default=5, ge=1, le=20),
+	current_user: dict = Depends(get_current_user),
+	db: AsyncSession = Depends(get_db_session),
+) -> SimilarCasesResponse:
+	"""Find similar grievances using vector similarity search."""
+	repo = GrievanceRepository(db)
+	grievance = await repo.get_by_id(grievance_id)
+	if grievance is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	# Get embedding from grievance if available
+	embedding = grievance.get("embedding")
+	if not embedding:
+		# Return empty if no embedding exists yet
+		return SimilarCasesResponse(count=0, cases=[])
+
+	# Query Qdrant for similar vectors
+	try:
+		from src.services.vector_service import VectorService
+		vector_service = VectorService()
+		similar = await vector_service.find_similar(
+			embedding=embedding,
+			category=grievance.get("category"),
+			limit=limit + 1,  # +1 to exclude self
+		)
+	except Exception:
+		# Fallback: search by category in DB
+		similar = []
+
+	cases = []
+	for hit in similar:
+		# Skip the same grievance
+		if hit.get("id") == grievance_id:
+			continue
+
+		cases.append(
+			SimilarCaseItem(
+				grid_id=hit.get("grid_id", ""),
+				title=hit.get("title", "Unknown"),
+				similarity_score=hit.get("score", 0.0),
+				resolution_summary=hit.get("resolution_summary"),
+				resolution_time_hours=hit.get("resolution_time_hours"),
+				department=hit.get("department"),
+			)
+		)
+
+		if len(cases) >= limit:
+			break
+
+	return SimilarCasesResponse(count=len(cases), cases=cases)

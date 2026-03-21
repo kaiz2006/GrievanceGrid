@@ -13,9 +13,11 @@ export interface User {
 }
 
 export interface AuthResponse {
-  token: string;
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
   user: User;
-  expires_at: string;
 }
 
 const mockUser: User = {
@@ -28,34 +30,38 @@ const mockUser: User = {
 export const authService = {
   // POST /auth/login - Login with email/password
   login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/login", { email, password }, async () => {
+    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password }, async () => {
       await mockDelay(1000);
       return {
-        token: "mock_jwt_token_" + Date.now(),
+        access_token: 'mock_jwt_token_' + Date.now(),
+        refresh_token: 'mock_refresh_token_' + Date.now(),
+        token_type: 'bearer',
+        expires_in: 86400,
         user: { ...mockUser, email },
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
     });
     // Store token for subsequent requests
-    if (response.token) {
-      localStorage.setItem("auth_token", response.token);
+    if (response.access_token) {
+      localStorage.setItem('auth_token', response.access_token);
     }
     return response;
   },
 
   // POST /auth/register - Register new user
   register: async (data: { email: string; password: string; name: string; phone?: string }): Promise<AuthResponse> => {
-    const response = await apiClient.post("/auth/register", { ...data }, async () => {
+    const response = await apiClient.post<AuthResponse>('/auth/register', { ...data }, async () => {
       await mockDelay(1200);
       return {
-        token: "mock_jwt_token_" + Date.now(),
+        access_token: 'mock_jwt_token_' + Date.now(),
+        refresh_token: 'mock_refresh_token_' + Date.now(),
+        token_type: 'bearer',
+        expires_in: 86400,
         user: { ...mockUser, email: data.email, name: data.name, phone: data.phone },
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
     });
     // Store token for subsequent requests
-    if (response.token) {
-      localStorage.setItem("auth_token", response.token);
+    if (response.access_token) {
+      localStorage.setItem('auth_token', response.access_token);
     }
     return response;
   },
@@ -81,23 +87,26 @@ export const authService = {
 
   // POST /auth/google - Google OAuth login
   googleLogin: async (idToken: string): Promise<AuthResponse> => {
-    return apiClient.post("/auth/google", { id_token: idToken }, async () => {
+    return apiClient.post('/auth/google', { id_token: idToken }, async () => {
       await mockDelay(800);
       return {
-        token: "mock_google_jwt_" + Date.now(),
-        user: { ...mockUser, email: "google.user@gmail.com", name: "Google User" },
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        access_token: 'mock_google_jwt_' + Date.now(),
+        refresh_token: 'mock_google_refresh_' + Date.now(),
+        token_type: 'bearer',
+        expires_in: 86400,
+        user: { ...mockUser, email: 'google.user@gmail.com', name: 'Google User' },
       };
     });
   },
 
   // POST /auth/refresh - Refresh JWT token
-  refreshToken: async (): Promise<{ token: string; expires_at: string }> => {
-    return apiClient.post("/auth/refresh", {}, async () => {
+  refreshToken: async (): Promise<{ access_token: string; refresh_token: string; expires_in: number }> => {
+    return apiClient.post('/auth/refresh', { refresh_token: localStorage.getItem('refresh_token') }, async () => {
       await mockDelay(200);
       return {
-        token: "mock_refreshed_jwt_" + Date.now(),
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        access_token: 'mock_refreshed_jwt_' + Date.now(),
+        refresh_token: 'mock_refreshed_refresh_' + Date.now(),
+        expires_in: 86400,
       };
     });
   },

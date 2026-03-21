@@ -77,3 +77,12 @@ class BackendClient:
         """Post batch risk score updates back to backend."""
         payload = {"updates": updates}
         return self._post("/api/v1/analytics/infrastructure/risk-update", payload, use_internal_auth=True)
+
+    def get_active_sla_timers(self) -> list[dict[str, Any]]:
+        """Fetch active SLA timers from backend."""
+        result = self._get("/api/v1/sla/timers/active", use_internal_auth=True)
+        return result if result is not None else []
+
+    def post_sla_escalation(self, grievance_id: str) -> bool:
+        """Trigger SLA escalation for a grievance."""
+        return self._post(f"/api/v1/sla/escalate/{grievance_id}", {}, use_internal_auth=True)

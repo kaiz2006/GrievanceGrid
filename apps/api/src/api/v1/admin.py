@@ -169,3 +169,141 @@ async def assign_department(
 		"status": str(updated["status"]),
 		"department_id": str(updated["assigned_department_id"]),
 	}
+
+
+# =============================================================================
+# DEPARTMENTS ENDPOINTS
+# =============================================================================
+
+
+class DepartmentItem(BaseModel):
+	id: str
+	name: str
+	code: str
+
+
+class DepartmentListResponse(BaseModel):
+	count: int
+	items: list[DepartmentItem]
+
+
+@router.get("/departments", response_model=DepartmentListResponse)
+async def list_departments(
+	admin_user: dict = Depends(require_admin),
+	db: AsyncSession = Depends(get_db_session),
+) -> DepartmentListResponse:
+	"""Get all departments."""
+	rows = await GrievanceRepository(db).fetch_all(
+		"""
+		SELECT id, name, code FROM departments ORDER BY name
+		"""
+	)
+	items = [
+		DepartmentItem(
+			id=str(row["id"]),
+			name=str(row["name"]),
+			code=str(row["code"]),
+		)
+		for row in rows
+	]
+	return DepartmentListResponse(count=len(items), items=items)
+
+
+# =============================================================================
+# TEAMS ENDPOINTS
+# =============================================================================
+
+
+class TeamItem(BaseModel):
+	id: str
+	name: str
+	department_id: str | None = None
+	status: str = "available"
+	current_location: dict[str, float] | None = None
+
+
+class TeamListResponse(BaseModel):
+	count: int
+	items: list[TeamItem]
+
+
+@router.get("/teams", response_model=TeamListResponse)
+async def list_teams(
+	department_id: str | None = Query(default=None),
+	admin_user: dict = Depends(require_admin),
+	db: AsyncSession = Depends(get_db_session),
+) -> TeamListResponse:
+	"""Get all field teams."""
+	where_clause = "WHERE department_id = :department_id" if department_id else ""
+	params = {"department_id": department_id} if department_id else {}
+
+	rows = await GrievanceRepository(db).fetch_all(
+		f"""
+		SELECT id, name, department_id, status FROM teams
+		{where_clause}
+		ORDER BY name
+		""",
+		params,
+	)
+
+	items = [
+		TeamItem(
+			id=str(row["id"]),
+			name=str(row["name"]),
+			department_id=str(row["department_id"]) if row.get("department_id") else None,
+			status=str(row.get("status", "available")),
+		)
+		for row in rows
+	]
+	return TeamListResponse(count=len(items), items=items)
+
+
+# =============================================================================
+# ASSIGN TEAM ENDPOINT
+# =============================================================================
+
+
+class AssignTeamRequest(BaseModel):
+	team_id: str = Field(min_length=1)
+
+
+class AssignTeamResponse(BaseModel):
+	grievance_id: str
+	team_id: str
+	status: str
+	eta_minutes: int | None = None
+
+
+@router.post("/grievances/{grievance_id}/assign-team", response_model=AssignTeamResponse)
+async def assign_team(
+	grievance_id: str,
+	payload: AssignTeamRequest,
+	admin_user: dict = Depends(require_admin),
+	db: AsyncSession = Depends(get_db_session),
+) -> AssignTeamResponse:
+	"""Assign a field team to a grievance."""
+	repo = GrievanceRepository(db)
+
+	# Update grievance with team assignment
+	updated = await repo.update(
+		"""
+		UPDATE grievances
+		SET assigned_team_id = :team_id, updated_at = CURRENT_TIMESTAMP
+		WHERE id = :grievance_id
+		RETURNING id, status, assigned_team_id
+		""",
+		{"grievance_id": grievance_id, "team_id": payload.team_id},
+	)
+
+	if updated is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	# Calculate ETA based on team location (simplified)
+	eta_minutes = 15  # Default ETA
+
+	return AssignTeamResponse(
+		grievance_id=grievance_id,
+		team_id=payload.team_id,
+		status=str(updated["status"]),
+		eta_minutes=eta_minutes,
+	)

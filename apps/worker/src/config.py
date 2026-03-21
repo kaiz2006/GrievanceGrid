@@ -3,6 +3,10 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+# Load .env file
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def _to_bool(value: str | None, default: bool = False) -> bool:
     if value is None:

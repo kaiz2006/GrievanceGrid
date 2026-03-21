@@ -277,6 +277,34 @@ class GrievanceRepository(BaseRepository):
             params,
         )
 
+    async def list_grievances_by_citizen(
+        self,
+        citizen_id: str,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        """List grievances submitted by a specific citizen."""
+        return await self.fetch_all(
+            """
+            SELECT
+                id,
+                grid_id,
+                status,
+                title,
+                description,
+                category,
+                priority,
+                location_address,
+                created_at,
+                resolved_at
+            FROM grievances
+            WHERE citizen_id = :citizen_id
+            ORDER BY created_at DESC
+            LIMIT :limit OFFSET :offset
+            """,
+            {"citizen_id": citizen_id, "limit": limit, "offset": offset},
+        )
+
     async def get_by_id(self, grievance_id: str) -> dict[str, Any] | None:
         """Get grievance details by UUID."""
         return await self.fetch_one(
