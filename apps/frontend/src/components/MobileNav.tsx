@@ -5,9 +5,21 @@ import {
   ShieldCheck, 
   TrendingUp, 
   Zap,
-  User as UserIcon
+  User as UserIcon,
+  Menu,
+  X,
+  Wrench,
+  AlertTriangle,
+  Activity,
+  Gavel,
+  Volume2,
+  GitCompare,
+  History,
+  Clock,
+  AlertOctagon
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 
 export const mobileMenuItems = [
   { icon: LayoutDashboard, label: "Feed", href: "/dashboard" },
@@ -16,13 +28,32 @@ export const mobileMenuItems = [
   { icon: ShieldCheck, label: "Admin", href: "/admin/dashboard", roles: ["admin"] },
 ];
 
+// Admin submenu items for mobile
+const adminSubmenuItems = [
+  { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard" },
+  { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring" },
+  { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox" },
+  { icon: Wrench, label: "Predictive Maintenance", href: "/admin/predictive-maintenance" },
+  { icon: AlertTriangle, label: "Crisis Clusters", href: "/admin/crisis-clusters" },
+  { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit" },
+  { icon: Volume2, label: "Voice Results", href: "/admin/voice-results" },
+  { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases" },
+  { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches" },
+  { icon: Activity, label: "Escalations", href: "/admin/escalations" },
+  { icon: History, label: "Audit History", href: "/admin/audit-history" },
+  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits" },
+];
+
 const MobileNav = () => {
   const location = useLocation();
   const currentRole = localStorage.getItem("userRole") || "citizen";
+  const [showAdminMenu, setShowAdminMenu] = useState(false);
 
   const filteredItems = mobileMenuItems.filter(item => 
     !item.roles || item.roles.includes(currentRole as any)
   );
+
+  const isAdmin = currentRole === "admin";
 
   return (
     <>
@@ -32,10 +63,47 @@ const MobileNav = () => {
           <Zap className="w-5 h-5 text-blue-500 fill-blue-500/20" />
           <span className="font-display font-bold text-sm tracking-tight">GrievanceGrid</span>
         </div>
-        <div className="w-9 h-9 rounded-full bg-blue-600/10 border border-blue-600/20 flex items-center justify-center group active:scale-95 transition-all">
-          <UserIcon className="w-4 h-4 text-blue-500" />
-        </div>
+        {isAdmin && (
+          <button 
+            onClick={() => setShowAdminMenu(!showAdminMenu)}
+            className="w-9 h-9 rounded-full bg-blue-600/10 border border-blue-600/20 flex items-center justify-center group active:scale-95 transition-all"
+          >
+            {showAdminMenu ? <X className="w-4 h-4 text-blue-500" /> : <Menu className="w-4 h-4 text-blue-500" />}
+          </button>
+        )}
+        {!isAdmin && (
+          <div className="w-9 h-9 rounded-full bg-blue-600/10 border border-blue-600/20 flex items-center justify-center group active:scale-95 transition-all">
+            <UserIcon className="w-4 h-4 text-blue-500" />
+          </div>
+        )}
       </header>
+
+      {/* Admin Submenu Overlay */}
+      {isAdmin && showAdminMenu && (
+        <div className="lg:hidden fixed top-16 inset-x-0 bottom-20 bg-background/95 backdrop-blur-xl z-[99] overflow-y-auto p-4">
+          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">Admin Portal</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {adminSubmenuItems.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={() => setShowAdminMenu(false)}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                    isActive 
+                      ? "bg-blue-600/10 text-blue-500 border border-blue-600/20" 
+                      : "bg-white/5 text-muted-foreground hover:bg-white/10"
+                  }`}
+                >
+                  <item.icon className="w-6 h-6" />
+                  <span className="text-[10px] font-bold text-center leading-tight">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Navbar */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 h-20 bg-sidebar/80 backdrop-blur-xl border-t border-sidebar-border z-[100] flex items-center justify-around px-8 safe-area-bottom">

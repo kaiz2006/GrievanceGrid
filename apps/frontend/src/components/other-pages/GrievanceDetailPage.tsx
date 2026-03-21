@@ -12,13 +12,28 @@ import {
   ChevronRight,
   Camera,
   Loader2,
-  Map as MapIcon
+  Map as MapIcon,
+  Layers,
+  Building2
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { grievanceService } from "@/services/grievance.service";
 import MapComponent from "../map/MapComponent";
 import { calculateDistance } from "@/utils/geo.utils";
 import { toast } from "sonner";
+import DepartmentAssignment from "./DepartmentAssignment";
+
+interface SimilarCase {
+  id: string;
+  grid_id: string;
+  title: string;
+  resolution_summary: string;
+  resolution_time_hours: number;
+  similarity_score: number;
+}
 
 const GrievanceDetailPage = () => {
   const { id } = useParams();
@@ -27,6 +42,8 @@ const GrievanceDetailPage = () => {
   const [currentPhoto, setCurrentPhoto] = useState(0);
   const [gpsVerifying, setGpsVerifying] = useState(false);
   const [gpsVerified, setGpsVerified] = useState(false);
+  const [similarCases, setSimilarCases] = useState<SimilarCase[]>([]);
+  const [showSimilarCases, setShowSimilarCases] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,6 +51,25 @@ const GrievanceDetailPage = () => {
         try {
           const result = await grievanceService.getDetail(id);
           setData(result);
+          // Simulate similar cases from vector search
+          setSimilarCases([
+            {
+              id: "sim_001",
+              grid_id: "GRI-2026-000089",
+              title: "Pothole on Sector 15 Main Road",
+              resolution_summary: "Filled with asphalt, leveled. 18h resolution.",
+              resolution_time_hours: 18,
+              similarity_score: 0.94
+            },
+            {
+              id: "sim_002",
+              grid_id: "GRI-2026-000067",
+              title: "Road damage near traffic signal",
+              resolution_summary: "Emergency repair, full resurfacing scheduled.",
+              resolution_time_hours: 24,
+              similarity_score: 0.87
+            }
+          ]);
         } catch (error) {
           console.error("Failed to fetch grievance details", error);
         } finally {
@@ -254,6 +290,18 @@ const GrievanceDetailPage = () => {
                     </div>
                   </div>
 
+                  {/* Department Assignment */}
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-[0.2em] ml-1 flex items-center gap-2">
+                      <Building2 className="w-3 h-3" />
+                      Department Assignment
+                    </Label>
+                    <DepartmentAssignment 
+                      grievanceId={id || ""} 
+                      currentDepartment={mockGrievance.details.category === "ROADS" ? "Public Works Department" : undefined}
+                    />
+                  </div>
+
                   <div className="space-y-3">
                     <Label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-[0.2em] ml-1">Investigation Notes</Label>
                     <textarea 
@@ -302,6 +350,46 @@ const GrievanceDetailPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Similar Cases */}
+              {showSimilarCases && similarCases.length > 0 && (
+                <div className="p-6 rounded-[2.5rem] bg-card border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <Layers className="w-5 h-5 text-purple-500" />
+                      <h3 className="font-bold">Similar Cases</h3>
+                    </div>
+                    <Badge className="bg-purple-500/10 text-purple-500 border-purple-500/20 text-[10px]">
+                      Vector Search
+                    </Badge>
+                  </div>
+                  <div className="space-y-3">
+                    {similarCases.map((c) => (
+                      <div 
+                        key={c.id}
+                        className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <p className="font-mono text-xs text-blue-500">{c.grid_id}</p>
+                          <span className={`text-xs font-bold ${
+                            c.similarity_score >= 0.9 ? "text-green-500" : c.similarity_score >= 0.8 ? "text-blue-500" : "text-amber-500"
+                          }`}>
+                            {(c.similarity_score * 100).toFixed(0)}% match
+                          </span>
+                        </div>
+                        <p className="text-sm font-medium mb-1">{c.title}</p>
+                        <p className="text-xs text-muted-foreground">{c.resolution_summary}</p>
+                        <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full ${c.similarity_score >= 0.9 ? "bg-green-500" : c.similarity_score >= 0.8 ? "bg-blue-500" : "bg-amber-500"}`}
+                            style={{ width: `${c.similarity_score * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

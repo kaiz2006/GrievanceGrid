@@ -18,7 +18,20 @@ import {
   Layout,
   Globe,
   Cpu,
-  Users
+  Users,
+  // New icons for missing pages
+  AlertTriangle,
+  Activity,
+  Wrench,
+  Gavel,
+  Volume2,
+  Clock,
+  GitCompare,
+  History,
+  AlertOctagon,
+  MapPin,
+  Route,
+  Lightbulb
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -37,6 +50,23 @@ const menuItems = [
   { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["admin"] },
   { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["admin"] },
   { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["admin"] },
+  
+  // NEW: Predictive Governance & Analytics (P1 Priority)
+  { icon: Wrench, label: "Predictive Maintenance", href: "/admin/predictive-maintenance", roles: ["admin"] },
+  { icon: AlertTriangle, label: "Crisis Clusters", href: "/admin/crisis-clusters", roles: ["admin"] },
+  { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit", roles: ["admin"] },
+  
+  // NEW: Voice & Similar Cases (P2 Priority)
+  { icon: Volume2, label: "Voice Results", href: "/admin/voice-results", roles: ["admin"] },
+  { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases", roles: ["admin"] },
+  
+  // NEW: SLA & Escalation Management (P2 Priority)
+  { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches", roles: ["admin"] },
+  { icon: Activity, label: "Escalations", href: "/admin/escalations", roles: ["admin"] },
+  
+  // NEW: Audit Management (P3 Priority)
+  { icon: History, label: "Audit History", href: "/admin/audit-history", roles: ["admin"] },
+  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["admin"] },
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },

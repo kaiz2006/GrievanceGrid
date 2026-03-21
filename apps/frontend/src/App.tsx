@@ -26,6 +26,16 @@ import MissionControlPage from "./components/other-pages/MissionControlPage";
 import DispatchPage from "./components/other-pages/DispatchPage";
 import EngineeringPage from "./components/other-pages/EngineeringPage";
 import IndustrialInterfacePage from "./components/other-pages/IndustrialInterfacePage";
+// New pages for missing functionality
+import PredictiveMaintenancePage from "./components/other-pages/PredictiveMaintenancePage";
+import CrisisClustersPage from "./components/other-pages/CrisisClustersPage";
+import ContestationAuditPage from "./components/other-pages/ContestationAuditPage";
+import VoiceResultPage from "./components/other-pages/VoiceResultPage";
+import SLABreachPage from "./components/other-pages/SLABreachPage";
+import EscalationManagementPage from "./components/other-pages/EscalationManagementPage";
+import AuditHistoryPage from "./components/other-pages/AuditHistoryPage";
+import SimilarCasesPage from "./components/other-pages/SimilarCasesPage";
+import PendingAuditsPage from "./components/other-pages/PendingAuditsPage";
 import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
@@ -54,6 +64,15 @@ const App = () => (
             <Route path="/admin/dispatch" element={<DispatchPage />} />
             <Route path="/admin/engineering" element={<EngineeringPage />} />
             <Route path="/admin/industrial" element={<IndustrialInterfacePage />} />
+            <Route path="/admin/predictive-maintenance" element={<PredictiveMaintenancePage />} />
+            <Route path="/admin/crisis-clusters" element={<CrisisClustersPage />} />
+            <Route path="/admin/contestation-audit" element={<ContestationAuditPage />} />
+            <Route path="/admin/voice-results" element={<VoiceResultPage />} />
+            <Route path="/admin/sla-breaches" element={<SLABreachPage />} />
+            <Route path="/admin/escalations" element={<EscalationManagementPage />} />
+            <Route path="/admin/audit-history" element={<AuditHistoryPage />} />
+            <Route path="/admin/similar-cases" element={<SimilarCasesPage />} />
+            <Route path="/admin/pending-audits" element={<PendingAuditsPage />} />
             <Route path="/grievance/:id" element={<GrievanceDetailPage />} />
             <Route path="/solutions" element={<SolutionsPage />} />
             <Route path="/impact" element={<ImpactPage />} />
