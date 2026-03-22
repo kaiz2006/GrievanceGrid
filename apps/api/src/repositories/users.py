@@ -4,6 +4,7 @@ Handles authentication and user profile queries
 """
 from typing import List, Optional, Dict, Any
 from uuid import uuid4
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.repositories.base import BaseRepository
 from src.core.auth import get_password_hash, verify_password
@@ -32,22 +33,39 @@ class UserRepository(BaseRepository):
             id, email, name, password_hash, role, department_id,
             auth_type, is_active, created_at, updated_at
         ) VALUES (
-            :id, :email, :name, :password_hash, :role, :department_id,
-            :auth_type, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+            :id, :email, :name, :password_hash, CAST(:role AS user_role), :department_id,
+            CAST(:auth_type AS auth_type), true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         ) RETURNING id, email, name, role, department_id, is_active, created_at
         """
-        result = await self.fetch_one(
-            query,
-            {
-                "id": user_id,
-                "email": email.lower(),
-                "name": name,
-                "password_hash": hashed_password,
-                "role": role,
-                "department_id": department_id,
-                "auth_type": auth_type,
-            },
-        )
+        params = {
+            "id": user_id,
+            "email": email.lower(),
+            "name": name,
+            "password_hash": hashed_password,
+            "role": role,
+            "department_id": department_id,
+            "auth_type": auth_type,
+        }
+
+        try:
+            result = await self.fetch_one(query, params)
+        except ProgrammingError as exc:
+            # Backward compatibility for local DBs where users.department_id is not present yet.
+            if "department_id" not in str(exc):
+                raise
+
+            await self.db.rollback()
+            fallback_query = """
+            INSERT INTO users (
+                id, email, name, password_hash, role,
+                auth_type, is_active, created_at, updated_at
+            ) VALUES (
+                :id, :email, :name, :password_hash, CAST(:role AS user_role),
+                CAST(:auth_type AS auth_type), true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+            ) RETURNING id, email, name, role, NULL::text AS department_id, is_active, created_at
+            """
+            result = await self.fetch_one(fallback_query, params)
+
         return dict(result) if result else {}
     
     async def get_by_email(self, email: str) -> Optional[Dict[str, Any]]:

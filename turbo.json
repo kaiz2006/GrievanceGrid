@@ -28,10 +28,19 @@
       "persistent": true
     },
     "db:generate": {
-      "cache": false
+      "inputs": ["src/schema.ts", "drizzle.config.ts"],
+      "outputs": ["drizzle/**"]
     },
     "db:push": {
+      "inputs": ["src/schema.ts", "drizzle.config.ts"]
+    },
+
+    "db:migrate": {
+      "dependsOn": ["db:generate"]
+    },
+    "clean": {
       "cache": false
     }
   }
 }
+

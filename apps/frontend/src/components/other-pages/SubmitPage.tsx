@@ -25,7 +25,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { grievanceService } from "@/services/grievance.service";
 import { voiceService } from "@/services/voice.service";
+import { mediaService } from "@/services/media.service";
 import MapComponent from "../map/MapComponent";
+
 
 const steps = [
   { id: "location", title: "Location", icon: MapPin },
@@ -35,13 +37,17 @@ const steps = [
 ];
 
 const categories = [
-  "Infrastructure",
-  "Utilities",
-  "Sanitation",
-  "Environment",
-  "Safety",
-  "Other"
+  { value: "ROADS", label: "Roads & Pavement" },
+  { value: "WATER_SUPPLY", label: "Water Supply" },
+  { value: "SANITATION", label: "Sanitation & Waste" },
+  { value: "ELECTRICITY", label: "Electricity & Power" },
+  { value: "PUBLIC_TRANSPORT", label: "Public Transport" },
+  { value: "ENVIRONMENT", label: "Environment" },
+  { value: "INFRASTRUCTURE", label: "Infrastructure" },
+  { value: "BUILDING_VIOLATION", label: "Building Violation" },
+  { value: "OTHER", label: "Other" }
 ];
+
 
 const SubmitPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -116,9 +122,26 @@ const SubmitPage = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await grievanceService.submit(formData);
+      let photoUrl = "";
+      if (selectedFile) {
+        const uploadRes = await mediaService.upload(selectedFile);
+        photoUrl = uploadRes.url;
+      }
+      
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        latitude: formData.location.latitude,
+        longitude: formData.location.longitude,
+        location_address: formData.location.address,
+        before_photo_url: photoUrl
+      };
+      const response = await grievanceService.submit(payload);
       console.log("[SUBMIT SUCCESS]", response);
       setSubmittedData(response);
+
+
     } catch (error) {
       console.error("[SUBMIT ERROR]", error);
     } finally {
@@ -321,10 +344,10 @@ const SubmitPage = () => {
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {categories.map((cat) => (
                           <div 
-                            key={cat}
-                            onClick={() => setFormData({ ...formData, category: cat })}
+                            key={cat.value}
+                            onClick={() => setFormData({ ...formData, category: cat.value })}
                             className={`p-6 rounded-2xl border transition-all flex flex-col items-center gap-3 group cursor-pointer ${
-                              formData.category === cat 
+                              formData.category === cat.value 
                                 ? "bg-blue-600/20 border-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.15)]" 
                                 : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 shadow-lg"
                             }`}
@@ -332,10 +355,11 @@ const SubmitPage = () => {
                             <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center group-hover:scale-110 transition-transform">
                               <Grid className="w-6 h-6 text-muted-foreground group-hover:text-blue-500" />
                             </div>
-                            <span className="text-sm font-bold tracking-wide uppercase">{cat}</span>
+                            <span className="text-sm font-bold tracking-wide uppercase">{cat.label}</span>
                           </div>
                         ))}
                       </div>
+
                     </div>
                     
                     <div className="p-6 rounded-2xl bg-yellow-500/5 border border-yellow-500/10 flex items-start gap-4">

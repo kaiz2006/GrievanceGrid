@@ -6,8 +6,12 @@
 # Install ALL dependencies (frontend, api, worker, database, graphql, ui, ai-models)
 npm run install:all
 
-# Start ALL services (requires Docker Desktop for AI models)
-npm run dev:all
+# Start Recommended services (Frontend + API)
+npm run dev:lite
+
+# Start ALL services (requires Docker)
+npm run dev:full
+
 ```
 
 ---
@@ -38,8 +42,14 @@ This runs:
 
 ### Start Everything
 ```bash
-npm run dev:all
+npm run dev:full
 ```
+
+### Recommended: Start Lite (Frontend + API)
+```bash
+npm run dev:lite
+```
+
 
 Runs in parallel:
 - Frontend (Vite on port 8080)
@@ -48,14 +58,16 @@ Runs in parallel:
 - GraphQL server
 - AI Models (Docker: LLM 8001, CV 8002, GNN 8003)
 
-### Start Individual Services
+| Command | Service | What it runs |
+|---------|---------|--------------|
+| `npm run dev` | Frontend only | Vite (8080) |
+| `npm run dev:lite` | Frontend + API | Vite + FastAPI |
+| `npm run dev:api` | Backend API | FastAPI (8000) |
+| `npm run dev:worker` | Worker only | Celery (worker + beat) |
+| `npm run dev:backend` | API + Worker + DB | FastAPI + Celery + DB tasks |
+| `npm run dev:ai` | AI models (Docker) | LLM, CV, GNN services |
+| `npm run dev:full` | Full stack | Everything (Lite + Worker + AI) |
 
-| Command | Service | Port |
-|---------|---------|------|
-| `npm run dev` | Frontend only | 8080 |
-| `npm run dev:api` | Backend API | 8000 |
-| `npm run dev:worker` | Celery worker + beat | - |
-| `npm run dev:ai` | AI models (Docker) | 8001, 8002, 8003 |
 
 ---
 
@@ -76,6 +88,18 @@ npm run stop:ai        # docker-compose down
 ```
 
 ---
+
+## Docker Commands
+
+```bash
+npm run docker:up      # Start ALL services in Docker (containers)
+npm run docker:down    # Stop all Docker services
+npm run docker:infra   # Start only infrastructure (Postgres, Redis, Qdrant)
+npm run dev:ai         # Start only AI services (LLM, CV, GNN)
+```
+
+---
+
 
 ## Database Commands
 

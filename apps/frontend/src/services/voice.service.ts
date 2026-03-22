@@ -31,7 +31,7 @@ const generateGridId = () => `GRI-VOICE-${Math.floor(Math.random() * 1000000).to
 export const voiceService = {
   // POST /voice/process - Process voice grievance
   processVoice: async (formData: FormData): Promise<VoiceProcessResult> => {
-    return apiClient.post("/voice/process", { formData: "multipart/form-data" }, async () => {
+    return apiClient.post("/voice/process", formData, async () => {
       await mockDelay(600);
       return {
         grid_id: generateGridId(),
@@ -45,6 +45,7 @@ export const voiceService = {
       };
     });
   },
+
 
   // GET /voice/result/{grievance_id} - Get voice grievance result
   getResult: async (grievanceId: string): Promise<VoiceResultDetail> => {

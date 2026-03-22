@@ -125,10 +125,12 @@ export const apiClient: ApiClient = {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
 
+        const isFormData = options.body instanceof FormData;
+
         const fetchOptions: RequestInit = {
           method,
           headers: {
-            "Content-Type": "application/json",
+            ...(!isFormData && { "Content-Type": "application/json" }),
             ...options.headers,
           },
           signal: controller.signal,
@@ -144,8 +146,9 @@ export const apiClient: ApiClient = {
         }
 
         if (options.body && method !== "GET") {
-          fetchOptions.body = JSON.stringify(options.body);
+          fetchOptions.body = isFormData ? options.body : JSON.stringify(options.body);
         }
+
 
         const response = await fetch(fullUrl, fetchOptions);
         clearTimeout(timeoutId);

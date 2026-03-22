@@ -108,68 +108,7 @@ export const grievanceService = {
 
   // GET /grievances/me - Get current user's grievances
   getMyGrievances: async (limit: number = 20, offset: number = 0) => {
-    return apiClient.get(`/grievances/me?limit=${limit}&offset=${offset}`, async () => {
-      await mockDelay(350);
-      return {
-        count: 4,
-        items: [
-          {
-            id: "grievance_001",
-            grid_id: "GRI-2026-008821",
-            title: "Street Light Failure",
-            category: "Infrastructure",
-            status: "IN_PROGRESS",
-            priority: "HIGH",
-            description: "Main street lights have been off for three days, creating safety concerns at night.",
-            location: "Park Avenue, Sector 4",
-            created_at: new Date(Date.now() - 86400000).toISOString(),
-            can_feedback: false,
-            can_contest: false
-          },
-          {
-            id: "grievance_002",
-            grid_id: "GRI-2026-007740",
-            title: "Water Leakage",
-            category: "Utilities",
-            status: "RESOLVED",
-            priority: "MEDIUM",
-            description: "Major pipe burst near the community center is wasting significant water.",
-            location: "Oak Drive, Block B",
-            created_at: new Date(Date.now() - 172800000).toISOString(),
-            resolved_at: new Date(Date.now() - 86400000).toISOString(),
-            can_feedback: true,
-            can_contest: true
-          },
-          {
-            id: "grievance_003",
-            grid_id: "GRI-2026-007650",
-            title: "Pothole on Main Road",
-            category: "Roads",
-            status: "PENDING",
-            priority: "HIGH",
-            description: "Large pothole causing traffic issues and vehicle damage.",
-            location: "Main Road, Near Market",
-            created_at: new Date(Date.now() - 43200000).toISOString(),
-            can_feedback: false,
-            can_contest: false
-          },
-          {
-            id: "grievance_004",
-            grid_id: "GRI-2026-007500",
-            title: "Garbage Collection",
-            category: "Sanitation",
-            status: "RESOLVED",
-            priority: "LOW",
-            description: "Garbage not collected for 3 days in residential area.",
-            location: "Rose Colony, Block C",
-            created_at: new Date(Date.now() - 259200000).toISOString(),
-            resolved_at: new Date(Date.now() - 172800000).toISOString(),
-            can_feedback: false,
-            can_contest: false
-          }
-        ]
-      };
-    });
+    return apiClient.get(`/grievances/me?limit=${limit}&offset=${offset}`);
   },
 
   // GET /grievances/{id}/similar - Get similar cases via vector search

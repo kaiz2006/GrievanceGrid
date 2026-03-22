@@ -11,36 +11,51 @@ const DashboardPage = () => {
   const [grievances, setGrievances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const activeStatuses = new Set(["PENDING", "PENDING_ASSIGNMENT", "PENDING_CLASSIFICATION", "ASSIGNED", "IN_PROGRESS", "ESCALATED", "CONTESTED"]);
+  const resolvedStatuses = new Set(["RESOLVED", "CLOSED", "VERIFIED"]);
+
+  const activeReports = grievances.filter((g) => activeStatuses.has(String(g.status || "").toUpperCase())).length;
+  const resolvedCases = grievances.filter((g) => resolvedStatuses.has(String(g.status || "").toUpperCase())).length;
+  const pendingReview = grievances.filter((g) => {
+    const status = String(g.status || "").toUpperCase();
+    return status === "PENDING" || status === "PENDING_ASSIGNMENT" || status === "PENDING_CLASSIFICATION";
+  }).length;
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case "RESOLVED":
+      case "CLOSED":
+      case "VERIFIED":
+        return "text-green-500 bg-green-500/10 border-green-500/20";
+      case "IN_PROGRESS":
+      case "ASSIGNED":
+        return "text-blue-500 bg-blue-500/10 border-blue-500/20";
+      case "PENDING":
+      case "PENDING_ASSIGNMENT":
+      case "PENDING_CLASSIFICATION":
+        return "text-yellow-500 bg-yellow-500/10 border-yellow-500/20";
+      case "ESCALATED":
+      case "CONTESTED":
+        return "text-red-500 bg-red-500/10 border-red-500/20";
+      default:
+        return "text-muted-foreground bg-white/5 border-white/10";
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      console.log("[API CALL]: GET /grievances/me");
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setGrievances([
-        {
-          id: "GRI-2026-008821",
-          title: "Street Light Failure",
-          category: "Infrastructure",
-          status: "In Progress",
-          statusColor: "text-blue-500 bg-blue-500/10 border-blue-500/20",
-          location: "Park Avenue, Sector 4",
-          date: "2024-03-15",
-          description: "Main street lights have been off for three days, creating safety concerns at night."
-        },
-        {
-          id: "GRI-2026-007740",
-          title: "Water Leakage",
-          category: "Utilities",
-          status: "Resolved",
-          statusColor: "text-green-500 bg-green-500/10 border-green-500/20",
-          location: "Oak Drive, Block B",
-          date: "2024-03-12",
-          description: "Major pipe burst near the community center is wasting significant water."
-        }
-      ]);
-      setLoading(false);
+      try {
+        const response = await grievanceService.getMyGrievances();
+        setGrievances(response.items || []);
+      } catch (error) {
+        console.error("Failed to fetch grievances:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
+
 
   if (loading) {
     return (
@@ -85,9 +100,9 @@ const DashboardPage = () => {
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {[
-              { label: "Active Reports", value: "12", icon: Clock, color: "text-blue-500" },
-              { label: "Resolved Cases", value: "48", icon: CheckCircle2, color: "text-green-500" },
-              { label: "Pending Review", value: "05", icon: AlertCircle, color: "text-yellow-500" }
+              { label: "Active Reports", value: String(activeReports), icon: Clock, color: "text-blue-500" },
+              { label: "Resolved Cases", value: String(resolvedCases), icon: CheckCircle2, color: "text-green-500" },
+              { label: "Pending Review", value: String(pendingReview), icon: AlertCircle, color: "text-yellow-500" }
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -137,14 +152,14 @@ const DashboardPage = () => {
                   <div className="absolute top-0 left-0 w-1 h-full bg-blue-500/40 group-hover:bg-blue-500 transition-colors" />
                   <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                     <div className="flex items-center gap-4">
-                      <Badge className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${grievance.statusColor}`}>
-                        {grievance.status}
+                      <Badge className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${getStatusColor(grievance.status)}`}>
+                        {grievance.status.replace(/_/g, " ")}
                       </Badge>
-                      <span className="text-xs font-mono text-muted-foreground/60">{grievance.id}</span>
+                      <span className="text-xs font-mono text-muted-foreground/60">{grievance.grid_id}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      {grievance.date}
+                      {new Date(grievance.created_at).toLocaleDateString()}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -160,7 +175,7 @@ const DashboardPage = () => {
                       <div className="flex flex-col justify-center space-y-3">
                         <div className="flex items-center gap-3 text-sm font-medium text-foreground">
                           <MapPin className="h-4 w-4 text-blue-500" />
-                          {grievance.location}
+                          {grievance.location_address || grievance.location || "Location not provided"}
                         </div>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground">
                           <span className="w-2 h-2 rounded-full bg-blue-500/50" />
@@ -171,7 +186,7 @@ const DashboardPage = () => {
                   </CardContent>
                   <CardFooter className="pt-2 border-t border-white/5 flex justify-end">
                     <Button variant="ghost" className="text-blue-500 hover:text-blue-400 hover:bg-transparent p-0 flex items-center group/btn" asChild>
-                      <a href={`/track/${grievance.id}`}>
+                      <a href={`/track/${grievance.grid_id}`}>
                         View Progress Tracking
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
                       </a>

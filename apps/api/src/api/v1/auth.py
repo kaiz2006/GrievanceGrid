@@ -15,7 +15,9 @@ from src.repositories.users import UserRepository
 from src.services.google_oauth import GoogleOAuthService
 from src.schemas.auth import (
     BasicAuthRequest,
+    RegisterRequest,
     GoogleOAuthRequest,
+
     RefreshTokenRequest,
     PasswordChangeRequest,
     TokenResponse,
@@ -30,11 +32,12 @@ router = APIRouter(tags=["Authentication"])
 
 
 async def _issue_tokens(user: dict, auth_type: str) -> dict:
+    user_id = str(user["id"])
     token_data = {
-        "sub": user["id"],
+        "sub": user_id,
         "email": user["email"],
         "name": user["name"],
-        "role": user["role"],
+        "role": str(user["role"]),
         "auth_type": auth_type,
     }
     access_token = create_access_token(token_data)
@@ -42,8 +45,9 @@ async def _issue_tokens(user: dict, auth_type: str) -> dict:
 
     access_ttl = max(1, settings.access_token_expire_minutes * 60)
     refresh_ttl = max(1, settings.refresh_token_expire_days * 24 * 60 * 60)
-    await store_token_session(access_token, user["id"], "access", access_ttl)
-    await store_token_session(refresh_token, user["id"], "refresh", refresh_ttl)
+    await store_token_session(access_token, user_id, "access", access_ttl)
+    await store_token_session(refresh_token, user_id, "refresh", refresh_ttl)
+
 
     return {
         "access_token": access_token,
@@ -51,11 +55,12 @@ async def _issue_tokens(user: dict, auth_type: str) -> dict:
         "token_type": "bearer",
         "expires_in": access_ttl,
         "user": {
-            "id": user["id"],
+            "id": user_id,
             "email": user["email"],
             "name": user["name"],
-            "role": user["role"],
+            "role": str(user["role"]),
             "is_active": user["is_active"],
+
             "created_at": user["created_at"].isoformat() if user["created_at"] else "",
         },
     }
@@ -63,14 +68,14 @@ async def _issue_tokens(user: dict, auth_type: str) -> dict:
 
 @router.post("/auth/register", response_model=TokenResponse)
 async def register(
-    request: BasicAuthRequest,
+    request: RegisterRequest,
     db_session: AsyncSession = Depends(get_db_session),
 ) -> dict:
     """
-    Register a new user with email and password.
+    Register a new user with email, password and name.
     
     Args:
-        request: Email and password credentials
+        request: Registration credentials and info
         db_session: Database session
         
     Returns:
@@ -88,13 +93,14 @@ async def register(
     # Create new user
     user = await user_repo.create_user(
         email=request.email,
-        name=request.email.split("@")[0],  # Use email prefix as default name
+        name=request.name,
         password=request.password,
         role="CITIZEN",
         auth_type="BASIC",
     )
     
     return await _issue_tokens(user, "BASIC")
+
 
 
 @router.post("/auth/login", response_model=TokenResponse)

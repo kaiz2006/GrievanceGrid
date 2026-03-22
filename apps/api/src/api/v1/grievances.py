@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from datetime import datetime, timezone
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
@@ -220,17 +220,17 @@ async def create_grievance(
 	)
 
 
-@router.get("/{grievance_id}", response_model=GrievanceDetailsResponse)
+@router.get("/{grievance_id:uuid}", response_model=GrievanceDetailsResponse)
 async def get_grievance(
-	grievance_id: str,
+	grievance_id: UUID,
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceDetailsResponse:
 	repo = GrievanceRepository(db)
-	grievance = await repo.get_by_id(grievance_id)
+	grievance = await repo.get_by_id(str(grievance_id))
 	if grievance is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
-	timeline = await repo.get_timeline(grievance_id)
+	timeline = await repo.get_timeline(str(grievance_id))
 	return GrievanceDetailsResponse(
 		grievance_id=str(grievance["id"]),
 		grid_id=str(grievance["grid_id"]),
@@ -310,27 +310,27 @@ async def list_grievances(
 	)
 
 
-@router.post("/{grievance_id}/ai-result", response_model=GrievanceAIResultResponse)
+@router.post("/{grievance_id:uuid}/ai-result", response_model=GrievanceAIResultResponse)
 async def receive_ai_result(
-	grievance_id: str,
+	grievance_id: UUID,
 	payload: GrievanceAIResultRequest,
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceAIResultResponse:
 	repo = GrievanceRepository(db)
-	updated = await repo.update_ai_result(grievance_id, payload.model_dump())
+	updated = await repo.update_ai_result(str(grievance_id), payload.model_dump())
 	if updated is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return GrievanceAIResultResponse(
-		grievance_id=grievance_id,
+		grievance_id=str(grievance_id),
 		status=str(updated["status"]),
 		updated_at=_to_iso(updated.get("updated_at")),
 	)
 
 
-@router.patch("/{grievance_id}/status", response_model=GrievanceAIResultResponse)
+@router.patch("/{grievance_id:uuid}/status", response_model=GrievanceAIResultResponse)
 async def update_grievance_status(
-	grievance_id: str,
+	grievance_id: UUID,
 	payload: GrievanceStatusUpdateRequest,
 	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
@@ -338,7 +338,7 @@ async def update_grievance_status(
 	service = GrievanceService(db)
 	try:
 		updated = await service.update_status(
-			grievance_id=grievance_id,
+			grievance_id=str(grievance_id),
 			new_status=payload.status,
 			notes=payload.notes,
 		)
@@ -348,21 +348,21 @@ async def update_grievance_status(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return GrievanceAIResultResponse(
-		grievance_id=grievance_id,
+		grievance_id=str(grievance_id),
 		status=str(updated["status"]),
 		updated_at=_to_iso(updated.get("updated_at")),
 	)
 
 
-@router.post("/{grievance_id}/notification-result", response_model=NotificationDeliveryResultResponse)
+@router.post("/{grievance_id:uuid}/notification-result", response_model=NotificationDeliveryResultResponse)
 async def receive_notification_delivery_result(
-	grievance_id: str,
+	grievance_id: UUID,
 	payload: NotificationDeliveryResultRequest,
 	db: AsyncSession = Depends(get_db_session),
 ) -> NotificationDeliveryResultResponse:
 	repo = GrievanceRepository(db)
 	stored = await repo.persist_notification_delivery(
-		grievance_id=grievance_id,
+		grievance_id=str(grievance_id),
 		status=payload.status,
 		delivery_report=payload.model_dump(),
 	)
@@ -370,22 +370,22 @@ async def receive_notification_delivery_result(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return NotificationDeliveryResultResponse(
-		grievance_id=grievance_id,
+		grievance_id=str(grievance_id),
 		status=payload.status,
 		updated_at=_to_iso(stored.get("updated_at") or datetime.now(timezone.utc)),
 	)
 
 
-@router.post("/{grievance_id}/feedback", response_model=GrievanceFeedbackResponse)
+@router.post("/{grievance_id:uuid}/feedback", response_model=GrievanceFeedbackResponse)
 async def submit_feedback(
-	grievance_id: str,
+	grievance_id: UUID,
 	payload: GrievanceFeedbackRequest,
 	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceFeedbackResponse:
 	repo = GrievanceRepository(db)
 	updated = await repo.add_feedback(
-		grievance_id,
+		str(grievance_id),
 		rating=payload.rating,
 		comment=payload.comment,
 		is_satisfied=payload.is_satisfied,
@@ -394,16 +394,16 @@ async def submit_feedback(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	return GrievanceFeedbackResponse(
-		grievance_id=grievance_id,
+		grievance_id=str(grievance_id),
 		rating=payload.rating,
 		submitted_at=_to_iso(updated.get("updated_at")),
 		message="Feedback submitted successfully",
 	)
 
 
-@router.post("/{grievance_id}/contest", response_model=GrievanceContestResponse)
+@router.post("/{grievance_id:uuid}/contest", response_model=GrievanceContestResponse)
 async def contest_grievance(
-	grievance_id: str,
+	grievance_id: UUID,
 	payload: GrievanceContestRequest,
 	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
@@ -412,14 +412,14 @@ async def contest_grievance(
 	audit_id = f"audit_{uuid4().hex[:8]}"
 	audit_task_id = dispatch_task(
 		"src.tasks.ai_processing.run_contestation_audit",
-		grievance_id,
+		str(grievance_id),
 		payload.reason,
 		payload.evidence_photo,
 		audit_id,
 	)
 
 	updated = await repo.mark_contested(
-		grievance_id,
+		str(grievance_id),
 		reason=payload.reason,
 		evidence_photo=payload.evidence_photo,
 		audit_id=audit_id,
@@ -520,16 +520,17 @@ class SimilarCasesResponse(BaseModel):
 	cases: list[SimilarCaseItem]
 
 
-@router.get("/{grievance_id}/similar", response_model=SimilarCasesResponse)
+@router.get("/{grievance_id:uuid}/similar", response_model=SimilarCasesResponse)
 async def get_similar_cases(
-	grievance_id: str,
+	grievance_id: UUID,
 	limit: int = Query(default=5, ge=1, le=20),
 	current_user: dict = Depends(get_current_user),
 	db: AsyncSession = Depends(get_db_session),
 ) -> SimilarCasesResponse:
 	"""Find similar grievances using vector similarity search."""
 	repo = GrievanceRepository(db)
-	grievance = await repo.get_by_id(grievance_id)
+	grievance_id_str = str(grievance_id)
+	grievance = await repo.get_by_id(grievance_id_str)
 	if grievance is None:
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
@@ -555,7 +556,7 @@ async def get_similar_cases(
 	cases = []
 	for hit in similar:
 		# Skip the same grievance
-		if hit.get("id") == grievance_id:
+		if hit.get("id") == grievance_id_str:
 			continue
 
 		cases.append(

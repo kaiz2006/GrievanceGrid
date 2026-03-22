@@ -23,7 +23,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { grievanceService } from "@/services/grievance.service";
-import { useMockTrackingWebSocket } from "@/hooks/useWebSocket";
+import { useTrackingWebSocket } from "@/hooks/useWebSocket";
+
 import MapComponent from "../map/MapComponent";
 
 const TrackingPage = () => {
@@ -39,14 +40,19 @@ const TrackingPage = () => {
     liveUpdates, 
     eta, 
     teamLocation 
-  } = useMockTrackingWebSocket(grid_id || null);
+  } = useTrackingWebSocket(grid_id || null);
 
   useEffect(() => {
     const fetchData = async () => {
       if (grid_id) {
-        const result = await grievanceService.getTrack(grid_id);
-        setData(result);
-        setLoading(false);
+        try {
+          const result = await grievanceService.getTrack(grid_id);
+          setData(result);
+        } catch (error) {
+          console.error("Failed to fetch tracking data:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
     fetchData();
@@ -63,8 +69,24 @@ const TrackingPage = () => {
     );
   }
 
-  const timelineEvents = data.timeline;
-  const slaProgress = 65; // Mock progress
+  const timelineEvents = data.timeline.map((event: any, index: number) => ({
+    id: index, // Use index since real API might not provide ID
+    title: event.status.replace(/_/g, " "),
+    date: new Date(event.timestamp).toLocaleString(),
+    description: event.description,
+    status: index === 0 ? "current" : "completed" // Simplistic mapping for now
+  }));
+
+  const formatRemainingTime = (seconds: number) => {
+    if (seconds <= 0) return "BREACHED";
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const slaProgress = data.sla_remaining_seconds ? Math.max(0, Math.min(100, (1 - data.sla_remaining_seconds / (48 * 3600)) * 100)) : 0;
+
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -219,11 +241,12 @@ const TrackingPage = () => {
                 <CardContent className="space-y-6">
                   <div className="text-center py-4">
                     <p className="text-5xl font-bold tracking-tighter mb-2">
-                      {eta || "08:42:15"}
+                      {eta || (data.sla_remaining_seconds ? formatRemainingTime(data.sla_remaining_seconds) : "00:00:00")}
                     </p>
                     <p className="text-sm text-muted-foreground font-medium uppercase tracking-[0.2em]">
-                      {eta ? "Live ETA" : "Estimated Resolution Time"}
+                      {eta ? "Live ETA" : "Time Remaining"}
                     </p>
+
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
@@ -288,17 +311,18 @@ const TrackingPage = () => {
                       className="pt-4"
                     >
                       <MapComponent 
-                        center={teamLocation ? [teamLocation.lat, teamLocation.lng] : [28.6139, 77.2090]} 
+                        center={teamLocation ? [teamLocation.lat, teamLocation.lng] : (data.assigned_team_location ? [data.assigned_team_location.latitude, data.assigned_team_location.longitude] : [28.6139, 77.2090])} 
                         zoom={15}
                         markers={[
                           { position: [28.6139, 77.2090], popupContent: "Grievance Location" },
                           { 
-                            position: teamLocation ? [teamLocation.lat, teamLocation.lng] : [28.6145, 77.2105], 
-                            popupContent: "Officer Rajesh (Live Location)" 
+                            position: teamLocation ? [teamLocation.lat, teamLocation.lng] : (data.assigned_team_location ? [data.assigned_team_location.latitude, data.assigned_team_location.longitude] : [28.6145, 77.2105]), 
+                            popupContent: "Officer (Live Location)" 
                           }
                         ]}
                         className="w-full h-[250px] rounded-xl overflow-hidden"
                       />
+
                       {teamLocation && (
                         <p className="text-xs text-muted-foreground mt-2 text-center">
                           Live: {teamLocation.lat.toFixed(4)}, {teamLocation.lng.toFixed(4)}

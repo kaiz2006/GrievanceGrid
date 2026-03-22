@@ -21,10 +21,11 @@ const LoginPage = () => {
     try {
       const response = await authService.login(email, password);
       console.log("[LOGIN SUCCESS]", response);
-      localStorage.setItem("token", response.token);
+      localStorage.setItem("auth_token", response.access_token);
       localStorage.setItem("userRole", role);
       window.location.href = "/dashboard";
     } catch (error) {
+
       console.error("[LOGIN ERROR]", error);
     } finally {
       setIsLoading(false);
@@ -113,6 +114,8 @@ const LoginPage = () => {
                       type="email"
                       placeholder="name@example.com"
                       className="pl-10 h-12 bg-white/5 border-white/10 focus:border-blue-500/50 transition-all"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -127,6 +130,8 @@ const LoginPage = () => {
                       id="password"
                       type="password"
                       className="pl-10 h-12 bg-white/5 border-white/10 focus:border-blue-500/50 transition-all"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>

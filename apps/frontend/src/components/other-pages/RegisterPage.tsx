@@ -24,8 +24,9 @@ const RegisterPage = () => {
     try {
       const response = await authService.register(formData);
       console.log("[REGISTER SUCCESS]", response);
-      localStorage.setItem("token", response.token);
+      localStorage.setItem("auth_token", response.access_token);
       window.location.href = "/dashboard";
+
     } catch (error) {
       console.error("[REGISTER ERROR]", error);
     } finally {
@@ -83,6 +84,8 @@ const RegisterPage = () => {
                       id="name"
                       placeholder="John Doe"
                       className="pl-10 h-12 bg-white/5 border-white/10 focus:border-blue-500/50 transition-all"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
                     />
                   </div>
@@ -96,6 +99,8 @@ const RegisterPage = () => {
                       type="email"
                       placeholder="name@example.com"
                       className="pl-10 h-12 bg-white/5 border-white/10 focus:border-blue-500/50 transition-all"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
                     />
                   </div>
@@ -108,10 +113,14 @@ const RegisterPage = () => {
                       id="password"
                       type="password"
                       className="pl-10 h-12 bg-white/5 border-white/10 focus:border-blue-500/50 transition-all"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       required
+                      minLength={8}
                     />
                   </div>
                 </div>
+
                 <Button className="cta-button-primary h-12 mt-2 w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Register Now"}
                   {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
