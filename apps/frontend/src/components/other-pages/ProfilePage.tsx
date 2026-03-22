@@ -37,16 +37,34 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
       setLoading(true);
-      const result = await authService.me();
-      setUser(result);
-      setFormData({
-        name: result.name || "",
-        email: result.email || "",
-        phone: result.phone || "",
-        address: ""
-      });
-      setLoading(false);
+      try {
+        const result = await authService.me();
+        setUser(result);
+        setFormData({
+          name: result.name || "",
+          email: result.email || "",
+          phone: result.phone || "",
+          address: ""
+        });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes("401")) {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = "/login";
+          return;
+        }
+        console.error("Failed to fetch profile:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);

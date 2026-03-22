@@ -44,10 +44,23 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        window.location.href = "/login";
+        return;
+      }
+
       try {
-        const response = await grievanceService.getMyGrievances();
+        const response = await grievanceService.getMyGrievances() as { items?: any[] };
         setGrievances(response.items || []);
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes("401")) {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = "/login";
+          return;
+        }
         console.error("Failed to fetch grievances:", error);
       } finally {
         setLoading(false);

@@ -48,7 +48,7 @@ class UserRepository(BaseRepository):
         }
 
         try:
-            result = await self.fetch_one(query, params)
+            result = await self.insert(query, params)
         except ProgrammingError as exc:
             # Backward compatibility for local DBs where users.department_id is not present yet.
             if "department_id" not in str(exc):
@@ -64,7 +64,7 @@ class UserRepository(BaseRepository):
                 CAST(:auth_type AS auth_type), true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
             ) RETURNING id, email, name, role, NULL::text AS department_id, is_active, created_at
             """
-            result = await self.fetch_one(fallback_query, params)
+            result = await self.insert(fallback_query, params)
 
         return dict(result) if result else {}
     
@@ -139,7 +139,7 @@ class UserRepository(BaseRepository):
         query = """
         SELECT id, email, name, role, phone, is_active, created_at
         FROM users 
-        WHERE role = :role::user_role AND is_active = true
+        WHERE role = CAST(:role AS user_role) AND is_active = true
         ORDER BY created_at DESC
         LIMIT :limit OFFSET :offset
         """

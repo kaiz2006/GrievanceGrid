@@ -270,11 +270,11 @@ async def get_current_user_info(
         User information
     """
     return {
-        "id": current_user["id"],
+        "id": str(current_user["id"]),
         "email": current_user["email"],
         "name": current_user["name"],
-        "role": current_user["role"],
-        "department_id": current_user.get("department_id"),
+        "role": str(current_user["role"]),
+        "department_id": str(current_user["department_id"]) if current_user.get("department_id") else None,
         "is_active": current_user["is_active"],
         "created_at": current_user["created_at"].isoformat()
         if current_user.get("created_at")
