@@ -48,7 +48,20 @@ const MyGrievancesPage = () => {
     const fetchData = async () => {
       setLoading(true);
       const result = await grievanceService.getMyGrievances();
-      setGrievances(result.items);
+      const mapped = ((result as any).grievances || (result as any).items || []).map((g: any) => ({
+        id: g.id,
+        grid_id: g.grid_id,
+        title: g.title,
+        category: g.category,
+        status: g.status,
+        priority: g.priority,
+        description: g.description,
+        location: g.location?.address || "Selected Location",
+        created_at: g.created_at || new Date().toISOString(),
+        can_feedback: g.status === "RESOLVED",
+        can_contest: g.status === "RESOLVED"
+      }));
+      setGrievances(mapped);
       setLoading(false);
     };
     fetchData();

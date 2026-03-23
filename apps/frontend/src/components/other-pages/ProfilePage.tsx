@@ -156,8 +156,8 @@ const ProfilePage = () => {
                     </div>
                     <div>
                       <h3 className="font-bold text-lg">{user?.name}</h3>
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {user?.role}
+                      <Badge variant="outline" className="text-xs uppercase">
+                        {localStorage.getItem("userRole") || user?.role || "citizen"}
                       </Badge>
                     </div>
                   </div>
@@ -186,9 +186,9 @@ const ProfilePage = () => {
                       <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2 block">
                         Email
                       </label>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
-                        <span>{user?.email}</span>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 h-10">
+                        <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
+                        <span className="text-sm">{user?.email}</span>
                       </div>
                     </div>
 

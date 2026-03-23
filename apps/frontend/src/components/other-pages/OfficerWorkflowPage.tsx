@@ -57,7 +57,7 @@ const OfficerWorkflowPage = () => {
     try {
       // Get grievances assigned to current officer
       const result = await grievanceService.getMyGrievances();
-      setGrievances(result.items || []);
+      setGrievances((result as any).grievances || (result as any).items || []);
     } catch (error) {
       console.error("Failed to fetch grievances:", error);
     }
@@ -124,16 +124,9 @@ const OfficerWorkflowPage = () => {
         <div className="container mx-auto max-w-6xl">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="h-10 w-10" asChild>
-                <Link to="/admin/dashboard">
-                  <ArrowLeft className="w-5 h-5" />
-                </Link>
-              </Button>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Officer Workflow</h1>
-                <p className="text-muted-foreground">Manage and update grievance statuses</p>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Officer Workflow</h1>
+              <p className="text-muted-foreground">Manage and update grievance statuses</p>
             </div>
             <Button variant="outline" onClick={fetchGrievances} className="gap-2">
               <RefreshCw className="w-4 h-4" />
