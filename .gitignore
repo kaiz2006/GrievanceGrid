@@ -1,18 +1,40 @@
-node_modules
-.next
-dist
-# .env
-# .env.local
-# .env.production
+# Dependencies
+node_modules/
+.venv/
+venv/
+env/
+
+# Build and Output
+dist/
+build/
+.turbo/
+.next/
+out/
 *.log
-.turbo
-build
-__pycache__
-# *.pyc
-.pytest_cache
-venv
-.venv
-.ds_store
-# .agent
-# .agents
+
+# Debug and Cache
+.pytest_cache/
+__pycache__/
+*.pyc
+.eslintcache
+.stylelintcache
+
+# Environment Variables
+.env
+.env.local
+.env.*
+!.env.example
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Agent and Tools
+.agent/
+.agents/
 .qoder
+skills-lock.json
+terminal_output.txt

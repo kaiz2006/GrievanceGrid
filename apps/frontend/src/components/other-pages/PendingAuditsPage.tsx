@@ -79,7 +79,7 @@ const PendingAuditsPage = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Gavel className="w-5 h-5 text-amber-500" />
-                <span className="text-xs font-bold text-amber-500 uppercase tracking-widest">Contestation Audit Queue</span>
+                <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Contestation Audit Queue</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Pending Audits</h1>
               <p className="text-muted-foreground mt-2">AI-triggered audits requiring officer review</p>

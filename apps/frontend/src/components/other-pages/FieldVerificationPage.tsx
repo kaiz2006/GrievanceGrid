@@ -39,7 +39,10 @@ const FieldVerificationPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!grievanceId) return;
+      if (!grievanceId) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const result = await grievanceService.getDetail(grievanceId);
       setGrievance(result);
@@ -179,11 +182,6 @@ const FieldVerificationPage = () => {
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" className="h-10 w-10" asChild>
-              <Link to="/admin/dispatch">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-            </Button>
             <div>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-green-500" />

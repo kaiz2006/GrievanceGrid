@@ -94,6 +94,7 @@ const App = () => (
             <Route path="/submit-voice" element={<VoiceSubmitPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/verify/:grievanceId" element={<FieldVerificationPage />} />
+            <Route path="/officer/field-verification" element={<FieldVerificationPage />} />
             <Route path="/officer/workflow" element={<OfficerWorkflowPage />} />
             <Route path="/grievance/:id" element={<GrievanceDetailPage />} />
             <Route path="/solutions" element={<SolutionsPage />} />
