@@ -1,12 +1,12 @@
 const logos = [
-  "City of Metropolis", "State Health Dept", "Public Works Board", "Housing Authority", "Transport Bureau", "Education Council", "Digital Governance", "Municipal Planning", "Infrastructure Core"
+  "Streamline", "NexGen", "CloudBase", "DataFlow", "Synthetix", "Orbiter", "Quantum"
 ];
 
 const LogoMarquee = () => {
   return (
     <section className="py-16 border-y border-border/30">
       <p className="text-center text-xs tracking-[0.3em] uppercase text-muted-foreground mb-10">
-        Trusted by the World's Largest Organizations
+        Trusted by the World's Largest Companies
       </p>
       <div className="overflow-hidden">
         <div className="flex marquee whitespace-nowrap">

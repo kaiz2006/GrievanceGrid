@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { ShieldCheck, ArrowRight } from "lucide-react";
+import { Moon, ArrowRight } from "lucide-react";
 
 const stats = [
-  { value: "50k+", label: "Complaints Resolved" },
-  { value: "12h", label: "Avg. Response Time" },
-  { value: "100%", label: "Data Security" },
+  { value: "$25M+", label: "Performance Snapshot" },
+  { value: "250+", label: "Digital Reach" },
+  { value: "98%", label: "Client Trust" },
 ];
 
 const StatsSection = () => {
@@ -14,14 +14,13 @@ const StatsSection = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <div className="w-16 h-16 rounded-2xl bg-muted border border-border flex items-center justify-center mb-6">
-              <ShieldCheck className="w-6 h-6 text-primary" />
+              <Moon className="w-6 h-6 text-primary" />
             </div>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              GrievanceGrid is built by experts in public administration and data security, 
-              ensuring every citizen voice is heard and every issue is resolved with transparency.
+              Our team of data scientists, engineers, and creatives craft tailored AI solutions that solve real-world challenges across industries.
             </p>
-            <a href="#solutions" className="cta-button group">
-              VIEW IMPACT DASHBOARD
+            <a href="#features" className="cta-button group">
+              LEARN MORE
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
           </div>

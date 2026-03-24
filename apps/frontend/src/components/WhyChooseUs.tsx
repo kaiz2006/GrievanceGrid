@@ -12,22 +12,8 @@ const reasons = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-60 brightness-[0.4]"
-        >
-          <source src="/bg4.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <section className="py-24 relative">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
             <Moon className="w-4 h-4 text-primary" />

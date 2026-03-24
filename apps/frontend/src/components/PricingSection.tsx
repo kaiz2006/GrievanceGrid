@@ -1,90 +1,67 @@
 import { motion } from "framer-motion";
-import { ShieldCheck, ArrowRight, Check, X } from "lucide-react";
+import { Moon, ArrowRight, Check, X } from "lucide-react";
 
 const plans = [
   {
     name: "Starter",
-    target: "Small Towns & Districts",
-    price: "$499/mo",
-    annually: "or $399/mo annually",
+    badge: "Popular",
+    price: "$999",
+    desc: "Perfect for small businesses getting started with digital marketing.",
     features: [
-      "Core AI Grievance Routing",
-      "Basic Analytics Dashboard",
-      "1,000 Requests/Month",
-      "Email Support",
-      "2 User Seats",
+      { text: "1 Campaign", included: true },
+      { text: "Monthly Reports", included: true },
+      { text: "Email Support", included: false },
+      { text: "Priority Support", included: false },
+      { text: "4x Revisions", included: false },
     ],
-    button: "Start Free Trial",
     highlighted: false,
   },
   {
-    name: "Professional",
+    name: "Growth",
     badge: "Most Popular",
-    target: "Mid-sized Cities & Counties",
-    price: "$1,299/mo",
-    annually: "or $1,038/mo annually",
+    price: "$2,999",
+    desc: "For brands ready to scale fast with full-service marketing.",
     features: [
-      "Advanced Geospatial Intelligence",
-      "Real-time Triage Automation",
-      "10,000 Requests/Month",
-      "Two-Factor Authentication (2FA)",
-      "Priority Email & Chat Support",
-      "10 User Seats",
-      "Custom Reporting",
+      { text: "1 Campaign", included: true },
+      { text: "Monthly Reports", included: true },
+      { text: "Email Support", included: true },
+      { text: "Priority Support", included: false },
+      { text: "4x Revisions", included: false },
     ],
-    button: "Start Free Trial",
     highlighted: true,
   },
   {
     name: "Enterprise",
-    target: "Large Metropolitan Areas & States",
-    price: "Custom",
-    annually: "",
+    badge: "Customized Solutions",
+    price: "$3,200",
+    desc: "Perfect for small businesses getting started with digital marketing.",
     features: [
-      "Full API Access & Integration",
-      "Dedicated Account Management",
-      "On-premise Deployment Options",
-      "Unlimited Requests",
-      "Advanced Security & Compliance",
-      "24/7 Phone Support",
-      "Unlimited User Seats",
-      "Custom AI Model Training",
+      { text: "1 Campaign", included: true },
+      { text: "Monthly Reports", included: true },
+      { text: "Email Support", included: true },
+      { text: "Priority Support", included: true },
+      { text: "4x Revisions", included: true },
     ],
-    button: "Contact Sales",
     highlighted: false,
   },
 ];
 
 const PricingSection = () => {
   return (
-    <section className="py-24 relative overflow-hidden" id="pricing">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-60 brightness-[0.4]"
-        >
-          <source src="/bg5.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <section className="py-24 relative" id="pricing">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span>Implementation Plans</span>
+            <Moon className="w-4 h-4 text-primary" />
+            <span>Pricing Plan</span>
           </div>
-          <h2 className="section-heading mb-4">Scalable Solutions for Government</h2>
+          <h2 className="section-heading mb-4">Flexible Plans For Every Stage</h2>
           <p className="section-subtext">
-            Choose the plan that fits your administrative scope and resolution goals.
+            Live dashboards and custom reports that surface the insights you need—instantly.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
             <motion.div
               key={i}
@@ -92,52 +69,39 @@ const PricingSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.12 }}
-              className={`glass-card p-10 flex flex-col relative transition-all duration-500 hover:translate-y-[-8px] ${
-                plan.highlighted 
-                  ? "border-white/50 ring-[3px] ring-white/10 shadow-[0_0_40px_-10px_rgba(255,255,255,0.1)] bg-gradient-to-b from-white/[0.05] to-transparent z-10 scale-105" 
-                  : "hover:border-primary/20"
+              className={`glass-card p-8 flex flex-col ${
+                plan.highlighted ? "border-primary/50 ring-1 ring-primary/20" : ""
               }`}
             >
-              {plan.highlighted && (
-                <div className="absolute -top-[14px] left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-white text-black text-[10px] font-bold tracking-tighter uppercase shadow-lg shadow-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-display font-semibold text-foreground">{plan.name}</span>
+                <span className="text-[10px] px-3 py-1 rounded-full bg-muted text-muted-foreground tracking-wider uppercase">
                   {plan.badge}
-                </div>
-              )}
-              <div className="text-center mb-10">
-                <h3 className="text-2xl font-display font-bold text-foreground mb-1">{plan.name}</h3>
-                <p className="text-[11px] text-muted-foreground mb-8 uppercase tracking-widest">{plan.target}</p>
-                <div className="flex flex-col items-center">
-                  <div className={`text-5xl font-display font-bold mb-1 ${plan.highlighted ? "text-white" : "text-foreground"}`}>
-                    {plan.price}
-                  </div>
-                  {plan.annually && (
-                    <p className="text-[10px] text-muted-foreground font-medium bg-muted/50 px-3 py-1 rounded-full border border-border/50">
-                      {plan.annually}
-                    </p>
-                  )}
-                </div>
+                </span>
               </div>
+              <div className="text-4xl font-display font-bold text-foreground mb-2">{plan.price}</div>
+              <p className="text-sm text-muted-foreground mb-8">{plan.desc}</p>
 
-              <div className="space-y-4 mb-10 flex-1 border-t border-border/50 pt-10">
-                {plan.features.map((feature, j) => (
+              <div className="space-y-3 mb-8 flex-1">
+                {plan.features.map((f, j) => (
                   <div key={j} className="flex items-center gap-3">
-                    <Check className={`w-4 h-4 shrink-0 ${plan.highlighted ? "text-white" : "text-primary"}`} />
-                    <span className="text-xs text-foreground/80 font-medium">
-                      {feature}
+                    {f.included ? (
+                      <Check className="w-4 h-4 text-primary" />
+                    ) : (
+                      <X className="w-4 h-4 text-muted-foreground/40" />
+                    )}
+                    <span className={`text-sm ${f.included ? "text-foreground" : "text-muted-foreground/40"}`}>
+                      {f.text}
                     </span>
                   </div>
                 ))}
               </div>
 
               <a
-                href="/contact"
-                className={`${
-                  plan.highlighted 
-                    ? "bg-white hover:bg-white/90 text-black shadow-xl shadow-white/10" 
-                    : "cta-button"
-                } inline-flex items-center justify-center gap-3 font-bold px-8 py-5 rounded-2xl transition-all duration-300 text-xs tracking-wider uppercase group w-full h-14`}
+                href="#"
+                className={`${plan.highlighted ? "cta-button-primary" : "cta-button"} justify-center text-xs group`}
               >
-                {plan.button}
+                GET STARTED
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
             </motion.div>

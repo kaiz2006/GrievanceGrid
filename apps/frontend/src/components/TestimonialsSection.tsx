@@ -1,12 +1,12 @@
-import { ShieldCheck, Quote } from "lucide-react";
+import { Moon, Quote } from "lucide-react";
 
 const testimonials = [
-  { quote: "GrievanceGrid transformed how we handle water supply issues. Resolution time dropped by 40%.", name: "David K.", role: "Commissioner, Public Works" },
-  { quote: "The geo-analytics dashboard allowed us to pinpoint sanitation gaps that we didn't even know existed.", name: "Anita S.", role: "City Council Member" },
-  { quote: "I finally feel like my complaints are being heard. The SMS updates are a game-changer for transparency.", name: "Rajesh M.", role: "Citizen" },
-  { quote: "Seamless integration with our legacy ERP. The automated routing is flawless.", name: "Sarah J.", role: "IT Director, State Services" },
-  { quote: "Accountability is at an all-time high. We can now track every officer's response rate in real time.", name: "Mayor Robert L.", role: "Administrative Lead" },
-  { quote: "The public dashboard has significantly improved trust between the city and its residents.", name: "Elena V.", role: "Public Relations Officer" },
+  { quote: "Before this, we were juggling spreadsheets and manual updates. Now everything's automated.", name: "Emma Foster", role: "Marketing Manager, BrightWave" },
+  { quote: "Truly impressive. The AI assistant is fast, accurate, and blends into our daily ops without friction.", name: "Liam Harrison", role: "Project Manager, CloudCore" },
+  { quote: "Routine tasks are now fully automated, and we can focus on strategic work that really moves the needle.", name: "Noah Mitchell", role: "AI Engineer, SmartOps" },
+  { quote: "Their predictive analytics helped us forecast trends more accurately than our previous tools.", name: "Sophia Collins", role: "UX/UI Lead, DesignHive" },
+  { quote: "The AI assistant is fast, accurate, and blends into our daily ops without friction.", name: "Ethan Parker", role: "Head of Product, FlowWorks" },
+  { quote: "Their predictive analytics helped us forecast trends more accurately than our previous tools.", name: "Olivia Bennet", role: "CMO at GreenTech" },
 ];
 
 const TestimonialsSection = () => {
@@ -15,12 +15,12 @@ const TestimonialsSection = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span>Success Stories</span>
+            <Moon className="w-4 h-4 text-primary" />
+            <span>Testimonials</span>
           </div>
-          <h2 className="section-heading mb-4">Driving Change in Public Service</h2>
+          <h2 className="section-heading mb-4">Real People. Real Results</h2>
           <p className="section-subtext">
-            See how cities are using GrievanceGrid to solve real-world citizen issues.
+            Find quick answers to the most common support questions
           </p>
         </div>
       </div>

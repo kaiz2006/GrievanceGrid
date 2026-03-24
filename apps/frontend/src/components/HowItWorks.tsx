@@ -1,50 +1,36 @@
 import { motion } from "framer-motion";
-import { UserPlus, Settings2, CheckCircle2, Shield } from "lucide-react";
+import { Moon, Zap, Mic, Settings } from "lucide-react";
 
 const steps = [
   {
-    icon: UserPlus,
-    title: "Unified Submission",
-    description: "Citizens submit grievances via a user-friendly portal with geo-tagging support.",
+    icon: Zap,
+    title: "AI-Powered Prioritization",
+    description: "Our engine ranks tasks by urgency & importance.",
   },
   {
-    icon: Settings2,
-    title: "Intelligent Routing",
-    description: "The system automatically assigns tasks based on department, location, and urgency.",
+    icon: Mic,
+    title: "Capture Tasks Instantly",
+    description: "Add tasks via voice, email, or integrations.",
   },
   {
-    icon: CheckCircle2,
-    title: "Real-Time Tracking",
-    description: "Track progress from intake to resolution with automated SMS notifications.",
+    icon: Settings,
+    title: "Seamless Automation",
+    description: "We ready to handle them for you.",
   },
 ];
 
 const HowItWorks = () => {
   return (
-    <section className="py-24 relative overflow-hidden" id="about-us">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-60 grayscale brightness-[0.4]"
-        >
-          <source src="/bg2.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <section className="py-24 relative" id="about-us">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
-            <Shield className="w-4 h-4 text-primary" />
-            <span>The Process</span>
+            <Moon className="w-4 h-4 text-primary" />
+            <span>How It Works</span>
           </div>
-          <h2 className="section-heading mb-4">From Grievance to Resolution</h2>
+          <h2 className="section-heading mb-4">Where complexity meets clarity</h2>
           <p className="section-subtext">
-            A transparent workflow designed to bridge the gap between citizens and administration.
+            Analyze deadlines, effort, and context to reorder intelligently.
           </p>
         </div>
 

@@ -1,55 +1,41 @@
 import { motion } from "framer-motion";
-import { MessagesSquare, Share2, Navigation, Archive, ShieldCheck } from "lucide-react";
+import { Moon, Layers, Workflow, Brain, BarChart3 } from "lucide-react";
 
 const features = [
   {
-    icon: MessagesSquare,
-    title: "Centralized Intake",
-    description: "Capture grievances from multiple channels—web, mobile, and SMS—into a single, unified grid.",
+    icon: Layers,
+    title: "Fast, scalable, and tailored solutions",
+    description: "Analyze deadlines and context to reorder intelligently.",
   },
   {
-    icon: Share2,
-    title: "Automated Routing",
-    description: "AI-driven logic ensures every complaint is instantly routed to the correct department and officer.",
+    icon: Workflow,
+    title: "Workflow Automation",
+    description: "Trigger actions based on task completion, time, or team activity.",
   },
   {
-    icon: Navigation,
-    title: "Geo-Analytics",
-    description: "Visualize grievance clusters on interactive maps to identify and address systemic local issues.",
+    icon: Brain,
+    title: "AI Planning Assistant",
+    description: "Suggests assignees, sets reminders, and flags blockers.",
   },
   {
-    icon: Archive,
-    title: "Resolution Tracking",
-    description: "Monitor every step of the resolution process with real-time status updates and audit trails.",
+    icon: BarChart3,
+    title: "Smart Analytics Dashboard",
+    description: "Analyze deadlines and context to reorder intelligently.",
   },
 ];
 
 const FeaturesSection = () => {
   return (
-    <section className="py-24 relative overflow-hidden" id="features">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-60 brightness-[0.4]"
-        >
-          <source src="/bg3.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <section className="py-24 relative" id="features">
+      <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span>Core Capabilities</span>
+            <Moon className="w-4 h-4 text-primary" />
+            <span>Our Features</span>
           </div>
-          <h2 className="section-heading mb-4">Accountability through Automation</h2>
+          <h2 className="section-heading mb-4">Your Productivity, Reinvented with AI</h2>
           <p className="section-subtext">
-            GrievanceGrid empowers public administrators with the tools to respond faster and more effectively.
+            Task AI Management was founded by a team of productivity hackers.
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react";
+import { Moon } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -8,53 +8,39 @@ import {
 
 const faqs = [
   {
-    q: "How does automated routing ensure accountability?",
-    a: "Every grievance is tagged with a unique ID and instantly assigned to the relevant department based on AI-classified category and location. Timestamps and audit trails ensure every hand-off is logged and monitorable.",
+    q: "Why is a strong brand identity or website important?",
+    a: "A robust brand identity and website serve as the face of your business, shaping how it is perceived by potential customers. They not only convey professionalism but also establish trust and credibility, vital factors in today's competitive market.",
   },
   {
-    q: "Is citizen data protected and secure?",
-    a: "Yes. GrievanceGrid uses state-of-the-art encryption and complies with international data privacy standards for government data, ensuring all personal information remains confidential.",
+    q: "Can I use Task AI with my existing tools?",
+    a: "Yes! Tash AI integrates seamlessly with your existing tools, allowing you to automate workflows, synchronize data, and boost team productivity effortlessly across every project and task.",
   },
   {
-    q: "Can it integrate with our existing municipal portals?",
-    a: "Absolutely. Our robust API allows for seamless integration with existing website forms, mobile apps, and legacy database systems.",
+    q: "Is Tash AI suitable for individuals or only teams?",
+    a: "Tash AI is designed for both individuals and teams. It scales to meet personal productivity needs while supporting collaborative workflows for businesses of all sizes efficiently.",
   },
   {
-    q: "How are citizens updated on their grievance status?",
-    a: "Citizens receive automated notifications via SMS and email at every milestone—from intake to department assignment and final resolution.",
+    q: "Do I need to be tech-savvy to use Tash AI?",
+    a: "No, you don't need to be tech-savvy. Tash AI offers an intuitive, user-friendly interface, guiding you through automation and productivity features effortlessly.",
   },
   {
-    q: "Does the system support geo-tagging for complaints?",
-    a: "Yes. Citizens can pinpoint exact locations on a map for issues like road repairs or sanitation, allowing for precise routing and geo-analytics.",
+    q: "What happens after the free trial?",
+    a: "After the free trial, you can choose a paid plan that fits your needs, unlocking full features, integrations, and ongoing support for seamless productivity and enhanced team collaboration.",
   },
 ];
 
 const FAQSection = () => {
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Background Video */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover opacity-60 brightness-[0.4]"
-        >
-          <source src="/bg7.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10 max-w-3xl">
+    <section className="py-24 relative">
+      <div className="container mx-auto px-6 max-w-3xl">
         <div className="text-center mb-16">
           <div className="section-badge mx-auto mb-6">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span>Infrastructure FAQ</span>
+            <Moon className="w-4 h-4 text-primary" />
+            <span>Common Questions</span>
           </div>
-          <h2 className="section-heading mb-4">Common Questions</h2>
+          <h2 className="section-heading mb-4">Got questions? We've got answers.</h2>
           <p className="section-subtext">
-            Everything you need to know about the GrievanceGrid platform.
+            Find quick answers to the most common support questions
           </p>
         </div>
 

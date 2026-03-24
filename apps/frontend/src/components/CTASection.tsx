@@ -9,17 +9,17 @@ const CTASection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="glass-card p-12 md:p-24 text-center relative overflow-hidden rounded-[3rem] border-white/5"
+          className="glass-card p-12 md:p-20 text-center relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
           <div className="relative z-10">
             <h2 className="section-heading mb-4 max-w-2xl mx-auto">
-              Ready to Modernize Your Public Service?
+              Ready to Transform Your Workflow?
             </h2>
             <p className="section-subtext mb-10">
-              Join the growing list of cities using GrievanceGrid to improve transparency and efficiency.
+              Join thousands of teams already using Infranex to boost productivity and ship faster.
             </p>
-            <a href="/contact" className="cta-button-primary group">
+            <a href="#pricing" className="cta-button-primary group">
               GET STARTED NOW
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>
