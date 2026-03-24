@@ -87,9 +87,6 @@ const ContestationAuditPage = () => {
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
           <div className="flex items-center gap-6 mb-12">
-            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl border border-white/10">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <Gavel className="w-5 h-5 text-amber-500" />

@@ -77,7 +77,7 @@ const menuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["admin"] },
   
   // NEW: Officer Workflow Pages
-  { icon: CheckCircle, label: "Field Verification", href: "/officer/workflow", roles: ["admin"] },
+  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["admin"] },
   { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["admin"] },
   
   // Citizen-specific pages

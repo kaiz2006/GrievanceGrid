@@ -54,4 +54,5 @@ export interface GrievanceDetail {
     resolution_sla: SLAInfo;
   };
   assigned_team?: TeamInfo;
+  created_at?: string;
 }

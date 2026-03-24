@@ -83,7 +83,7 @@ const SubmitPage = () => {
       case 2:
         return formData.category !== "";
       case 3:
-        return !!selectedFile || !!audioURL;
+        return true; // Media is now optional for demo
       default:
         return false;
     }
@@ -508,25 +508,23 @@ const SubmitPage = () => {
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 ) : (
-                  (selectedFile || audioURL) && (
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting || !isStepValid()}
-                      className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500 animate-in fade-in zoom-in duration-300"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Submitting...
-                        </>
-                      ) : (
-                        <>
-                          Submit Report
-                          <Send className="ml-2 h-5 w-5" />
-                        </>
-                      )}
-                    </Button>
-                  )
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || !isStepValid()}
+                    className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500 animate-in fade-in zoom-in duration-300"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Submit Report
+                        <Send className="ml-2 h-5 w-5" />
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
             </form>

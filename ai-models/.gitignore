@@ -2,8 +2,8 @@
 **/data/*.csv
 **/data/*.pt
 **/data/*.pth
-**/models/*.pth
-**/models/*.pt
+# **/models/*.pth
+# **/models/*.pt
 
 # CV Image Data
 cv/data/train/
@@ -19,6 +19,6 @@ __pycache__/
 .pytest_cache/
 
 # Local Environment
-.env
-.env.local
-.env.*.local
+# .env
+# .env.local
+# .env.*.local
