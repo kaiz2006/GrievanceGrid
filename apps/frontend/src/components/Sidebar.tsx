@@ -38,7 +38,8 @@ import {
   User,
   // Officer workflow icons
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  Bot
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -86,6 +87,7 @@ const menuItems = [
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },
+  { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["citizen"] },
   { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["citizen"] },
   { icon: Search, label: "Track Status", href: "/track/GRV-9901", roles: ["citizen"] },
   { icon: Layers, label: "Impact", href: "/impact", roles: ["citizen"] },

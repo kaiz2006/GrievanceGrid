@@ -42,6 +42,7 @@ import FeedbackPage from "./components/other-pages/FeedbackPage";
 import ContestationPage from "./components/other-pages/ContestationPage";
 import VoiceSubmitPage from "./components/other-pages/VoiceSubmitPage";
 import ProfilePage from "./components/other-pages/ProfilePage";
+import AIAssistantPage from "./components/other-pages/AIAssistantPage";
 // New officer workflow pages
 import FieldVerificationPage from "./components/other-pages/FieldVerificationPage";
 import OfficerWorkflowPage from "./components/other-pages/OfficerWorkflowPage";
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="/feedback/:grievanceId" element={<FeedbackPage />} />
             <Route path="/contest/:grievanceId" element={<ContestationPage />} />
             <Route path="/submit-voice" element={<VoiceSubmitPage />} />
+            <Route path="/ai-assistant" element={<AIAssistantPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/verify/:grievanceId" element={<FieldVerificationPage />} />
             <Route path="/officer/workflow" element={<OfficerWorkflowPage />} />
