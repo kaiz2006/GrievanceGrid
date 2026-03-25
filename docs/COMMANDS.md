@@ -108,6 +108,7 @@ npm run db:generate    # Generate Drizzle migrations
 npm run db:push        # Push schema to database
 npm run db:migrate     # Run migrations
 npm run db:studio      # Open Drizzle Studio
+npm run db:empty       # Empty DB tables (truncate + restart identity)
 npm run db:seed        # Destructive seed (10k grievances)
 npm run db:seed:large  # Destructive seed (50k grievances)
 npm run db:seed:xlarge # Destructive seed (200k grievances)

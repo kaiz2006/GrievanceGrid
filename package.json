@@ -36,6 +36,7 @@
     "db:push": "turbo run db:push --filter=@grievancegrid/database",
     "db:migrate": "turbo run db:migrate --filter=@grievancegrid/database",
     "db:studio": "turbo run db:studio --filter=@grievancegrid/database",
+    "db:empty": "turbo run db:empty --filter=@grievancegrid/database",
     "db:seed": "turbo run db:seed --filter=@grievancegrid/database",
     "db:seed:large": "turbo run db:seed:large --filter=@grievancegrid/database",
     "db:seed:xlarge": "turbo run db:seed:xlarge --filter=@grievancegrid/database",

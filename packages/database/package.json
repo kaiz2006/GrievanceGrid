@@ -9,14 +9,15 @@
     "db:push": "drizzle-kit push:pg",
     "db:migrate": "drizzle-kit up:pg",
     "db:generate": "drizzle-kit generate:pg",
-    "db:studio": "drizzle-kit studio",
+    "db:studio": "drizzle-kit studio --port 4984",
+    "db:empty": "tsx src/empty.ts",
     "db:seed": "tsx src/seed.ts --allow-reset --grievances=10000 --seed=42 --batch=1000",
     "db:seed:large": "tsx src/seed.ts --allow-reset --grievances=50000 --seed=42 --batch=1000",
     "db:seed:xlarge": "tsx src/seed.ts --allow-reset --grievances=200000 --seed=42 --batch=2000",
     "db:setup": "npm run db:generate && npm run db:push && npm run db:seed"
   },
   "dependencies": {
-    "drizzle-orm": "^0.30.0",
+    "drizzle-orm": "^0.45.1",
     "pg": "^8.11.0",
     "postgres": "^3.4.3",
     "uuid": "^9.0.1"
@@ -24,8 +25,8 @@
   "devDependencies": {
     "@types/pg": "^8.18.0",
     "@types/uuid": "^9.0.7",
-    "drizzle-kit": "^0.20.0",
-    "drizzle-orm": "^0.30.0",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0"
   }

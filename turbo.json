@@ -42,6 +42,9 @@
       "cache": false,
       "persistent": true
     },
+    "db:empty": {
+      "cache": false
+    },
     "db:seed": {
       "cache": false
     },
