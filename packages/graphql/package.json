@@ -6,7 +6,7 @@
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
   "scripts": {
-    "install:deps": "npm install",
+    "install:deps": "echo Install JS deps from repository root: npm install --workspaces --include-workspace-root",
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/server.ts",
     "codegen": "graphql-codegen --config codegen.yml"

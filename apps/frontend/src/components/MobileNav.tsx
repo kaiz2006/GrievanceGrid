@@ -25,9 +25,9 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 export const mobileMenuItems = [
-  { icon: LayoutDashboard, label: "Feed", href: "/dashboard", roles: ["admin"] },
+  { icon: LayoutDashboard, label: "Feed", href: "/dashboard", roles: ["CITIZEN"] },
   { icon: Send, label: "Submit", href: "/submit" },
-  { icon: ShieldCheck, label: "Admin", href: "/admin/dashboard", roles: ["admin"] },
+  { icon: ShieldCheck, label: "Admin", href: "/admin/dashboard", roles: ["ADMIN"] },
 ];
 
 // Admin submenu items for mobile
@@ -60,10 +60,10 @@ const MobileNav = () => {
   const [showAdminMenu, setShowAdminMenu] = useState(false);
 
   const filteredItems = mobileMenuItems.filter(item => 
-    !item.roles || item.roles.includes(currentRole as any)
+    !item.roles || item.roles.some(role => role.toUpperCase() === currentRole.toUpperCase())
   );
 
-  const isAdmin = currentRole === "admin";
+  const isAdmin = currentRole.toUpperCase() === "ADMIN";
 
   return (
     <>

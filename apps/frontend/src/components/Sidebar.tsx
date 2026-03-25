@@ -47,58 +47,60 @@ import Shuffle from "./Shuffle";
 
 const menuItems = [
   // Admin prioritized items
-  { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["admin"] },
-  { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring", roles: ["admin"] },
-  { icon: Cpu, label: "AI Audit", href: "/admin/ai-audit", roles: ["admin"] },
-  { icon: Globe, label: "Transparency", href: "/admin/transparency", roles: ["admin"] },
-  { icon: Search, label: "Forensic", href: "/admin/forensic", roles: ["admin"] },
-  { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox", roles: ["admin"] },
-  { icon: ShieldCheck, label: "Fraud Detection", href: "/admin/fraud-detection", roles: ["admin"] },
-  { icon: Layout, label: "Mission Control", href: "/admin/mission-control", roles: ["admin"] },
-  { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["admin"] },
-  { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["admin"] },
-  { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["admin"] },
+  { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["ADMIN"] },
+  { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring", roles: ["ADMIN"] },
+  { icon: Cpu, label: "AI Audit", href: "/admin/ai-audit", roles: ["ADMIN"] },
+  { icon: Globe, label: "Transparency", href: "/admin/transparency", roles: ["ADMIN"] },
+  { icon: Search, label: "Forensic", href: "/admin/forensic", roles: ["ADMIN"] },
+  { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox", roles: ["ADMIN"] },
+  { icon: ShieldCheck, label: "Fraud Detection", href: "/admin/fraud-detection", roles: ["ADMIN"] },
+  { icon: Layout, label: "Mission Control", href: "/admin/mission-control", roles: ["ADMIN"] },
+  { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["ADMIN"] },
+  { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["ADMIN"] },
+  { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["ADMIN"] },
   
   // NEW: Predictive Governance & Analytics (P1 Priority)
-  { icon: Wrench, label: "Predictive Maintenance", href: "/admin/predictive-maintenance", roles: ["admin"] },
-  { icon: AlertTriangle, label: "Crisis Clusters", href: "/admin/crisis-clusters", roles: ["admin"] },
-  { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit", roles: ["admin"] },
+  { icon: Wrench, label: "Predictive Maintenance", href: "/admin/predictive-maintenance", roles: ["ADMIN"] },
+  { icon: AlertTriangle, label: "Crisis Clusters", href: "/admin/crisis-clusters", roles: ["ADMIN"] },
+  { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit", roles: ["ADMIN"] },
   
   // NEW: Voice & Similar Cases (P2 Priority)
-  { icon: Volume2, label: "Voice Results", href: "/admin/voice-results", roles: ["admin"] },
-  { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases", roles: ["admin"] },
+  { icon: Volume2, label: "Voice Results", href: "/admin/voice-results", roles: ["ADMIN"] },
+  { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases", roles: ["ADMIN"] },
   
   // NEW: SLA & Escalation Management (P2 Priority)
-  { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches", roles: ["admin"] },
-  { icon: Activity, label: "Escalations", href: "/admin/escalations", roles: ["admin"] },
+  { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches", roles: ["ADMIN"] },
+  { icon: Activity, label: "Escalations", href: "/admin/escalations", roles: ["ADMIN"] },
   
   // NEW: Audit Management (P3 Priority)
-  { icon: History, label: "Audit History", href: "/admin/audit-history", roles: ["admin"] },
-  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["admin"] },
+  { icon: History, label: "Audit History", href: "/admin/audit-history", roles: ["ADMIN"] },
+  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["ADMIN"] },
   
   // NEW: Officer Workflow Pages
-  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["admin"] },
-  { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["admin"] },
+  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["ADMIN", "OFFICER"] },
+  { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["ADMIN", "OFFICER"] },
   
   // Citizen-specific pages
-  { icon: List, label: "My Grievances", href: "/my-grievances", roles: ["citizen"] },
-  { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["citizen"] },
+  { icon: List, label: "My Grievances", href: "/my-grievances", roles: ["CITIZEN"] },
+  { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["CITIZEN"] },
   
   // Common/Citizen items
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },
-  { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["citizen"] },
-  { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["citizen"] },
-  { icon: User, label: "My Profile", href: "/profile", roles: ["citizen", "admin"] },
-  { icon: Layers, label: "Impact", href: "/impact", roles: ["citizen"] },
-  { icon: FileText, label: "Resources", href: "/resource-center", roles: ["citizen"] },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["CITIZEN"] },
+  { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
+  { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
+  { icon: User, label: "My Profile", href: "/profile", roles: ["CITIZEN", "ADMIN", "OFFICER"] },
+  { icon: Layers, label: "Impact", href: "/impact", roles: ["CITIZEN"] },
+  { icon: FileText, label: "Resources", href: "/resource-center", roles: ["CITIZEN"] },
 ];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const currentRole = localStorage.getItem("userRole") || "citizen";
+  const currentRole = (localStorage.getItem("userRole") || "CITIZEN").toUpperCase();
 
-  const filteredItems = menuItems.filter(item => item.roles.includes(currentRole as any));
+  const filteredItems = menuItems.filter(item => 
+    item.roles.some(role => role.toUpperCase() === currentRole)
+  );
 
   return (
     <motion.aside

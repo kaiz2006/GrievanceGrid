@@ -1,155 +1,105 @@
-"""Google OAuth 2.0 authentication service."""
+"""Firebase ID token verification without firebase-admin network dependency."""
 
 from __future__ import annotations
 
-import os
+import logging
+import time
+from typing import Any
+
 import httpx
-from datetime import datetime
-from typing import Any, Optional
+from jose import jwt, JWTError
 
-from google.auth.transport import requests
-from google.oauth2 import id_token
+from src.core.config import settings
+
+logger = logging.getLogger(__name__)
+
+# Google's public keys for Firebase tokens
+_FIREBASE_CERTS_URL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+_cert_cache: dict = {}
+_cert_cache_expiry: float = 0.0
 
 
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:3000/auth/callback")
+async def _get_firebase_public_keys() -> dict[str, str]:
+    """Fetch and cache Firebase public certificates."""
+    global _cert_cache, _cert_cache_expiry
+
+    now = time.time()
+    if _cert_cache and now < _cert_cache_expiry:
+        return _cert_cache
+
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        resp = await client.get(_FIREBASE_CERTS_URL)
+        resp.raise_for_status()
+        _cert_cache = resp.json()
+        # Cache-Control header tells us how long to cache
+        cc = resp.headers.get("cache-control", "")
+        max_age = 3600
+        for part in cc.split(","):
+            part = part.strip()
+            if part.startswith("max-age="):
+                try:
+                    max_age = int(part.split("=")[1])
+                except ValueError:
+                    pass
+        _cert_cache_expiry = now + max_age
+
+    return _cert_cache
 
 
 class GoogleOAuthService:
-    """Service for Google OAuth authentication flow."""
-    
+    """Verify Firebase ID tokens issued by Firebase Authentication."""
+
     @staticmethod
     async def verify_id_token(id_token_str: str) -> dict[str, Any] | None:
         """
-        Verify Google ID token and extract user information.
-        
+        Verify a Firebase ID token and return the user's profile.
+
         Args:
-            id_token_str: Google ID token from frontend
-            
+            id_token_str: Firebase ID token from result.user.getIdToken()
+
         Returns:
-            User info dict with fields: sub, email, name, picture, or None if invalid
+            User info dict or None if invalid.
         """
+        if not settings.firebase_project_id:
+            logger.error("FIREBASE_PROJECT_ID not configured")
+            return None
+
         try:
-            # Verify the token signature
-            idinfo = id_token.verify_oauth2_token(
-                id_token_str,
-                requests.Request(),
-                GOOGLE_CLIENT_ID,
-                clock_skew_in_seconds=10,
-            )
-            
-            # Token is valid, extract user info
-            if idinfo.get("email_verified"):
-                return {
-                    "sub": idinfo.get("sub"),
-                    "email": idinfo.get("email"),
-                    "name": idinfo.get("name"),
-                    "picture": idinfo.get("picture"),
-                    "auth_type": "GOOGLE_OAUTH",
-                }
+            certs = await _get_firebase_public_keys()
         except Exception as e:
-            print(f"Failed to verify Google ID token: {e}")
+            logger.error("Failed to fetch Firebase public keys: %s", e)
             return None
-        
-        return None
-    
-    @staticmethod
-    async def exchange_code_for_token(code: str) -> dict[str, Any] | None:
-        """
-        Exchange authorization code for access and ID tokens.
-        
-        Args:
-            code: Authorization code from Google OAuth flow
-            
-        Returns:
-            Token response with access_token and id_token, or None on failure
-        """
-        if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
-            return None
-        
-        async with httpx.AsyncClient() as client:
+
+        # Try each certificate until one verifies
+        decoded = None
+        last_error = None
+        for kid, cert_pem in certs.items():
             try:
-                response = await client.post(
-                    "https://oauth2.googleapis.com/token",
-                    data={
-                        "client_id": GOOGLE_CLIENT_ID,
-                        "client_secret": GOOGLE_CLIENT_SECRET,
-                        "code": code,
-                        "grant_type": "authorization_code",
-                        "redirect_uri": GOOGLE_REDIRECT_URI,
-                    },
+                decoded = jwt.decode(
+                    id_token_str,
+                    cert_pem,
+                    algorithms=["RS256"],
+                    audience=settings.firebase_project_id,
+                    issuer=f"https://securetoken.google.com/{settings.firebase_project_id}",
+                    options={"leeway": 10},
                 )
-                
-                if response.status_code == 200:
-                    return response.json()
-            except Exception as e:
-                print(f"Failed to exchange OAuth code: {e}")
-        
-        return None
-    
-    @staticmethod
-    async def refresh_access_token(refresh_token: str) -> dict[str, Any] | None:
-        """
-        Refresh Google access token using refresh token.
-        
-        Args:
-            refresh_token: Google refresh token
-            
-        Returns:
-            New token response or None on failure
-        """
-        if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+                break
+            except JWTError as e:
+                last_error = e
+                continue
+
+        if decoded is None:
+            logger.warning("Firebase token verification failed: %s", last_error)
             return None
-        
-        async with httpx.AsyncClient() as client:
-            try:
-                response = await client.post(
-                    "https://oauth2.googleapis.com/token",
-                    data={
-                        "client_id": GOOGLE_CLIENT_ID,
-                        "client_secret": GOOGLE_CLIENT_SECRET,
-                        "refresh_token": refresh_token,
-                        "grant_type": "refresh_token",
-                    },
-                )
-                
-                if response.status_code == 200:
-                    return response.json()
-            except Exception as e:
-                print(f"Failed to refresh Google access token: {e}")
-        
-        return None
-    
-    @staticmethod
-    def get_authorization_url(state: str | None = None, scope: str | None = None) -> str:
-        """
-        Generate Google OAuth authorization URL.
-        
-        Args:
-            state: CSRF protection state parameter
-            scope: OAuth scopes to request
-            
-        Returns:
-            Authorization URL for frontend redirect
-        """
-        if not GOOGLE_CLIENT_ID:
-            return ""
-        
-        default_scope = "openid email profile"
-        if scope:
-            default_scope = scope
-        
-        params = {
-            "client_id": GOOGLE_CLIENT_ID,
-            "redirect_uri": GOOGLE_REDIRECT_URI,
-            "response_type": "code",
-            "scope": default_scope,
-            "access_type": "offline",
+
+        if not decoded.get("email_verified"):
+            logger.warning("Firebase token email not verified for uid=%s", decoded.get("sub"))
+            return None
+
+        return {
+            "sub": decoded.get("sub"),
+            "email": decoded.get("email"),
+            "name": decoded.get("name") or decoded.get("email"),
+            "picture": decoded.get("picture"),
+            "auth_type": "GOOGLE_OAUTH",
         }
-        
-        if state:
-            params["state"] = state
-        
-        param_str = "&".join(f"{k}={v}" for k, v in params.items())
-        return f"https://accounts.google.com/o/oauth2/v2/auth?{param_str}"

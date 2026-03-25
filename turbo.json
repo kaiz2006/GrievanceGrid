@@ -38,6 +38,22 @@
     "db:migrate": {
       "dependsOn": ["db:generate"]
     },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:empty": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "db:seed:large": {
+      "cache": false
+    },
+    "db:seed:xlarge": {
+      "cache": false
+    },
     "clean": {
       "cache": false
     }

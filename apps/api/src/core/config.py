@@ -37,6 +37,8 @@ class ApiSettings(BaseSettings):
     celery_broker_url: str = Field(default="redis://localhost:6379/0", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(default="redis://localhost:6379/1", alias="CELERY_RESULT_BACKEND")
     internal_worker_token: str = Field(alias="INTERNAL_WORKER_TOKEN")
+    google_client_id: str = Field(default="", alias="GOOGLE_CLIENT_ID")
+    firebase_project_id: str = Field(default="grievance-grid", alias="FIREBASE_PROJECT_ID")
 
     access_token_expire_minutes: int = Field(default=30, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
     refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")

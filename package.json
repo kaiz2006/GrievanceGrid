@@ -3,8 +3,8 @@
   "private": true,
   "packageManager": "npm@10.0.0",
   "scripts": {
-    "install:all": "turbo run install:deps && cd ai-models && npm run install:deps",
-    "install:frontend": "cd apps/frontend && npm install",
+    "install:all": "npm install --workspaces --include-workspace-root && turbo run install:deps --filter=@grievancegrid/api --filter=@grievancegrid/worker && cd ai-models && npm run install:deps",
+    "install:frontend": "npm install --workspace=@grievancegrid/frontend",
     "install:api": "cd apps/api && npm run install:deps",
     "install:worker": "cd apps/worker && npm run install:deps",
     "install:ai": "cd ai-models && npm run install:deps",
@@ -36,7 +36,10 @@
     "db:push": "turbo run db:push --filter=@grievancegrid/database",
     "db:migrate": "turbo run db:migrate --filter=@grievancegrid/database",
     "db:studio": "turbo run db:studio --filter=@grievancegrid/database",
+    "db:empty": "turbo run db:empty --filter=@grievancegrid/database",
     "db:seed": "turbo run db:seed --filter=@grievancegrid/database",
+    "db:seed:large": "turbo run db:seed:large --filter=@grievancegrid/database",
+    "db:seed:xlarge": "turbo run db:seed:xlarge --filter=@grievancegrid/database",
     "db:setup": "npm run db:generate && npm run db:push && npm run db:seed",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
