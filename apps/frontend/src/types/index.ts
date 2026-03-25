@@ -4,14 +4,20 @@
 export type UserRole = "CITIZEN" | "CREW" | "OFFICER" | "ADMIN" | "AUDITOR";
 
 export type GrievanceStatus = 
-  | "CREATED" 
+  | "CREATED"
+  | "PENDING"
+  | "PENDING_CLASSIFICATION"
+  | "PENDING_ASSIGNMENT"
+  | "ASSIGNED"
   | "AI_PROCESSED" 
   | "ROUTED" 
   | "ACKNOWLEDGED" 
   | "IN_PROGRESS" 
+  | "ESCALATED"
   | "VERIFIED" 
   | "RESOLVED" 
-  | "CONTESTED";
+  | "CONTESTED"
+  | "CLOSED";
 
 export interface Location {
   latitude: number;
@@ -55,4 +61,5 @@ export interface GrievanceDetail {
   };
   assigned_team?: TeamInfo;
   created_at?: string;
+  resolved_at?: string;
 }

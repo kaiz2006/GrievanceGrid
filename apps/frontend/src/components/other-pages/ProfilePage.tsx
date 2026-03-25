@@ -311,7 +311,7 @@ const ProfilePage = () => {
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </Link>
                   <Link
-                    to="/track/GRV-9901"
+                    to="/track/GRI-2026-000102"
                     className="flex items-center justify-between p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group"
                   >
                     <div className="flex items-center gap-3">

@@ -25,9 +25,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
 export const mobileMenuItems = [
-  { icon: LayoutDashboard, label: "Feed", href: "/dashboard" },
+  { icon: LayoutDashboard, label: "Feed", href: "/dashboard", roles: ["admin"] },
   { icon: Send, label: "Submit", href: "/submit" },
-  { icon: Search, label: "Track", href: "/track/GRV-9901" },
   { icon: ShieldCheck, label: "Admin", href: "/admin/dashboard", roles: ["admin"] },
 ];
 
@@ -49,11 +48,9 @@ const adminSubmenuItems = [
 
 // Citizen submenu items for mobile
 const citizenSubmenuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: List, label: "My Grievances", href: "/my-grievances" },
   { icon: Send, label: "Submit", href: "/submit" },
   { icon: Mic, label: "Voice Submit", href: "/submit-voice" },
-  { icon: Search, label: "Track", href: "/track/GRV-9901" },
   { icon: User, label: "Profile", href: "/profile" },
 ];
 

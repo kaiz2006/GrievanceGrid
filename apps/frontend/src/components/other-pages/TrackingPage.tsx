@@ -69,9 +69,30 @@ const TrackingPage = () => {
     );
   }
 
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center justify-center mx-auto">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">Grievance Not Found</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              The tracking ID <span className="text-foreground font-mono font-bold bg-white/5 px-2 py-0.5 rounded">{grid_id}</span> could not be found in the city ledger.
+            </p>
+          </div>
+          <Button className="cta-button-primary w-full h-14" asChild>
+            <a href="/my-grievances">Back to My Grievances</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const timelineEvents = data.timeline.map((event: any, index: number) => ({
     id: index, // Use index since real API might not provide ID
-    title: event.status.replace(/_/g, " "),
+    title: (event.status || "UNKNOWN").replace(/_/g, " "),
     date: new Date(event.timestamp).toLocaleString(),
     description: event.description,
     status: index === 0 ? "current" : "completed" // Simplistic mapping for now
@@ -104,7 +125,7 @@ const TrackingPage = () => {
                 <Badge className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 text-xs font-bold tracking-widest uppercase">
                   ACTIVE CASE
                 </Badge>
-                <span className="text-muted-foreground font-mono text-sm">{grid_id || "GRV-9901"}</span>
+                <span className="text-muted-foreground font-mono text-sm">{grid_id || "GRI-2026-000102"}</span>
                 {/* WebSocket Connection Status */}
                 <Badge 
                   className={`${
