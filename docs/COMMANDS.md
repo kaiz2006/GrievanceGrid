@@ -1,211 +1,170 @@
-# GrievanceGrid Development Commands
+# GrievanceGrid Commands Reference
+
+This document lists the current runnable commands and what each command does.
 
 ## Quick Start
 
 ```bash
-# Install ALL dependencies (frontend, api, worker, database, graphql, ui, ai-models)
+# 1) Install dependencies
 npm run install:all
 
-# Start Recommended services (Frontend + API)
+# 2) Start frontend + API
 npm run dev:lite
 
-# Start ALL services (requires Docker)
-npm run dev:full
-
-```
-
----
-
-## Installation Commands
-
-### Install Everything
-```bash
-npm run install:all
-```
-
-This runs:
-1. `turbo run install:deps` - All npm workspaces + Python venv packages
-2. `cd ai-models && npm run install:deps` - AI models Python venv
-
-### Install Individual Packages
-
-| Command | Package | What it does |
-|---------|---------|--------------|
-| `npm run install:frontend` | apps/frontend | `npm install` |
-| `npm run install:api` | apps/api | Python venv + pip install |
-| `npm run install:worker` | apps/worker | Python venv + pip install |
-| `npm run install:ai` | ai-models | Python venv + pip install |
-
----
-
-## Development Commands
-
-### Start Everything
-```bash
+# 3) (Optional) Start full stack for demo/hackathon
 npm run dev:full
 ```
 
-### Recommended: Start Lite (Frontend + API)
+## Root Commands
+
+Run all commands below from repository root.
+
+| Command | What it does |
+|---|---|
+| `npm run install:all` | Installs npm workspaces, then installs Python dependencies for API/Worker and AI models. |
+| `npm run install:frontend` | Installs frontend workspace dependencies only. |
+| `npm run install:api` | Creates/uses Python venv and installs API requirements. |
+| `npm run install:worker` | Creates/uses Python venv and installs Worker requirements. |
+| `npm run install:ai` | Creates/uses Python venv and installs AI-model requirements. |
+| `npm run dev` | Starts frontend only via Turborepo filter. |
+| `npm run dev:lite` | Starts frontend + API. |
+| `npm run dev:backend` | Starts API + Worker + database package tasks. |
+| `npm run dev:full` | Starts `dev:lite`, Worker, and AI models in parallel. |
+| `npm run dev:api` | Starts API workspace dev mode only. |
+| `npm run dev:worker` | Starts Worker workspace dev mode only. |
+| `npm run dev:ai` | Starts AI model Docker services (foreground). |
+| `npm run docker:up` | Starts root docker-compose stack in detached mode. |
+| `npm run docker:down` | Stops root docker-compose stack. |
+| `npm run docker:infra` | Starts only infra containers (Postgres, Redis, Qdrant). |
+| `npm run build` | Runs all build tasks via Turborepo. |
+| `npm run build:frontend` | Builds frontend workspace only. |
+| `npm run lint` | Runs all lint tasks via Turborepo. |
+| `npm run test` | Runs all test tasks via Turborepo. |
+| `npm run start` | Starts package `start` scripts in parallel via Turborepo. |
+| `npm run start:prod` | Starts API and Worker production commands. |
+| `npm run start:api` | Starts API server with uvicorn. |
+| `npm run start:worker` | Starts Celery worker queues. |
+| `npm run start:ai` | Starts AI model Docker services in detached mode. |
+| `npm run stop:ai` | Stops AI model Docker services. |
+| `npm run db:generate` | Generates Drizzle migration files from schema. |
+| `npm run db:push` | Pushes schema to database directly. |
+| `npm run db:migrate` | Applies generated migrations. |
+| `npm run db:studio` | Opens Drizzle Studio UI. |
+| `npm run db:empty` | Truncates all app tables and resets identities. |
+| `npm run db:seed` | Destructive seed for about 10k grievances. |
+| `npm run db:seed:large` | Destructive seed for about 50k grievances. |
+| `npm run db:seed:xlarge` | Destructive seed for about 200k grievances. |
+| `npm run db:setup` | Runs `db:generate` + `db:push` + `db:seed`. |
+| `npm run clean` | Runs workspace clean tasks and removes root node_modules. |
+| `npm run format` | Formats JS/TS/JSON/MD files using Prettier. |
+
+## Database Package Commands
+
+Run these from `packages/database` when working directly on DB tasks.
+
+| Command | What it does |
+|---|---|
+| `npm run db:generate` | Generate migrations from `src/schema.ts`. |
+| `npm run db:push` | Push schema to DB without migration files. |
+| `npm run db:migrate` | Apply migrations with drizzle-kit up. |
+| `npm run db:studio` | Open Drizzle Studio on port `4984`. |
+| `npm run db:empty` | Truncate all domain tables (`RESTART IDENTITY CASCADE`). |
+| `npm run db:seed` | Destructive deterministic seed (`~10k`). |
+| `npm run db:seed:large` | Destructive deterministic seed (`~50k`). |
+| `npm run db:seed:xlarge` | Destructive deterministic seed (`~200k`). |
+| `npm run db:setup` | Generate + push + seed (default volume). |
+
+Notes:
+1. `db:empty` and all `db:seed*` commands are destructive.
+2. Safety checks block production-like DB URLs unless override env vars are explicitly set.
+
+## Workspace-Specific Commands
+
+### apps/frontend
+
+Run from `apps/frontend`.
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start Vite dev server. |
+| `npm run build` | Production build. |
+| `npm run build:dev` | Development-mode build. |
+| `npm run lint` | Run ESLint. |
+| `npm run preview` | Preview built frontend. |
+| `npm run test` | Run Vitest once. |
+| `npm run test:watch` | Run Vitest in watch mode. |
+
+### apps/api
+
+Run from `apps/api`.
+
+| Command | What it does |
+|---|---|
+| `npm run install:deps` | Create/use venv and install API Python dependencies. |
+| `npm run dev` | Start FastAPI with reload. |
+| `npm run start` | Start FastAPI without reload. |
+| `npm run test` | Run pytest for API. |
+
+### apps/worker
+
+Run from `apps/worker`.
+
+| Command | What it does |
+|---|---|
+| `npm run install:deps` | Create/use venv and install Worker Python dependencies. |
+| `npm run dev` | Start worker + beat concurrently. |
+| `npm run dev:worker` | Start Celery worker queues. |
+| `npm run dev:beat` | Start Celery beat scheduler. |
+| `npm run start` | Start worker (non-dev command). |
+| `npm run test` | Run pytest for worker. |
+
+### ai-models
+
+Run from `ai-models`.
+
+| Command | What it does |
+|---|---|
+| `npm run install:deps` | Create/use venv and install AI Python dependencies. |
+| `npm run dev` | Start AI services with Docker Compose (foreground). |
+| `npm run dev:build` | Rebuild and start AI services with Docker Compose. |
+| `npm run start` | Start AI services in detached mode. |
+| `npm run stop` | Stop AI services. |
+| `npm run dev:llm` | Run LLM server directly from source. |
+| `npm run dev:cv` | Run CV server directly from source. |
+| `npm run dev:gnn` | Run GNN server directly from source. |
+
+## Common Workflows
+
+### Frontend + API only
+
 ```bash
+npm run install:all
 npm run dev:lite
 ```
 
-
-Runs in parallel:
-- Frontend (Vite on port 8080)
-- API (FastAPI on port 8000)
-- Worker (Celery)
-- GraphQL server
-- AI Models (Docker: LLM 8001, CV 8002, GNN 8003)
-
-| Command | Service | What it runs |
-|---------|---------|--------------|
-| `npm run dev` | Frontend only | Vite (8080) |
-| `npm run dev:lite` | Frontend + API | Vite + FastAPI |
-| `npm run dev:api` | Backend API | FastAPI (8000) |
-| `npm run dev:worker` | Worker only | Celery (worker + beat) |
-| `npm run dev:backend` | API + Worker + DB | FastAPI + Celery + DB tasks |
-| `npm run dev:ai` | AI models (Docker) | LLM, CV, GNN services |
-| `npm run dev:full` | Full stack | Everything (Lite + Worker + AI) |
-
-
----
-
-## Production Commands
+### Full hackathon demo stack
 
 ```bash
-# Start all production services
-npm run start
-
-# Start API + Worker (production mode)
-npm run start:prod
-
-# Individual production starts
-npm run start:api      # uvicorn production server
-npm run start:worker   # celery worker
-npm run start:ai       # docker-compose up -d
-npm run stop:ai        # docker-compose down
+npm run docker:infra
+npm run db:setup
+npm run dev:full
 ```
 
----
-
-## Docker Commands
+### Reset database and load large data for ML testing
 
 ```bash
-npm run docker:up      # Start ALL services in Docker (containers)
-npm run docker:down    # Stop all Docker services
-npm run docker:infra   # Start only infrastructure (Postgres, Redis, Qdrant)
-npm run dev:ai         # Start only AI services (LLM, CV, GNN)
+npm run db:empty
+npm run db:seed:large
 ```
-
----
-
-
-## Database Commands
-
-```bash
-npm run db:generate    # Generate Drizzle migrations
-npm run db:push        # Push schema to database
-npm run db:migrate     # Run migrations
-npm run db:studio      # Open Drizzle Studio
-npm run db:empty       # Empty DB tables (truncate + restart identity)
-npm run db:seed        # Destructive seed (10k grievances)
-npm run db:seed:large  # Destructive seed (50k grievances)
-npm run db:seed:xlarge # Destructive seed (200k grievances)
-npm run db:setup       # Full setup (generate + push + seed)
-```
-
-Note: seeding is destructive in this hackathon setup (tables are truncated and refilled).
-
----
-
-## Build & Quality Commands
-
-```bash
-npm run build          # Build all packages
-npm run lint           # Lint all packages
-npm run test           # Run all tests
-npm run clean          # Clean node_modules
-npm run format         # Format with Prettier
-```
-
----
-
-## Package Structure
-
-```
-GrievanceGrid/
-├── apps/
-│   ├── frontend/      # React + Vite (port 8080)
-│   ├── api/           # FastAPI backend (port 8000)
-│   └── worker/        # Celery worker
-├── packages/
-│   ├── database/      # Drizzle ORM schema
-│   ├── graphql/       # GraphQL server
-│   └── ui/            # Shared UI components
-└── ai-models/         # ML microservices (Docker)
-    ├── llm/           # LLM service (port 8001)
-    ├── cv/            # Computer Vision (port 8002)
-    └── gnn/           # Graph Neural Network (port 8003)
-```
-
----
 
 ## Service URLs
 
-| Service | URL | Description |
-|---------|-----|-------------|
-| Frontend | http://localhost:8080 | React web app |
-| API | http://localhost:8000 | FastAPI backend |
-| API Docs | http://localhost:8000/docs | Swagger UI |
-| LLM Service | http://localhost:8001 | AI text processing |
-| CV Service | http://localhost:8002 | Image classification |
-| GNN Service | http://localhost:8003 | Department routing |
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:8080 |
+| API | http://localhost:8000 |
+| API Docs | http://localhost:8000/docs |
+| LLM Service | http://localhost:8001 |
+| CV Service | http://localhost:8002 |
+| GNN Service | http://localhost:8003 |
 
----
-
-## Requirements
-
-- **Node.js** 18+
-- **Python** 3.11+
-- **Docker Desktop** (for AI models)
-- **PostgreSQL** 16
-- **Redis** 7
-
----
-
-## Environment Files
-
-Each app has its own `.env` file:
-
-```
-apps/frontend/.env      # VITE_API_BASE_URL, VITE_WS_URL
-apps/api/.env           # DATABASE_URL, REDIS_URL, JWT_SECRET
-apps/worker/.env        # CELERY_BROKER_URL, REDIS_URL
-ai-models/.env          # LLM_API_URL, CV_API_URL, GNN_API_URL
-```
-
----
-
-## Troubleshooting
-
-### Python venv already exists
-The install script handles this automatically - it will skip venv creation and just run pip install.
-
-### Docker not running
-`npm run dev:ai` requires Docker Desktop to be running. Start Docker Desktop first.
-
-### Port already in use
-Check what's using the port:
-```bash
-# Windows
-netstat -ano | findstr :8000
-
-# Kill process
-taskkill /PID <pid> /F
-```
-
-### Database connection failed
-1. Ensure PostgreSQL is running
-2. Check `DATABASE_URL` in `apps/api/.env`
-3. Run `npm run db:setup` to create tables
