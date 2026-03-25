@@ -5,9 +5,9 @@
   "scripts": {
     "install:deps": "python -m venv venv 2>nul || echo venv already exists && .\\venv\\Scripts\\pip install -r requirements.txt",
     "dev": "concurrently \"npm run dev:worker\" \"npm run dev:beat\"",
-    "dev:worker": ".\\venv\\Scripts\\celery -A src.celery_app worker --loglevel=info -Q ai-processing,notifications,sla-monitor,reporting,analytics,maintenance",
+    "dev:worker": ".\\venv\\Scripts\\celery -A src.celery_app worker --pool=solo --loglevel=info -Q ai-processing,notifications,sla-monitor,reporting,analytics,maintenance",
     "dev:beat": ".\\venv\\Scripts\\celery -A src.celery_app beat --loglevel=info",
-    "start": ".\\venv\\Scripts\\celery -A src.celery_app worker --loglevel=info",
+    "start": ".\\venv\\Scripts\\celery -A src.celery_app worker --pool=solo --loglevel=info",
     "test": ".\\venv\\Scripts\\pytest"
   }
 }

@@ -2,6 +2,7 @@
 // Following API SPEC Section - Authentication
 import { apiClient, mockDelay } from "./api.client";
 import { UserRole } from "@/types";
+import { auth, signOut } from "@/lib/firebase";
 
 export interface User {
   id: string;
@@ -72,8 +73,13 @@ export const authService = {
   // GET /auth/me - Get current user
   me: async (): Promise<User> => {
     return apiClient.get("/auth/me", async () => {
-      await mockDelay(500);
-      return mockUser;
+      await mockDelay(200);
+      const email = localStorage.getItem("userEmail") || mockUser.email;
+      const name = localStorage.getItem("userName") || mockUser.name;
+      const role = (localStorage.getItem("userRole") as UserRole) || mockUser.role;
+      const id = localStorage.getItem("userUid") || mockUser.id;
+      const avatar_url = localStorage.getItem("userPhoto") || undefined;
+      return { id, email, name, role, avatar_url };
     });
   },
 
@@ -86,6 +92,18 @@ export const authService = {
     // Clear token on logout
     localStorage.removeItem("auth_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userUid");
+    localStorage.removeItem("userPhoto");
+    
+    // Sign out from Firebase
+    try {
+      if (auth) await signOut(auth);
+    } catch(e) {
+      console.error("Firebase signout error", e);
+    }
     return response;
   },
 

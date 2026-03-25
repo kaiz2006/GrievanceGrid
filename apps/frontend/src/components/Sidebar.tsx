@@ -77,19 +77,18 @@ const menuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["admin"] },
   
   // NEW: Officer Workflow Pages
-  { icon: CheckCircle, label: "Field Verification", href: "/officer/workflow", roles: ["admin"] },
+  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["admin"] },
   { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["admin"] },
   
   // Citizen-specific pages
   { icon: List, label: "My Grievances", href: "/my-grievances", roles: ["citizen"] },
   { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["citizen"] },
-  { icon: User, label: "My Profile", href: "/profile", roles: ["citizen", "admin"] },
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["citizen", "admin"] },
   { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["citizen"] },
   { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["citizen"] },
-  { icon: Search, label: "Track Status", href: "/track/GRV-9901", roles: ["citizen"] },
+  { icon: User, label: "My Profile", href: "/profile", roles: ["citizen", "admin"] },
   { icon: Layers, label: "Impact", href: "/impact", roles: ["citizen"] },
   { icon: FileText, label: "Resources", href: "/resource-center", roles: ["citizen"] },
 ];

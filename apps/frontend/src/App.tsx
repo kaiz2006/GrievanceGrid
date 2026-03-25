@@ -68,6 +68,7 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/submit" element={<SubmitPage />} />
+            <Route path="/track" element={<MyGrievancesPage />} />
             <Route path="/track/:grid_id" element={<TrackingPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/ai-audit" element={<AIAuditPage />} />
@@ -96,6 +97,7 @@ const App = () => (
             <Route path="/ai-assistant" element={<AIAssistantPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/verify/:grievanceId" element={<FieldVerificationPage />} />
+            <Route path="/officer/field-verification" element={<FieldVerificationPage />} />
             <Route path="/officer/workflow" element={<OfficerWorkflowPage />} />
             <Route path="/grievance/:id" element={<GrievanceDetailPage />} />
             <Route path="/solutions" element={<SolutionsPage />} />

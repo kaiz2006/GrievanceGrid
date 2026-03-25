@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FileText,
   Clock,
@@ -48,7 +48,20 @@ const MyGrievancesPage = () => {
     const fetchData = async () => {
       setLoading(true);
       const result = await grievanceService.getMyGrievances();
-      setGrievances(result.items);
+      const mapped = ((result as any).grievances || (result as any).items || []).map((g: any) => ({
+        id: g.id,
+        grid_id: g.grid_id,
+        title: g.title,
+        category: g.category,
+        status: g.status,
+        priority: g.priority,
+        description: g.description,
+        location: g.location?.address || "Selected Location",
+        created_at: g.created_at || new Date().toISOString(),
+        can_feedback: g.status === "RESOLVED",
+        can_contest: g.status === "RESOLVED"
+      }));
+      setGrievances(mapped);
       setLoading(false);
     };
     fetchData();
@@ -97,43 +110,78 @@ const MyGrievancesPage = () => {
     feedbackPending: grievances.filter((g) => g.can_feedback).length,
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Loading Your Grievances...</p>
-        </div>
-      </div>
-    );
-  }
+    const navigate = useNavigate();
+    const [quickTrackId, setQuickTrackId] = useState("");
 
-  return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
-        {/* Ambient Glows */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[150px] pointer-events-none" />
+    const handleQuickTrack = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (quickTrackId.trim()) {
+            navigate(`/track/${quickTrackId.trim()}`);
+        }
+    };
 
-        <div className="container mx-auto max-w-6xl">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <FileText className="w-5 h-5 text-blue-500" />
-                <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">My Grievances</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Track Your Reports</h1>
-              <p className="text-muted-foreground mt-2">View and manage all your submitted grievances</p>
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Loading Your Grievances...</p>
+                </div>
             </div>
+        );
+    }
 
-            <Button className="h-14 px-8 bg-blue-600 hover:bg-blue-500" asChild>
-              <Link to="/submit">
-                <Plus className="w-5 h-5 mr-2" />
-                Submit New Grievance
-              </Link>
-            </Button>
-          </div>
+    return (
+        <div className="min-h-screen bg-background text-foreground flex flex-col">
+            <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
+                {/* Ambient Glows */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[150px] pointer-events-none" />
+
+                <div className="container mx-auto max-w-6xl">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <Search className="w-5 h-5 text-blue-500" />
+                                <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Track Status</span>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Grievance Tracking</h1>
+                            <p className="text-muted-foreground mt-2">Enter a Grid ID or select a report from your history below</p>
+                        </div>
+
+                        <Button className="h-14 px-8 bg-blue-600 hover:bg-blue-500" asChild>
+                            <Link to="/submit">
+                                <Plus className="w-5 h-5 mr-2" />
+                                Submit New Grievance
+                            </Link>
+                        </Button>
+                    </div>
+
+                    {/* Quick Track Card */}
+                    <Card className="glass-card border-blue-500/20 bg-blue-500/5 mb-12 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                        <CardContent className="p-8">
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="flex-1 space-y-2">
+                                    <h3 className="text-xl font-bold">Quick Track</h3>
+                                    <p className="text-sm text-muted-foreground">Have a specific Grid ID? Enter it here to see live updates.</p>
+                                </div>
+                                <form onSubmit={handleQuickTrack} className="flex-1 w-full flex flex-col sm:flex-row gap-3">
+                                    <Input
+                                        placeholder="EX: GRI-2026-000102"
+                                        value={quickTrackId}
+                                        onChange={(e) => setQuickTrackId(e.target.value)}
+                                        className="h-12 bg-white/5 border-white/10 font-mono"
+                                    />
+                                    <Button type="submit" className="h-12 px-8 bg-blue-600 hover:bg-blue-500 shrink-0">
+                                        Track Now
+                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                    </Button>
+                                </form>
+                            </div>
+                        </CardContent>
+                    </Card>
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">

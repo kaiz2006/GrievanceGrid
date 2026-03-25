@@ -1,6 +1,7 @@
 // Admin Service for GrievanceGrid
 // Following API SPEC Sections 7, 8 - Admin & Analytics
 import { apiClient, mockDelay } from "./api.client";
+import { getMockGrievances } from "@/lib/mockStore";
 
 export const adminService = {
   // GET /analytics/dashboard - Dashboard analytics
@@ -84,37 +85,20 @@ export const adminService = {
   getEscalations: async (limit: number = 100) => {
     return apiClient.get(`/admin/escalations?limit=${limit}`, async () => {
       await mockDelay(350);
+      const all = getMockGrievances();
+      // For demo, treat CRITICAL priority or ESCALATED status as escalations
+      const escalated = all.filter(g => g.priority === "CRITICAL" || (g.status as string) === "ESCALATED");
       return {
-        count: 3,
-        items: [
-          {
-            grievance_id: "grievance_101",
-            grid_id: "GRI-2026-000101",
-            title: "Major water pipeline leak",
-            status: "ESCALATED",
-            priority: "CRITICAL",
-            assigned_department_id: "dept_water",
-            created_at: new Date(Date.now() - 3600000).toISOString()
-          },
-          {
-            grievance_id: "grievance_102",
-            grid_id: "GRI-2026-000102",
-            title: "Power outage in industrial area",
-            status: "ESCALATED",
-            priority: "HIGH",
-            assigned_department_id: "dept_electricity",
-            created_at: new Date(Date.now() - 7200000).toISOString()
-          },
-          {
-            grievance_id: "grievance_103",
-            grid_id: "GRI-2026-000103",
-            title: "Contested resolution - Road repair",
-            status: "CONTESTED",
-            priority: "HIGH",
-            assigned_department_id: "dept_pwd",
-            created_at: new Date(Date.now() - 5400000).toISOString()
-          }
-        ]
+        count: escalated.length,
+        items: escalated.map(g => ({
+          grievance_id: g.id,
+          grid_id: g.grid_id,
+          title: g.title,
+          status: g.status,
+          priority: g.priority,
+          assigned_department_id: "dept_unknown",
+          created_at: g.timeline[0]?.timestamp || new Date().toISOString()
+        }))
       };
     });
   },
@@ -124,34 +108,23 @@ export const adminService = {
     const deptParam = departmentId ? `&department=${departmentId}` : "";
     return apiClient.get(`/admin/sla-breaches?limit=${limit}${deptParam}`, async () => {
       await mockDelay(400);
+      const all = getMockGrievances();
+      // For demo, anything stuck "PENDING" or "CREATED" without movement is a breach
+      const breaches = all.filter(g => g.status === "CREATED" || (g.status as string) === "OVERDUE");
       return {
-        count: 2,
-        items: [
-          {
-            sla_id: "sla_001",
-            grievance_id: "grievance_101",
-            grid_id: "GRI-2026-000101",
-            sla_type: "RESOLUTION",
-            deadline_at: new Date(Date.now() - 3600000).toISOString(),
-            escalation_level: 2,
-            title: "Major water pipeline leak",
-            priority: "CRITICAL",
-            status: "ESCALATED",
-            location_address: "Sector 15, Main Road"
-          },
-          {
-            sla_id: "sla_002",
-            grievance_id: "grievance_102",
-            grid_id: "GRI-2026-000102",
-            sla_type: "RESPONSE",
-            deadline_at: new Date(Date.now() - 7200000).toISOString(),
-            escalation_level: 1,
-            title: "Power outage in industrial area",
-            priority: "HIGH",
-            status: "IN_PROGRESS",
-            location_address: "Industrial Area, Block B"
-          }
-        ]
+        count: breaches.length,
+        items: breaches.map(g => ({
+          sla_id: `sla_${g.id}`,
+          grievance_id: g.id,
+          grid_id: g.grid_id,
+          sla_type: "RESOLUTION",
+          deadline_at: g.sla?.resolution_sla?.deadline || new Date().toISOString(),
+          escalation_level: 1,
+          title: g.title,
+          priority: g.priority,
+          status: g.status,
+          location_address: g.location?.address || "Unknown"
+        }))
       };
     });
   },

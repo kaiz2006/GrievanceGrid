@@ -51,8 +51,14 @@ const DashboardPage = () => {
       }
 
       try {
-        const response = await grievanceService.getMyGrievances() as { items?: any[] };
-        setGrievances(response.items || []);
+        const response = await grievanceService.getMyGrievances() as any;
+        const mapped = (response.grievances || response.items || []).map((g: any) => ({
+          ...g,
+          location: g.location?.address || g.location_address || "Location not provided",
+          created_at: g.created_at || new Date().toISOString(),
+          status: g.status || "PENDING"
+        }));
+        setGrievances(mapped);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message.includes("401")) {
@@ -166,7 +172,7 @@ const DashboardPage = () => {
                   <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                     <div className="flex items-center gap-4">
                       <Badge className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${getStatusColor(grievance.status)}`}>
-                        {grievance.status.replace(/_/g, " ")}
+                        {grievance.status ? grievance.status.replace(/_/g, " ") : "UNKNOWN"}
                       </Badge>
                       <span className="text-xs font-mono text-muted-foreground/60">{grievance.grid_id}</span>
                     </div>

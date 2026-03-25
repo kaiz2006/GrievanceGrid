@@ -1,5 +1,6 @@
 import { ArrowRight, Play, Cpu } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -39,9 +40,9 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a href="#solutions" className="bg-white text-black font-bold px-10 py-5 rounded-full hover:bg-white/90 transition-all text-sm tracking-widest uppercase">
+            <Link to="/login" className="bg-white text-black font-bold px-10 py-5 rounded-full hover:bg-white/90 transition-all text-sm tracking-widest uppercase">
               Initialize Grid
-            </a>
+            </Link>
             <a href="#impact" className="border border-white/20 text-white font-bold px-10 py-5 rounded-full hover:bg-white/5 transition-all text-sm tracking-widest uppercase flex items-center gap-3">
               <Play className="w-4 h-4 fill-white" />
               System Walkthrough
