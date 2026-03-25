@@ -28,12 +28,18 @@ const LoginPage = () => {
     try {
       const response = await authService.login(email, password);
       console.log("[LOGIN SUCCESS]", response);
-      localStorage.setItem("auth_token", response.access_token);
-      localStorage.setItem("userRole", role);
-      const target = role === "admin" ? "/admin/dashboard" : "/my-grievances";
+      
+      const userRole = response.user.role;
+      localStorage.setItem("userRole", userRole);
+      localStorage.setItem("userEmail", response.user.email);
+      localStorage.setItem("userName", response.user.name);
+      localStorage.setItem("userUid", response.user.id);
+      
+      const target = (userRole === "ADMIN" || userRole === "OFFICER") ? "/admin/dashboard" : "/my-grievances";
       window.location.href = target;
-    } catch (error) {
+    } catch (error: any) {
       console.error("[LOGIN ERROR]", error);
+      alert(error.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
@@ -46,31 +52,31 @@ const LoginPage = () => {
     }
     setGoogleEmailError("");
     
-    // Guard against missing Firebase configuration
     if (!auth) {
-      setGoogleEmailError("Firebase configuration is missing. Please set your VITE_FIREBASE_* environment variables to enable Google Sign-In.");
+      setGoogleEmailError("Firebase configuration is missing.");
       return;
     }
 
     setGoogleLoading(true);
 
     try {
-      // Force custom params if we wanted to pre-fill email:
-      // googleProvider.setCustomParameters({ login_hint: googleEmail });
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+      const idToken = await result.user.getIdToken();
 
-      localStorage.setItem("auth_token", "firebase_" + user.uid);
-      localStorage.setItem("userRole", role);
-      localStorage.setItem("userEmail", user.email || googleEmail);
-      localStorage.setItem("userUid", user.uid);
-      localStorage.setItem("userName", user.displayName || "User");
-      if (user.photoURL) {
-        localStorage.setItem("userPhoto", user.photoURL);
+      // Verify with backend
+      const response = await authService.googleLogin(idToken);
+      const userRole = response.user.role;
+
+      localStorage.setItem("userRole", userRole);
+      localStorage.setItem("userEmail", response.user.email);
+      localStorage.setItem("userUid", response.user.id);
+      localStorage.setItem("userName", response.user.name);
+      if (response.user.avatar_url) {
+        localStorage.setItem("userPhoto", response.user.avatar_url);
       }
 
-      console.log("[GOOGLE SIGN-IN SUCCESS]", user.uid, role);
-      const target = role === "admin" ? "/admin/dashboard" : "/my-grievances";
+      console.log("[GOOGLE SIGN-IN SUCCESS]", response.user.id, userRole);
+      const target = (userRole === "ADMIN" || userRole === "OFFICER") ? "/admin/dashboard" : "/my-grievances";
       window.location.href = target;
     } catch (error: any) {
       console.error("[GOOGLE SIGN-IN ERROR]", error);

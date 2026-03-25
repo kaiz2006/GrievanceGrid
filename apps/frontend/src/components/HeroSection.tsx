@@ -25,11 +25,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] tracking-[0.2em] text-white/50 font-bold mb-8 backdrop-blur-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />
-            V4.0 STABLE ENGINE
-          </div>
-          
+
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white mb-8 leading-[1.05] tracking-tighter max-w-5xl mx-auto">
             The AI Operating System for <span className="text-white italic">Civic Infrastructure.</span>
           </h1>
