@@ -30,7 +30,8 @@ const LoginPage = () => {
       console.log("[LOGIN SUCCESS]", response);
       localStorage.setItem("auth_token", response.access_token);
       localStorage.setItem("userRole", role);
-      window.location.href = "/dashboard";
+      const target = role === "admin" ? "/admin/dashboard" : "/my-grievances";
+      window.location.href = target;
     } catch (error) {
       console.error("[LOGIN ERROR]", error);
     } finally {
@@ -44,6 +45,13 @@ const LoginPage = () => {
       return;
     }
     setGoogleEmailError("");
+    
+    // Guard against missing Firebase configuration
+    if (!auth) {
+      setGoogleEmailError("Firebase configuration is missing. Please set your VITE_FIREBASE_* environment variables to enable Google Sign-In.");
+      return;
+    }
+
     setGoogleLoading(true);
 
     try {
@@ -62,7 +70,8 @@ const LoginPage = () => {
       }
 
       console.log("[GOOGLE SIGN-IN SUCCESS]", user.uid, role);
-      window.location.href = "/dashboard";
+      const target = role === "admin" ? "/admin/dashboard" : "/my-grievances";
+      window.location.href = target;
     } catch (error: any) {
       console.error("[GOOGLE SIGN-IN ERROR]", error);
       setGoogleEmailError(error.message || "Failed to sign in with Google.");

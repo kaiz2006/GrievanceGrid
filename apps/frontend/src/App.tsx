@@ -67,6 +67,7 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/submit" element={<SubmitPage />} />
+            <Route path="/track" element={<MyGrievancesPage />} />
             <Route path="/track/:grid_id" element={<TrackingPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/ai-audit" element={<AIAuditPage />} />
