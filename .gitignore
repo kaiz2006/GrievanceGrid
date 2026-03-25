@@ -2,7 +2,7 @@
 node_modules/
 .venv/
 venv/
-env/
+
 
 # Build and Output
 dist/
@@ -20,11 +20,7 @@ __pycache__/
 .stylelintcache
 
 # Environment Variables
-.env
-.env.local
-.env.*
-!apps/frontend/.env
-!/.env.example
+
 
 # IDE and OS
 .vscode/
@@ -38,4 +34,4 @@ Thumbs.db
 .agents/
 .qoder
 skills-lock.json
-terminal_output.txt
+terminal_output.txt
