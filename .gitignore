@@ -23,7 +23,8 @@ __pycache__/
 .env
 .env.local
 .env.*
-!.env.example
+!apps/frontend/.env
+!/.env.example
 
 # IDE and OS
 .vscode/
