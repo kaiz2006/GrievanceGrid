@@ -100,7 +100,7 @@ export const authService = {
     
     // Sign out from Firebase
     try {
-      await signOut(auth);
+      if (auth) await signOut(auth);
     } catch(e) {
       console.error("Firebase signout error", e);
     }

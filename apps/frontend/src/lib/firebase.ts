@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,9 +11,20 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+// Initialize Firebase safely – missing env vars should not crash the entire app
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
 
-export { signInWithPopup, signOut };
+try {
+  if (firebaseConfig.apiKey) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+  } else {
+    console.warn("Firebase config not found – Firebase features will be disabled. Set VITE_FIREBASE_* env vars.");
+  }
+} catch (e) {
+  console.error("Firebase initialization failed:", e);
+}
+
+export const googleProvider = new GoogleAuthProvider();
+export { auth, signInWithPopup, signOut };
