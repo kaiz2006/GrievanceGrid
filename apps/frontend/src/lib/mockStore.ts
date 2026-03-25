@@ -39,7 +39,8 @@ export const getMockGrievances = (): GrievanceDetail[] => {
     {
       id: "2",
       grid_id: "GRI-2026-000089",
-      category: "WATER",
+      category: "WATER_SUPPLY",
+
       priority: "CRITICAL",
       status: "CREATED",
       title: "Major Pipe Burst",
@@ -53,6 +54,47 @@ export const getMockGrievances = (): GrievanceDetail[] => {
         response_sla: { deadline: new Date(Date.now() + 3600000).toISOString(), remaining_hours: 1 },
         resolution_sla: { deadline: new Date(Date.now() + 24 * 3600000).toISOString(), remaining_hours: 24 }
       }
+    },
+    {
+      id: "3",
+      grid_id: "GRI-2026-000045",
+      category: "SANITATION",
+      priority: "NORMAL",
+      status: "RESOLVED",
+      title: "Garbage Overflow",
+      description: "Garbage collection has not happened for 3 days. Bin is overflowing.",
+      location: { latitude: 28.58, longitude: 77.15, address: "Main Street, Block C" },
+      created_at: new Date(Date.now() - 172800000).toISOString(),
+      resolved_at: new Date(Date.now() - 86400000).toISOString(),
+      timeline: [
+        { status: "CREATED", timestamp: new Date(Date.now() - 172800000).toISOString(), description: "Grievance submitted" },
+        { status: "RESOLVED", timestamp: new Date(Date.now() - 86400000).toISOString(), description: "Garbage cleared and bin sanitized" }
+      ],
+      sla: {
+        response_sla: { deadline: new Date(Date.now() - 150000000).toISOString() },
+        resolution_sla: { deadline: new Date(Date.now() - 100000000).toISOString() }
+      }
+    },
+    {
+      id: "4",
+      grid_id: "GRI-2026-000213",
+      category: "ELECTRICITY",
+      priority: "HIGH",
+      status: "ESCALATED",
+      title: "Street Light Failure",
+      description: "Entire street light line is down from Pole 12 to 24. Very dark at night.",
+      location: { latitude: 28.65, longitude: 77.10, address: "Industrial Area Phase II" },
+      created_at: new Date(Date.now() - 259200000).toISOString(),
+      timeline: [
+        { status: "CREATED", timestamp: new Date(Date.now() - 259200000).toISOString(), description: "Grievance submitted" },
+        { status: "ASSIGNED", timestamp: new Date(Date.now() - 250000000).toISOString(), description: "Assigned to Electrical Dept" },
+        { status: "ESCALATED", timestamp: new Date(Date.now() - 86400000).toISOString(), description: "Automatic escalation due to SLA breach" }
+      ],
+      sla: {
+        response_sla: { deadline: new Date(Date.now() - 240000000).toISOString() },
+        resolution_sla: { deadline: new Date(Date.now() - 100000000).toISOString() }
+      }
+
     }
   ];
 
