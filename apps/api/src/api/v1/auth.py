@@ -197,11 +197,13 @@ async def google_oauth(
     
     # Create new user if doesn't exist
     if not user:
+        # Determine role - default to CITIZEN, but check for admin emails for dev convenience
+        is_admin = (email and "admin" in email.lower()) or email == "thakuraaryan2006@gmail.com"
         user = await user_repo.create_user(
             email=email,
             name=google_user.get("name", email),
             password=None,  # OAuth users don't have passwords
-            role="CITIZEN",
+            role="ADMIN" if is_admin else "CITIZEN",
             department_id=None,
             auth_type="GOOGLE_OAUTH",
         )

@@ -1,7 +1,7 @@
 services:
   # Infrastructure
   postgres:
-    image: postgres:16-alpine
+    image: postgis/postgis:16-3.4-alpine
     container_name: grievance-postgres
     ports:
       - "5432:5432"

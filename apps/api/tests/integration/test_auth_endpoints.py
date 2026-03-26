@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from src.repositories.users import UserRepository
 from src.core.auth import create_refresh_token
 
 
@@ -20,7 +21,7 @@ def test_register_returns_tokens(client, monkeypatch: pytest.MonkeyPatch) -> Non
         "created_at": datetime.now(timezone.utc),
     }
 
-    async def fake_user_exists(email: str) -> bool:
+    async def fake_user_exists(*args, **kwargs) -> bool:
         return False
 
     async def fake_create_user(*args, **kwargs):
@@ -35,7 +36,7 @@ def test_register_returns_tokens(client, monkeypatch: pytest.MonkeyPatch) -> Non
 
     response = client.post(
         "/api/v1/auth/register",
-        json={"email": "new.user@example.com", "password": "StrongPass123"},
+        json={"email": "new.user@example.com", "password": "StrongPass123", "name": "New User"},
     )
 
     assert response.status_code == 200

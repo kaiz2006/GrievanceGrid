@@ -93,28 +93,30 @@ def test_get_grievance_details_returns_timeline(client, monkeypatch: pytest.Monk
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_by_id", fake_get_by_id)
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.get_timeline", fake_timeline)
 
-    response = client.get("/api/v1/grievances/g-details")
+    grievance_id = "d0e4b843-0678-44f2-97ea-5eeef7f3462e"
+    response = client.get(f"/api/v1/grievances/{grievance_id}")
 
     assert response.status_code == 200
     body = response.json()
-    assert body["grievance_id"] == "g-details"
+    assert body["grievance_id"] == grievance_id
     assert body["timeline"][0]["status"] == "CREATED"
 
 
 def test_update_grievance_status_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> None:
     async def fake_update_status(self, grievance_id: str, new_status: str, notes: str | None = None):
-        return {"id": grievance_id, "status": new_status, "updated_at": datetime.now(timezone.utc)}
+        return {"grievance_id": grievance_id, "status": new_status, "updated_at": datetime.now(timezone.utc)}
 
     monkeypatch.setattr("src.services.grievance_service.GrievanceService.update_status", fake_update_status)
 
+    grievance_id = "4740ce06-cada-44f2-97ea-5eeef7f3462e"
     response = client.patch(
-        "/api/v1/grievances/g-2/status",
+        f"/api/v1/grievances/{grievance_id}/status",
         json={"status": "IN_PROGRESS", "notes": "Team started work"},
     )
 
     assert response.status_code == 200
     body = response.json()
-    assert body["grievance_id"] == "g-2"
+    assert body["grievance_id"] == grievance_id
     assert body["status"] == "IN_PROGRESS"
 
 
@@ -126,18 +128,19 @@ def test_submit_feedback_endpoint(client, monkeypatch: pytest.MonkeyPatch) -> No
         comment: str | None = None,
         is_satisfied: bool | None = None,
     ):
-        return {"id": grievance_id, "updated_at": datetime.now(timezone.utc)}
+        return {"grievance_id": grievance_id, "rating": rating, "updated_at": datetime.now(timezone.utc)}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.add_feedback", fake_add_feedback)
 
+    grievance_id = "bd90f43e-fd19-44f2-97ea-5eeef7f3462e"
     response = client.post(
-        "/api/v1/grievances/g-3/feedback",
+        f"/api/v1/grievances/{grievance_id}/feedback",
         json={"rating": 5, "comment": "Resolved quickly", "is_satisfied": True},
     )
 
     assert response.status_code == 200
     body = response.json()
-    assert body["grievance_id"] == "g-3"
+    assert body["grievance_id"] == grievance_id
     assert body["rating"] == 5
 
 
@@ -150,13 +153,14 @@ def test_contest_endpoint_triggers_audit(client, monkeypatch: pytest.MonkeyPatch
         audit_id: str | None = None,
         audit_task_id: str | None = None,
     ):
-        return {"id": grievance_id, "status": "CONTESTED"}
+        return {"id": grievance_id, "status": "CONTESTED", "audit_id": audit_id or "audit-1", "audit_task_id": audit_task_id or "task-1"}
 
     monkeypatch.setattr("src.repositories.grievances.GrievanceRepository.mark_contested", fake_mark_contested)
     monkeypatch.setattr("src.api.v1.grievances.dispatch_task", lambda *args, **kwargs: "audit-task-1")
 
+    grievance_id = "4a426440-ea59-44f2-97ea-5eeef7f3462e"
     response = client.post(
-        "/api/v1/grievances/g-4/contest",
+        f"/api/v1/grievances/{grievance_id}/contest",
         json={"reason": "Issue is unresolved", "evidence_photo": "https://example.com/proof.jpg"},
     )
 
