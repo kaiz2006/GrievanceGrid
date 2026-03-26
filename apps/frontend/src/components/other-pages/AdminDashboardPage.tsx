@@ -44,10 +44,10 @@ const AdminDashboardPage = () => {
   }
 
   const metrics = [
-    { label: "New Grievances", value: data.summary.total_grievances.toString(), trend: "+12.5%", icon: TrendingUp, color: "text-blue-500 bg-blue-500/10" },
-    { label: "In Resolution", value: data.summary.pending.toString(), trend: "+5.2%", icon: Clock, color: "text-amber-500 bg-amber-500/10" },
-    { label: "Resolved Today", value: data.summary.resolved.toString(), trend: "+18.3%", icon: ShieldCheck, color: "text-green-500 bg-green-500/10" },
-    { label: "Average SLA", value: data.summary.avg_resolution_hours.toString() + "h", trend: "-1.5%", icon: Globe, color: "text-purple-500 bg-purple-500/10" },
+    { label: "New Grievances", value: (data?.summary?.total_grievances || 0).toString(), trend: "+12.5%", icon: TrendingUp, color: "text-blue-500 bg-blue-500/10" },
+    { label: "In Resolution", value: (data?.summary?.pending || 0).toString(), trend: "+5.2%", icon: Clock, color: "text-amber-500 bg-amber-500/10" },
+    { label: "Resolved Today", value: (data?.summary?.resolved || 0).toString(), trend: "+18.3%", icon: ShieldCheck, color: "text-green-500 bg-green-500/10" },
+    { label: "Average SLA", value: (data?.summary?.avg_resolution_hours || 0).toString() + "h", trend: "-1.5%", icon: Globe, color: "text-purple-500 bg-purple-500/10" },
   ];
 
   const actionQueue = [
