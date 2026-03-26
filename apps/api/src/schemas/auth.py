@@ -34,6 +34,7 @@ class BasicAuthRequest(BaseModel):
     
     email: EmailStr = Field(..., description="User email address")
     password: str = Field(..., min_length=8, description="User password")
+    role: str | None = Field(default=None, description="Requested role (for Dev Mode)")
 
 
 class RegisterRequest(BaseModel):

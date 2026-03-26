@@ -26,10 +26,12 @@ class RedisRateLimitMiddleware(BaseHTTPMiddleware):
         key = f"{settings.rate_limit_prefix}:{ip}:{window_bucket}"
 
         try:
+            import asyncio
             redis = get_redis_client()
-            current = await redis.incr(key)
+            # Use a strict 1-second timeout to avoid hanging the entire request
+            current = await asyncio.wait_for(redis.incr(key), timeout=1.0)
             if current == 1:
-                await redis.expire(key, window_seconds + 1)
+                await asyncio.wait_for(redis.expire(key, window_seconds + 1), timeout=1.0)
 
             if current > settings.rate_limit_requests_per_window:
                 retry_after = window_seconds
@@ -38,7 +40,7 @@ class RedisRateLimitMiddleware(BaseHTTPMiddleware):
                     content={"detail": "Rate limit exceeded. Please try again shortly."},
                     headers={"Retry-After": str(retry_after)},
                 )
-        except Exception as exc:
-            logger.warning("Rate limiter bypassed due to Redis error", extra={"error": str(exc)})
+        except (asyncio.TimeoutError, Exception) as exc:
+            logger.warning(f"Rate limiter bypassed (Redis Error/Timeout): {exc}")
 
         return await call_next(request)

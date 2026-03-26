@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
@@ -28,6 +28,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -82,8 +83,7 @@ const ProfilePage = () => {
 
   const handleLogout = async () => {
     await authService.logout();
-    localStorage.removeItem("userRole");
-    window.location.href = "/";
+    navigate("/");
   };
 
   if (loading) {

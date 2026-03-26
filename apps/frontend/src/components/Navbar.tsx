@@ -1,12 +1,26 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import Shuffle from "./Shuffle";
 
 const navLinks = ["Home", "Solutions", "Impact", "SLA Monitoring", "Resource Center"];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    const role = localStorage.getItem("userRole");
+    setIsLoggedIn(!!token);
+    setUserRole(role);
+  }, [location.pathname]);
+
+  const dashboardPath = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR")
+    ? "/admin/dashboard"
+    : "/my-grievances";
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
@@ -43,9 +57,16 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:block">
-          <Link to="/login" className="cta-button-primary text-xs px-6 py-3">
-            GET STARTED
-          </Link>
+          {isLoggedIn ? (
+            <Link to={dashboardPath} className="cta-button-primary text-xs px-6 py-3 gap-2">
+              <LayoutDashboard className="w-4 h-4" />
+              DASHBOARD
+            </Link>
+          ) : (
+            <Link to="/login" className="cta-button-primary text-xs px-6 py-3">
+              GET STARTED
+            </Link>
+          )}
         </div>
 
         <button
@@ -75,13 +96,24 @@ const Navbar = () => {
               </a>
             );
           })}
-          <Link 
-            to="/login" 
-            className="cta-button-primary text-xs px-6 py-3 w-full justify-center"
-            onClick={() => setMobileOpen(false)}
-          >
-            GET STARTED
-          </Link>
+          {isLoggedIn ? (
+            <Link 
+              to={dashboardPath} 
+              className="cta-button-primary text-xs px-6 py-3 w-full justify-center gap-2"
+              onClick={() => setMobileOpen(false)}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              DASHBOARD
+            </Link>
+          ) : (
+            <Link 
+              to="/login" 
+              className="cta-button-primary text-xs px-6 py-3 w-full justify-center"
+              onClick={() => setMobileOpen(false)}
+            >
+              GET STARTED
+            </Link>
+          )}
         </div>
       )}
     </nav>

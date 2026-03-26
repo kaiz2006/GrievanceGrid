@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { UserPlus, Mail, Lock, User, Chrome, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { UserPlus, Mail, Lock, User, Chrome, ArrowRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 import { authService } from "@/services/auth.service";
+import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ const RegisterPage = () => {
     role: "CITIZEN"
   });
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +27,49 @@ const RegisterPage = () => {
     try {
       const response = await authService.register(formData);
       console.log("[REGISTER SUCCESS]", response);
-      localStorage.setItem("auth_token", response.access_token);
-      window.location.href = "/dashboard";
+      
+      const userRole = response.user.role;
+      const target = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR") 
+        ? "/admin/dashboard" 
+        : "/my-grievances";
+      
+      navigate(target);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("[REGISTER ERROR]", error);
+      alert(error.message || "Registration failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    const firebaseAuth = auth;
+    if (!firebaseAuth) {
+      alert("Firebase configuration is missing.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await signInWithPopup(firebaseAuth, googleProvider);
+      const idToken = await result.user.getIdToken();
+
+      // Verify with backend
+      const response = await authService.googleLogin(idToken);
+      const userRole = response.user.role;
+
+      console.log("[GOOGLE SIGN-UP SUCCESS]", response.user.id, userRole);
+      const target = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR") 
+        ? "/admin/dashboard" 
+        : "/my-grievances";
+      
+      navigate(target);
+
+    } catch (error: any) {
+      console.error("[GOOGLE SIGN-UP ERROR]", error);
+      alert(error.message || "Failed to sign up with Google.");
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +103,12 @@ const RegisterPage = () => {
             </CardHeader>
             <CardContent className="grid gap-6">
               <div className="grid gap-2">
-                <Button variant="outline" className="h-12 border-white/10 bg-white/5 hover:bg-white/10 transition-all font-medium py-6" disabled={isLoading}>
+                <Button 
+                  variant="outline" 
+                  className="h-12 border-white/10 bg-white/5 hover:bg-white/10 transition-all font-medium py-6" 
+                  disabled={isLoading}
+                  onClick={handleGoogleSignUp}
+                >
                   <Chrome className="mr-2 h-5 w-5" />
                   Sign up with Google
                 </Button>

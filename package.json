@@ -8,7 +8,7 @@
     "install:api": "cd apps/api && npm run install:deps",
     "install:worker": "cd apps/worker && npm run install:deps",
     "install:ai": "cd ai-models && npm run install:deps",
-    "dev": "turbo run dev --filter=@grievancegrid/frontend",
+    "dev": "turbo run dev --filter=@grievancegrid/frontend --filter=@grievancegrid/api",
     "dev:lite": "turbo run dev --filter=@grievancegrid/frontend --filter=@grievancegrid/api",
     "dev:backend": "turbo run dev --filter=@grievancegrid/api --filter=@grievancegrid/worker --filter=@grievancegrid/database",
     "dev:full": "concurrently \"npm run dev:lite\" \"npm run dev:worker\" \"npm run dev:ai\"",

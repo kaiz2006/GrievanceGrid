@@ -28,27 +28,36 @@ const mockUser: User = {
   role: "CITIZEN",
 };
 
-const persistTokens = (accessToken?: string, refreshToken?: string): void => {
-  if (accessToken) {
-    localStorage.setItem("auth_token", accessToken);
+const persistAuthResponse = (response: AuthResponse): void => {
+  if (response.access_token) {
+    localStorage.setItem("auth_token", response.access_token);
   }
-  if (refreshToken) {
-    localStorage.setItem("refresh_token", refreshToken);
+  if (response.refresh_token) {
+    localStorage.setItem("refresh_token", response.refresh_token);
+  }
+  if (response.user) {
+    localStorage.setItem("userRole", response.user.role);
+    localStorage.setItem("userEmail", response.user.email);
+    localStorage.setItem("userName", response.user.name);
+    localStorage.setItem("userUid", response.user.id);
+    if (response.user.avatar_url) {
+      localStorage.setItem("userPhoto", response.user.avatar_url);
+    }
   }
 };
 
 export const authService = {
   // POST /auth/login - Login with email/password
-  login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password });
-    persistTokens(response.access_token, response.refresh_token);
+  login: async (email: string, password: string, role?: string): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password, role });
+    persistAuthResponse(response);
     return response;
   },
 
   // POST /auth/register - Register new user
   register: async (data: { email: string; password: string; name: string; phone?: string }): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>('/auth/register', { ...data });
-    persistTokens(response.access_token, response.refresh_token);
+    persistAuthResponse(response);
     return response;
   },
 
@@ -59,21 +68,27 @@ export const authService = {
 
   // POST /auth/logout - Logout user
   logout: async (): Promise<{ success: boolean }> => {
-    const response = await apiClient.post<{ success: boolean }>("/auth/logout", {});
-    // Clear token on logout
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("userUid");
-    localStorage.removeItem("userPhoto");
-    
-    // Sign out from Firebase
+    let response = { success: true };
     try {
-      if (auth) await signOut(auth);
-    } catch(e) {
-      console.error("Firebase signout error", e);
+      response = await apiClient.post<{ success: boolean }>("/auth/logout", {});
+    } catch (e) {
+      console.warn("Backend logout failed, proceeding with local cleanup", e);
+    } finally {
+      // ALWAYS clear local state
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("userUid");
+      localStorage.removeItem("userPhoto");
+      
+      // Sign out from Firebase
+      try {
+        if (auth) await signOut(auth);
+      } catch(e) {
+        console.error("Firebase signout error", e);
+      }
     }
     return response;
   },
@@ -81,14 +96,19 @@ export const authService = {
   // POST /auth/google - Google OAuth login
   googleLogin: async (idToken: string): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>('/auth/google', { id_token: idToken });
-    persistTokens(response.access_token, response.refresh_token);
+    persistAuthResponse(response);
     return response;
   },
 
   // POST /auth/refresh - Refresh JWT token
   refreshToken: async (): Promise<{ access_token: string; refresh_token: string; expires_in: number }> => {
     const response = await apiClient.post<{ access_token: string; refresh_token: string; expires_in: number }>('/auth/refresh', { refresh_token: localStorage.getItem('refresh_token') });
-    persistTokens(response.access_token, response.refresh_token);
+    if (response.access_token) {
+      localStorage.setItem("auth_token", response.access_token);
+    }
+    if (response.refresh_token) {
+      localStorage.setItem("refresh_token", response.refresh_token);
+    }
     return response;
   },
 

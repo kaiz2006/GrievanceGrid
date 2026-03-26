@@ -161,4 +161,4 @@ class SLARepository(BaseRepository):
             FROM sla_timers
             """
         )
-        return result or {"response_sla_met": None, "resolution_sla_met": None}
+        return result or {"response_sla_met": 0.0, "resolution_sla_met": 0.0}

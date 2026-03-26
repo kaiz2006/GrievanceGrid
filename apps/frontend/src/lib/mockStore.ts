@@ -40,6 +40,7 @@ export const getMockGrievances = (): GrievanceDetail[] => {
       id: "2",
       grid_id: "GRI-2026-000089",
       category: "WATER_SUPPLY",
+
       priority: "CRITICAL",
       status: "CREATED",
       title: "Major Pipe Burst",
@@ -93,6 +94,7 @@ export const getMockGrievances = (): GrievanceDetail[] => {
         response_sla: { deadline: new Date(Date.now() - 240000000).toISOString() },
         resolution_sla: { deadline: new Date(Date.now() - 100000000).toISOString() }
       }
+
     }
   ];
 

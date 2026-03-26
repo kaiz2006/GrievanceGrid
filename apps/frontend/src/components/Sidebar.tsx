@@ -42,8 +42,9 @@ import {
   Bot
 } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Shuffle from "./Shuffle";
+import { authService } from "@/services/auth.service";
 
 const menuItems = [
   // Admin prioritized items
@@ -96,6 +97,7 @@ const menuItems = [
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const currentRole = (localStorage.getItem("userRole") || "CITIZEN").toUpperCase();
 
   const filteredItems = menuItems.filter(item => 
@@ -185,12 +187,11 @@ const Sidebar = () => {
           })}
         </div>
 
-        {/* User / Footer Section */}
         <div className="p-4 mt-auto border-t border-white/5 space-y-2">
           <button 
-            onClick={() => {
-              localStorage.removeItem("userRole");
-              window.location.href = "/";
+            onClick={async () => {
+              await authService.logout();
+              navigate("/");
             }}
             className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-muted-foreground hover:text-red-500 hover:bg-red-500/5 transition-all group"
           >
