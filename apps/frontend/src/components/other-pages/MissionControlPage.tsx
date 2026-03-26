@@ -15,8 +15,11 @@ import {
   Filter,
   Camera,
   Search,
-  AlertCircle
+  AlertCircle,
+  Bot,
+  Sparkles
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import MapComponent from "../map/MapComponent";
 
 const auditStream = [
@@ -76,7 +79,10 @@ const MissionControlPage = () => {
                   <button className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                      <Search className="w-4 h-4 text-blue-500" />
                   </button>
-                  <button className="px-6 py-2 bg-gradient-to-br from-blue-400 to-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+                  <Link to="/admin/ai-assistant" className="px-6 py-2 bg-gradient-to-br from-blue-400 to-blue-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+                     AI Assistant
+                  </Link>
+                  <button className="px-6 py-2 bg-white/5 border border-white/10 text-white/40 text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-white/10 transition-all">
                      Issue Directive
                   </button>
                </div>

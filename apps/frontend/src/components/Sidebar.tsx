@@ -48,6 +48,7 @@ import Shuffle from "./Shuffle";
 const menuItems = [
   // Admin prioritized items
   { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["admin"] },
+  { icon: Bot, label: "AI Assistant", href: "/admin/ai-assistant", roles: ["admin"] },
   { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring", roles: ["admin"] },
   { icon: Cpu, label: "AI Audit", href: "/admin/ai-audit", roles: ["admin"] },
   { icon: Globe, label: "Transparency", href: "/admin/transparency", roles: ["admin"] },

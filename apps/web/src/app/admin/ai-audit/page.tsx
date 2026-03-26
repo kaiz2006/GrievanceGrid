@@ -15,8 +15,9 @@ export default function GeneratedPage() {
 </div>
 <nav className="flex items-center gap-8">
 <Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/mission-control">Dashboard</Link>
-<Link className="text-sm font-medium text-plum" href="/admin/forensic-audit">AI Audit</Link>
-<Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/settings">Settings</Link>
+<Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/ai-assistant">AI Assistant</Link>
+<Link className="text-sm font-medium text-plum font-bold" href="/admin/ai-audit">AI Audit</Link>
+<Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/forensic-audit">Forensic</Link>
 <div className="w-9 h-9 rounded-md shadow-sm border border-slate-200 bg-center bg-cover" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuCzcL1fvZRL9PfxS1VAJL5hQWqfAY2H7109UHdDYLmNINzLu_hC9eD0y8dtDE5Newe2VHw2Ib-0I40I30CcKsn1MF-fo8fj4bvW0cdJOYAy3YB-0UxpCQz_kQ_-EopX069MLDxdFz121veDh6Dzjc30qvIeJhpH4TqxOvgWXfER3DAU_o-n8U71wYx5jA0Tbuc86PzOrBvTgBHhLMSxxUPKITTnhOw0EvCxcu3c3I1ZbcVR4tWh-XiMHENSM2WFuDfxYUdNDFXfLXMc\')' }}></div>
 </nav>
 </header>

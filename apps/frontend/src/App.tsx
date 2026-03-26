@@ -46,6 +46,7 @@ import AIAssistantPage from "./components/other-pages/AIAssistantPage";
 // New officer workflow pages
 import FieldVerificationPage from "./components/other-pages/FieldVerificationPage";
 import OfficerWorkflowPage from "./components/other-pages/OfficerWorkflowPage";
+import AdminAIAssistantPage from "./components/other-pages/AdminAIAssistantPage";
 import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
@@ -89,6 +90,7 @@ const App = () => (
             <Route path="/admin/audit-history" element={<AuditHistoryPage />} />
             <Route path="/admin/similar-cases" element={<SimilarCasesPage />} />
             <Route path="/admin/pending-audits" element={<PendingAuditsPage />} />
+            <Route path="/admin/ai-assistant" element={<AdminAIAssistantPage />} />
             {/* Citizen-facing pages */}
             <Route path="/my-grievances" element={<MyGrievancesPage />} />
             <Route path="/feedback/:grievanceId" element={<FeedbackPage />} />

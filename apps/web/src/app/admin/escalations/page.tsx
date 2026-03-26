@@ -15,9 +15,10 @@ export default function GeneratedPage() {
 </div>
 <div className="flex flex-1 justify-end gap-8 items-center">
 <div className="flex items-center gap-6 text-sm font-medium">
-<Link className="text-[var(--text-main)] hover:text-[var(--primary-plum)] transition-colors border-b-2 border-[var(--primary-plum)] pb-1" href="#">Inbox</Link>
-<Link className="text-[var(--text-muted)] hover:text-[var(--primary-plum)] transition-colors" href="#">Archive</Link>
-<Link className="text-[var(--text-muted)] hover:text-[var(--primary-plum)] transition-colors" href="/admin/settings">Settings</Link>
+<Link className="text-[var(--text-muted)] hover:text-[var(--primary-plum)] transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-[var(--text-main)] hover:text-[var(--primary-plum)] transition-colors border-b-2 border-[var(--primary-plum)] pb-1" href="/admin/ai-assistant">AI Assistant</Link>
+<Link className="text-[var(--text-muted)] hover:text-[var(--primary-plum)] transition-colors" href="/admin/analytics">Reports</Link>
+<Link className="text-[var(--text-muted)] hover:text-[var(--primary-plum)] transition-colors" href="/admin/escalations">SLA</Link>
 </div>
 <Link href="/admin/mission-control" className="flex items-center justify-center bg-white text-[var(--primary-plum)] border border-[var(--primary-plum)] px-4 py-2 text-sm font-semibold rounded hover:bg-[var(--primary-plum)] hover:text-white transition-colors">
                         CRISIS MAP

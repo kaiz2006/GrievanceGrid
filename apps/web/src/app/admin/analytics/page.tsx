@@ -19,9 +19,10 @@ export default function GeneratedPage() {
 </div>
 <div className="flex flex-1 justify-end gap-6 items-center">
 <div className="flex items-center gap-6 hidden md:flex">
-<Link className="text-text-main text-sm font-medium hover:text-primary transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/mission-control">Dashboard</Link>
+<Link className="text-text-main text-sm font-medium hover:text-primary transition-colors" href="/admin/ai-assistant">AI Assistant</Link>
 <Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/analytics">Reports</Link>
-<Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/settings">Settings</Link>
+<Link className="text-text-muted text-sm font-medium hover:text-text-main transition-colors" href="/admin/escalations">SLA</Link>
 </div>
 <div className="bg-gray-200 border border-border rounded-full bg-center bg-no-repeat aspect-square bg-cover size-10" data-alt="User avatar placeholder image" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkxhiXh4a865sTADhmyGLQu7eYfdelrqKzB7sFiX1TjrVrXAqIy_mwITEp5-RhOBtmmvwL0adOu8nGyhkZP30mpyzqpj0TtVegWZ-e9H254Q-x2j0Bxh7UGlxKfUX4YlujdSt403dppQQa-vHzYnpz2e2qDReX_3xZ5sP9Kzc4Rz9ufNsl57Vi_W2OfpNdpkoFHg8a2fnZLQ14oVN3Y1TEuYTwykEq9pdV837FkFAHPf_mTIo2o5-PGqqEM69ylIKVckbNCOQanwp9')` }}></div>
 </div>

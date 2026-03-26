@@ -26,11 +26,14 @@ export default function GeneratedPage() {
                 <Link className="hover:text-plum transition-colors" href="/admin/mission-control">
                   Dashboard
                 </Link>
-                <Link className="hover:text-plum transition-colors" href="#">
-                  Hotspots
+                <Link className="hover:text-plum transition-colors" href="/admin/ai-assistant">
+                  AI Assistant
                 </Link>
-                <Link className="hover:text-plum transition-colors" href="#">
-                  Evidence Log
+                <Link className="text-plum font-bold" href="/admin/forensic-audit">
+                  Forensic
+                </Link>
+                <Link className="hover:text-plum transition-colors" href="/admin/analytics">
+                  Reports
                 </Link>
               </nav>
               <Link href="/admin/forensic-audit" className="flex items-center justify-center bg-plum text-white text-sm font-medium h-10 px-6 rounded-md shadow-button hover:bg-opacity-90 transition-all">

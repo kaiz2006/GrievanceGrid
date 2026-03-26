@@ -13,8 +13,11 @@ import {
   Filter,
   BarChart3,
   Map as MapIcon,
-  MessageSquare
+  MessageSquare,
+  Bot,
+  Sparkles
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { adminService } from "@/services/admin.service";
 import Shuffle from "../Shuffle";
 import MapComponent from "../map/MapComponent";

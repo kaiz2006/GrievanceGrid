@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
@@ -55,8 +55,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Global Floating AI Assistant Widget - Only for Citizens */}
-        {localStorage.getItem("userRole") === "citizen" && location.pathname !== "/ai-assistant" && (
+        {/* Global Floating AI Assistant Widget - For Citizens & Admins */}
+        {(localStorage.getItem("userRole") === "citizen" || localStorage.getItem("userRole") === "admin") && 
+         location.pathname !== "/ai-assistant" && 
+         location.pathname !== "/admin/ai-assistant" && (
           <motion.div 
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -72,7 +74,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             >
               <div className="flex items-start gap-2">
                 <Sparkles className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-                <span>I can help you in writing your issues / complaints instantly!</span>
+                <span>
+                  {localStorage.getItem("userRole") === "admin" 
+                    ? "Strategic Core Online. Ready to analyze city grid diagnostics."
+                    : "I can help you in writing your issues / complaints instantly!"}
+                </span>
               </div>
             </motion.div>
             
@@ -81,10 +87,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               asChild
               className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-600 hover:bg-blue-500 shadow-[0_0_25px_rgba(37,99,235,0.5)] transition-all duration-300 hover:scale-110 flex items-center justify-center p-0 border border-blue-400/30 hover:shadow-[0_0_35px_rgba(37,99,235,0.7)]"
             >
-              <a href="/ai-assistant">
+              <Link to={localStorage.getItem("userRole") === "admin" ? "/admin/ai-assistant" : "/ai-assistant"}>
                 <Bot className="w-6 h-6 md:w-8 md:h-8 text-white relative z-10" />
                 <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
-              </a>
+              </Link>
             </Button>
           </motion.div>
         )}

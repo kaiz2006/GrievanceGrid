@@ -1,33 +1,43 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
+import { motion } from "framer-motion";
+import { Bot, Sparkles, Search } from "lucide-react";
 
 export default function GeneratedPage() {
   return (
     <>
 <div className="w-full min-h-screen bg-background font-display text-primary">
 
-<header className="flex flex-wrap gap-4 p-6 z-10 w-full shrink-0">
-<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
-<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Total Active</h2>
-<div className="flex justify-between items-end">
-<span className="text-3xl font-bold font-mono text-plum">14,285</span>
-<span className="text-sage font-bold text-sm">+12%</span>
-</div>
-</div>
-<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
-<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">SLA Compliance</h2>
-<div className="flex justify-between items-end">
-<span className="text-3xl font-bold font-mono text-plum">87.4%</span>
-<span className="text-red-400 font-bold text-sm">-2.1%</span>
-</div>
-</div>
-<div className="flex-1 min-w-[200px] reduced-industrial p-4 flex flex-col justify-between">
-<h2 className="text-sm font-medium uppercase tracking-wider mb-2 text-plum/70">Critical Clusters</h2>
-<div className="flex justify-between items-end">
-<span className="text-3xl font-bold font-mono text-plum">24</span>
-<span className="text-sage font-bold text-sm">+4</span>
-</div>
-</div>
+<header className="flex flex-wrap items-center justify-between p-6 z-10 w-full shrink-0 border-b border-plum/10 bg-white/50 backdrop-blur-md sticky top-0">
+  <div className="flex items-center gap-8">
+    <Link href="/admin/mission-control">
+      <h1 className="text-xl font-bold tracking-tighter text-plum flex items-center gap-2">
+        <div className="size-8 bg-plum text-white rounded flex items-center justify-center">
+          <span className="material-symbols-outlined text-sm">grid_view</span>
+        </div>
+        GrievanceGrid
+      </h1>
+    </Link>
+    <nav className="hidden md:flex items-center gap-6">
+      <Link className="text-sm font-bold text-plum border-b-2 border-plum pb-1" href="/admin/mission-control">Dashboard</Link>
+      <Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/ai-assistant">AI Assistant</Link>
+      <Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/analytics">Reports</Link>
+      <Link className="text-sm font-medium text-slate-500 hover:text-plum transition-colors" href="/admin/escalations">SLA</Link>
+    </nav>
+  </div>
+  
+  <div className="flex gap-4">
+    <div className="flex-1 min-w-[150px] reduced-industrial p-3 flex flex-col justify-between h-16">
+      <h2 className="text-[10px] font-bold uppercase tracking-wider text-plum/50">Total Active</h2>
+      <span className="text-xl font-bold font-mono text-plum">14,285</span>
+    </div>
+    <div className="flex-1 min-w-[150px] reduced-industrial p-3 flex flex-col justify-between h-16">
+      <h2 className="text-[10px] font-bold uppercase tracking-wider text-plum/50">SLA Compliance</h2>
+      <span className="text-xl font-bold font-mono text-plum">87.4%</span>
+    </div>
+  </div>
 </header>
 <main className="flex-1 flex overflow-hidden relative">
 <div className="absolute inset-0 z-0 bg-white grid-bg" data-alt="High-contrast light grey/white interactive map" style={{ backgroundImage: 'url(\'https://lh3.googleusercontent.com/aida-public/AB6AXuBkbeKEdriTCooN5ES2dwMLlrgitmBb_Qcfdt4I2rfj8loWjN3WHrHKa9K1Par4YJsCBai_1RXnoxJL3FWK7yRdA4tY8D5bw1ZacfeN_IhLbZEhYKHCgp-7sfVu1JfV7YjKm20qo3OAB3p2jfep2QHL2tioilWB4hTQnvNX6Wcn3EZkBfxM8ABeCqLHCMpMnJhQ8tIllWH4UDkuEgtRxVJtHjERmmBX9opI-WPAKjKIjLVoSEPxxbSqNzyOl3L7F8dPD0UAgZExxcbo\')', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'luminosity', opacity: '0.7' }}>
@@ -105,6 +115,39 @@ export default function GeneratedPage() {
 <span className="material-symbols-outlined text-plum font-light">my_location</span>
 </Link>
 </div>
+<div className="absolute bottom-6 right-6 z-50 flex flex-col items-end gap-3 group">
+  {/* Tooltip Bubble */}
+  <motion.div 
+    initial={{ opacity: 0, scale: 0.9, x: 20 }}
+    animate={{ opacity: 1, scale: 1, x: 0 }}
+    transition={{ delay: 1.5, duration: 0.5 }}
+    className="glass-card bg-[#0b0f19]/95 backdrop-blur-xl border border-plum/30 text-xs font-medium px-4 py-3 rounded-2xl rounded-br-sm shadow-[0_0_30px_rgba(56,29,42,0.15)] text-plum/80 max-w-[220px] pointer-events-none"
+  >
+    <div className="flex items-start gap-2 text-plum">
+      <Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+      <span>AI Assistant: Query grid status or operational reports.</span>
+    </div>
+  </motion.div>
+  
+  <Link href="/admin/ai-assistant">
+    <motion.button 
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-plum text-white shadow-[0_0_25px_rgba(56,29,42,0.4)] transition-all duration-300 flex items-center justify-center p-0 border border-plum/30 hover:shadow-[0_0_35px_rgba(56,29,42,0.6)] relative overflow-hidden"
+    >
+      <Bot className="w-7 h-7 md:w-8 md:h-8 relative z-10" />
+      <div className="absolute inset-0 bg-white/10 animate-pulse" />
+      <motion.div 
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-0 border-2 border-dashed border-white/20 rounded-full"
+      />
+    </motion.button>
+  </Link>
+</div>
+
 <div className="absolute bottom-6 right-6 z-10 w-96 reduced-industrial overflow-hidden bg-light-slate">
 <div className="bg-white px-3 py-2 flex justify-between items-center border-b border-plum/20">
 <span className="text-plum font-medium uppercase text-xs tracking-wider">AI Audit Stream</span>
@@ -119,7 +162,14 @@ export default function GeneratedPage() {
 <p className="text-yellow-700">&gt; [WARNING] Anomaly detected in Grid 4A.</p>
 <p className="text-red-700 font-bold">&gt; [ALERT] Hotspot critical in Sector Zeta.</p>
 <p className="opacity-80">&gt; [SYSTEM] Re-routing backup protocols.</p>
-<p>&gt; _</p>
+<div className="flex items-center gap-2 mt-2 pt-2 border-t border-plum/10">
+  <span className="text-plum font-bold">QUERY_ID:</span>
+  <input 
+     placeholder="Search ticket..."
+     className="bg-transparent border-none focus:ring-0 w-full text-[11px] p-0 placeholder:text-plum/30"
+  />
+  <Search className="w-3 h-3 text-plum/50 font-bold" />
+</div>
 </div>
 </div>
 </main>
