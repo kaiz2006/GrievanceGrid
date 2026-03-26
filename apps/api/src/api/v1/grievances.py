@@ -518,6 +518,25 @@ async def contest_grievance(
 		audit_task_id=audit_task_id,
 		message="Contestation received. AI audit initiated. You will be contacted within 24 hours.",
 	)
+	
+
+@router.post("/{grid_id}/simulate", status_code=202)
+async def trigger_simulation(
+	grid_id: str,
+	db: AsyncSession = Depends(get_db_session),
+) -> dict[str, str]:
+	"""Trigger a background worker to simulate the resolution lifecycle for a grievance."""
+	repo = GrievanceRepository(db)
+	grievance = await repo.get_by_grid_id(grid_id.upper())
+	if grievance is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+	
+	task_id = dispatch_task(
+		"src.tasks.simulation.simulate_grievance_lifecycle",
+		str(grievance["id"]),
+	)
+	
+	return {"message": "Simulation started", "task_id": task_id}
 
 
 

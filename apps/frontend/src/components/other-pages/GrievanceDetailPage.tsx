@@ -25,6 +25,7 @@ import MapComponent from "../map/MapComponent";
 import { calculateDistance } from "@/utils/geo.utils";
 import { toast } from "sonner";
 import DepartmentAssignment from "./DepartmentAssignment";
+import GrievanceSLA from "@/components/GrievanceSLA";
 
 interface SimilarCase {
   id: string;
@@ -275,7 +276,7 @@ const GrievanceDetailPage = () => {
               </div>
 
               {/* Resolution Hub */}
-              <div className="p-8 rounded-[2.5rem] bg-card border border-border shadow-[0_20px_60px_rgba(0,0,0,0.5)] border-blue-500/10">
+              <div className="p-8 rounded-[2.5rem] bg-card border shadow-[0_20px_60px_rgba(0,0,0,0.5)] border-blue-500/10">
                 <div className="flex items-center gap-3 mb-8">
                   <ShieldCheck className="w-5 h-5 text-blue-500" />
                   <h3 className="text-xl font-bold">Officer Hub</h3>
@@ -283,11 +284,7 @@ const GrievanceDetailPage = () => {
                 
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-[0.2em] ml-1">Resolution Status</Label>
-                    <div className="p-4 rounded-2xl bg-blue-600 text-white font-bold flex items-center gap-3">
-                      <Clock className="w-5 h-5" />
-                      <span>SLA: {mockGrievance.details.slaRemaining}</span>
-                    </div>
+                    <GrievanceSLA createdAt={data.created_at || new Date().toISOString()} />
                   </div>
 
                   {/* Department Assignment */}

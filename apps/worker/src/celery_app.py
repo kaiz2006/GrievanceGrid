@@ -14,6 +14,7 @@ celery_app = Celery(
         "src.tasks.clustering",
         "src.tasks.maintenance",
         "src.tasks.notifications",
+        "src.tasks.simulation",
         "src.schedulers.sla_monitor",
         "src.schedulers.report_generator",
     ],

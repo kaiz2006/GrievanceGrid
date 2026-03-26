@@ -8,7 +8,6 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
 import ComparisonSection from "@/components/ComparisonSection";
 import FAQSection from "@/components/FAQSection";
-import CTASection from "@/components/CTASection";
 
 const Index = () => {
   return (
@@ -23,7 +22,6 @@ const Index = () => {
       <div id="pricing"><PricingSection /></div>
       <ComparisonSection />
       <div id="resources"><FAQSection /></div>
-      <CTASection />
     </>
   );
 };

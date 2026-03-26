@@ -25,6 +25,8 @@ const VoiceSubmitPage = () => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [language, setLanguage] = useState("hi");
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,6 +46,27 @@ const VoiceSubmitPage = () => {
     { code: "pa", name: "Punjabi" },
     { code: "en", name: "English" },
   ];
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation not supported");
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setIsLocating(false);
+      },
+      (err) => {
+        setIsLocating(false);
+        setLocationError("Location access denied. Please enable GPS.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const startRecording = async () => {
     try {
@@ -69,12 +92,9 @@ const VoiceSubmitPage = () => {
         setRecordingTime((prev) => prev + 1);
       }, 1000);
 
-      // Get location
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-          () => console.log("Location access denied")
-        );
+      // Get location if not already available
+      if (!location) {
+        handleGetLocation();
       }
     } catch (err) {
       console.error("Error accessing microphone:", err);
@@ -271,12 +291,40 @@ const VoiceSubmitPage = () => {
                 </div>
 
                 {/* Location Status */}
-                {location && (
-                  <div className="mt-4 flex items-center gap-2 text-xs text-green-500">
-                    <MapPin className="w-3 h-3" />
-                    Location captured
-                  </div>
-                )}
+                <div className="mt-6 flex flex-col items-center gap-3">
+                  {location ? (
+                    <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-4 py-2 rounded-full text-xs text-green-500 font-bold uppercase tracking-widest">
+                      <MapPin className="w-3.5 h-3.5" />
+                      GPS Locked: {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+                      <button 
+                        onClick={handleGetLocation} 
+                        className="ml-2 hover:bg-green-500/20 p-1 rounded-full transition-colors"
+                        disabled={isLocating}
+                      >
+                        <Loader2 className={`w-3 h-3 ${isLocating ? 'animate-spin' : ''}`} />
+                      </button>
+                    </div>
+                  ) : locationError ? (
+                    <div className="flex flex-col items-center gap-2">
+                       <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-2 rounded-full text-xs text-red-500 font-bold uppercase tracking-widest">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {locationError}
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={handleGetLocation} className="text-purple-500 hover:text-purple-400">
+                        Retry Location Access
+                      </Button>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={handleGetLocation}
+                      disabled={isLocating}
+                      className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-full text-xs text-muted-foreground transition-all"
+                    >
+                      <MapPin className={`w-3.5 h-3.5 ${isLocating ? 'animate-bounce' : ''}`} />
+                      {isLocating ? "Acquiring GPS..." : "Capturing Location..."}
+                    </button>
+                  )}
+                </div>
               </>
             ) : (
               /* Playback Interface */

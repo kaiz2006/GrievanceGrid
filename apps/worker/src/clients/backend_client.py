@@ -86,3 +86,8 @@ class BackendClient:
     def post_sla_escalation(self, grievance_id: str) -> bool:
         """Trigger SLA escalation for a grievance."""
         return self._post(f"/api/v1/sla/escalate/{grievance_id}", {}, use_internal_auth=True)
+
+    def update_grievance_status(self, grievance_id: str, status: str, notes: str | None = None) -> bool:
+        """Force update a grievance status from the worker."""
+        payload = {"status": status, "notes": notes}
+        return self._post(f"/api/v1/grievances/{grievance_id}/status", payload, use_internal_auth=True)

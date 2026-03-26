@@ -7,6 +7,8 @@ from uuid import uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.grievances import GrievanceRepository
+from src.core.redis_client import get_redis_client
+import json
 
 
 class GrievanceService:
@@ -90,7 +92,22 @@ class GrievanceService:
         if not self.validate_status_transition(current_status, new_status):
             raise ValueError(self.transition_error_message(current_status, new_status))
 
-        return await self.repo.update_status(grievance_id=grievance_id, status=new_status, notes=notes)
+        updated = await self.repo.update_status(grievance_id=grievance_id, status=new_status, notes=notes)
+        
+        # Broadcast via Redis PubSub for real-time WebSocket updates
+        if updated:
+            redis = get_redis_client()
+            channel = f"grievance:{grievance_id}:updates"
+            await redis.publish(channel, json.dumps({
+                "type": "status_update",
+                "grievance_id": grievance_id,
+                "grid_id": updated.get("grid_id"),
+                "status": new_status,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "notes": notes
+            }))
+            
+        return updated
 
     async def delete_grievance(self, grievance_id: str) -> bool:
         return await self.repo.delete_grievance(grievance_id)

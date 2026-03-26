@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { grievanceService } from "@/services/grievance.service";
 import { analyticsService } from "@/services/analytics.service";
+import GrievanceSLA from "@/components/GrievanceSLA";
 import { DashboardAnalytics } from "@/types/analytics";
 
 const OfficerDashboardPage = () => {
@@ -281,11 +282,18 @@ const OfficerDashboardPage = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-indigo-400 mr-4">
-                                Open Record
+                        <div className="flex flex-col items-end gap-3 shrink-0">
+                            {g.status !== "RESOLVED" && (
+                              <div className="w-56 scale-90 origin-right">
+                                <GrievanceSLA createdAt={g.created_at} />
+                              </div>
+                            )}
+                            <div className="flex items-center gap-4">
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-indigo-400 mr-4">
+                                    Open Record
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                             </div>
-                            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                         </div>
                       </Link>
                     ))}

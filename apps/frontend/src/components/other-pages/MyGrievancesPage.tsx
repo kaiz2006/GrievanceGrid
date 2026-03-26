@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { grievanceService } from "@/services/grievance.service";
+import GrievanceSLA from "@/components/GrievanceSLA";
 
 interface Grievance {
   id: string;
@@ -330,9 +331,14 @@ const MyGrievancesPage = () => {
                             </div>
                           </div>
 
-                          {/* Action Hub */}
-                          <div className="flex flex-row lg:flex-col items-center gap-4 shrink-0">
-                            {grievance.can_feedback && (
+                           {/* Action Hub */}
+                          <div className="flex flex-col lg:w-72 gap-6 shrink-0">
+                            {grievance.status !== "RESOLVED" && (
+                              <GrievanceSLA createdAt={grievance.created_at} />
+                            )}
+                            
+                            <div className="flex flex-row lg:flex-col items-center gap-4">
+                              {grievance.can_feedback && (
                               <Button
                                 variant="outline"
                                 className="w-full h-14 px-8 border-emerald-500/30 bg-emerald-500/5 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all glow-crew"
@@ -366,10 +372,11 @@ const MyGrievancesPage = () => {
                                 <ArrowRight className="w-4 h-4 animate-bounce-x" />
                               </Link>
                             </Button>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
-                    </Card>
+                      </Card>
                   </motion.div>
                 );
               })

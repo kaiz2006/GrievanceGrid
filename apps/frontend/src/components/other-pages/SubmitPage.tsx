@@ -27,6 +27,7 @@ import { grievanceService } from "@/services/grievance.service";
 import { voiceService } from "@/services/voice.service";
 import { mediaService } from "@/services/media.service";
 import MapComponent from "../map/MapComponent";
+import GrievanceSLA from "@/components/GrievanceSLA";
 
 
 const steps = [
@@ -59,12 +60,59 @@ const SubmitPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const [locationType, setLocationType] = useState("current");
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<any>(null);
   const [locationSelected, setLocationSelected] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setFormData(prev => ({
+          ...prev,
+          location: { 
+            ...prev.location, 
+            latitude, 
+            longitude, 
+            address: `Current Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}` 
+          }
+        }));
+        setLocationSelected(true);
+        setIsLocating(false);
+      },
+      (error) => {
+        setIsLocating(false);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError("Location access denied. Please enable GPS and allow permissions.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Request to get user location timed out.");
+            break;
+          default:
+            setLocationError("An unknown error occurred.");
+            break;
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleMapClick = (lat: number, lng: number) => {
     setFormData(prev => ({
@@ -176,6 +224,8 @@ const SubmitPage = () => {
             </div>
           </div>
 
+          <GrievanceSLA createdAt={submittedData.created_at || new Date().toISOString()} />
+
           <div className="flex flex-col gap-4">
             <Button 
               className="cta-button-primary h-14 w-full text-base bg-blue-600 hover:bg-blue-500"
@@ -254,7 +304,10 @@ const SubmitPage = () => {
                   >
                     <div className="space-y-4">
                       <Label className="text-lg font-bold">Where is the issue located?</Label>
-                      <Tabs defaultValue="current" className="w-full" onValueChange={setLocationType}>
+                      <Tabs defaultValue="current" className="w-full" onValueChange={(val) => {
+                        setLocationType(val);
+                        if (val === "current") handleGetLocation();
+                      }}>
                         <TabsList className="grid grid-cols-2 bg-white/5 border border-white/10 h-14 p-1 rounded-2xl">
                           <TabsTrigger value="current" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-white/5 data-[state=inactive]:hover:bg-white/10 h-full transition-all">
                             Current Location
@@ -267,6 +320,12 @@ const SubmitPage = () => {
                     </div>
 
                     <div className="rounded-3xl border border-white/10 overflow-hidden relative group shadow-2xl">
+                      {isLocating && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-[1001] flex flex-col items-center justify-center gap-4">
+                          <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                          <p className="text-white font-bold animate-pulse">Fetching GPS Location...</p>
+                        </div>
+                      )}
                       <MapComponent 
                         center={[formData.location.latitude, formData.location.longitude]} 
                         zoom={15}
@@ -279,12 +338,30 @@ const SubmitPage = () => {
                       />
                       <div className="absolute bottom-4 left-4 z-[1000] bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                         <p className="text-xs font-mono text-blue-400">
-                          {locationSelected ? `LAT: ${formData.location.latitude.toFixed(6)} | LNG: ${formData.location.longitude.toFixed(6)}` : "Please click on the map to set location"}
+                          {locationSelected ? `LAT: ${formData.location.latitude.toFixed(6)} | LNG: ${formData.location.longitude.toFixed(6)}` : "Please click on the map or use GPS to set location"}
                         </p>
                       </div>
+                      {locationType === "current" && (
+                        <button
+                          type="button"
+                          onClick={handleGetLocation}
+                          className="absolute top-4 right-4 z-[1000] bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-full shadow-lg border border-blue-400/30 group transition-all"
+                        >
+                          <MapPin className={`w-5 h-5 ${isLocating ? 'animate-bounce' : ''}`} />
+                          <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            Refresh GPS
+                          </span>
+                        </button>
+                      )}
                     </div>
-                    {!locationSelected && (
-                      <p className="text-xs text-red-500 font-medium">Please mark the location on the map to continue.</p>
+                    {locationError && (
+                      <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+                        <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                        <p className="text-sm text-red-500 font-medium">{locationError}</p>
+                      </div>
+                    )}
+                    {!locationSelected && !isLocating && (
+                      <p className="text-xs text-red-500 font-medium">Please mark the location on the map or fetch GPS to continue.</p>
                     )}
                   </motion.div>
                 )}

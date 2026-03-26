@@ -31,6 +31,7 @@ const FieldVerificationPage = () => {
   const [afterPhoto, setAfterPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [verified, setVerified] = useState(false);
@@ -49,23 +50,31 @@ const FieldVerificationPage = () => {
       setLoading(false);
     };
     fetchData();
-
-    // Get current location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          setLocationError("");
-        },
-        (err) => {
-          setLocationError("Location access required for verification. Please enable GPS.");
-        },
-        { enableHighAccuracy: true }
-      );
-    } else {
-      setLocationError("Geolocation not supported by your browser.");
-    }
+    refreshLocation();
   }, [grievanceId]);
+
+  const refreshLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation not supported by your browser.");
+      return;
+    }
+
+    setIsLocating(true);
+    setLocationError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setIsLocating(false);
+        setLocationError("");
+      },
+      (err) => {
+        setIsLocating(false);
+        setLocationError("Location access required for verification. Please enable GPS.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -228,11 +237,20 @@ const FieldVerificationPage = () => {
 
               {/* Location Status */}
               <Card className={`glass-card border-white/5 ${locationError ? "bg-red-500/5 border-red-500/20" : "bg-white/[0.02]"}`}>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="flex items-center gap-3">
-                    <Crosshair className={`w-5 h-5 ${locationError ? "text-red-500" : "text-green-500"}`} />
+                    <Crosshair className={`w-5 h-5 ${locationError ? "text-red-500" : "text-green-500"} ${isLocating ? "animate-spin" : ""}`} />
                     Current Location
                   </CardTitle>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={refreshLocation}
+                    disabled={isLocating}
+                    className="h-8 w-8 rounded-full hover:bg-white/10"
+                  >
+                    <Loader2 className={`w-4 h-4 ${isLocating ? "animate-spin" : ""}`} />
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   {locationError ? (
@@ -329,6 +347,18 @@ const FieldVerificationPage = () => {
                       className="bg-white/5 border-white/10 min-h-[100px] resize-none"
                     />
                   </div>
+
+                  {/* Audit Failure Button */}
+                  <button 
+                    disabled={!isWithinRange}
+                    className={`w-full py-4 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all ${
+                      isWithinRange 
+                        ? "bg-blue-600 text-white hover:scale-105" 
+                        : "bg-white/[0.05] border border-white/5 text-muted-foreground/40"
+                    }`}
+                  >
+                    Verify & Audit Failure
+                  </button>
 
                   {/* Submit Button */}
                   <Button
