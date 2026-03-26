@@ -24,6 +24,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "OFFICER",
   "ADMIN",
   "AUDITOR",
+  "DEPT_HEAD",
 ]);
 
 export const grievanceStatusEnum = pgEnum("grievance_status", [
@@ -59,7 +60,7 @@ export const priorityEnum = pgEnum("priority", [
   "CRITICAL",
 ]);
 
-export const authTypeEnum = pgEnum("auth_type", ["GOOGLE", "BASIC"]);
+export const authTypeEnum = pgEnum("auth_type", ["GOOGLE", "BASIC", "GOOGLE_OAUTH", "JWT"]);
 
 export const slaTypeEnum = pgEnum("sla_type", ["RESPONSE", "RESOLUTION"]);
 

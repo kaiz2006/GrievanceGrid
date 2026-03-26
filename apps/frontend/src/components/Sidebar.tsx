@@ -116,16 +116,16 @@ const Sidebar = () => {
       {/* Interaction Ball / Collapse Toggle */}
       <button 
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-10 w-6 h-6 bg-blue-600 rounded-full items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all z-[60]"
+        className="absolute -right-3 top-10 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-110 active:scale-95 transition-all z-[60]"
       >
-        {collapsed ? <ChevronRight className="w-4 h-4 text-white" /> : <ChevronLeft className="w-4 h-4 text-white" />}
+        {collapsed ? <ChevronRight className="w-3 h-3 text-white" /> : <ChevronLeft className="w-3 h-3 text-white" />}
       </button>
 
       <div className="w-full h-full flex flex-col overflow-hidden">
         <div className="h-24 flex items-center px-6 mb-4">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
-              <Zap className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.4)] overflow-hidden">
+              <img src="/logo.jpeg" className="w-full h-full object-cover" alt="Logo" />
             </div>
             <motion.div 
               animate={{ 

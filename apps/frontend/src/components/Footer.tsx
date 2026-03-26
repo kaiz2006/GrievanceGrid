@@ -1,4 +1,4 @@
-import { ShieldCheck, Twitter, Instagram, Linkedin, Github } from "lucide-react";
+import { Twitter, Instagram, Linkedin, Github } from "lucide-react";
 
 const footerLinks = {
   Product: ["Features", "Pricing", "Integrations", "Changelog"],
@@ -13,10 +13,8 @@ const Footer = () => {
         <div className="glass-card p-12 md:p-20 rounded-[3rem] border-white/5 bg-card/40 backdrop-blur-2xl">
           <div className="grid md:grid-cols-12 gap-16 mb-20">
             <div className="md:col-span-5">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/20">
-                  <ShieldCheck className="w-6 h-6 text-primary" />
-                </div>
+              <div className="flex items-center gap-4 mb-8">
+                <img src="/logo.jpeg" className="w-12 h-12 object-contain rounded-2xl border border-white/10" alt="GrievanceGrid Logo" />
                 <span className="text-2xl font-display font-bold text-foreground tracking-tight">GrievanceGrid</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mb-10">
