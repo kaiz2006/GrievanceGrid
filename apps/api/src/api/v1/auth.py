@@ -105,12 +105,11 @@ async def register(
     # FALLBACK: If DB is unreachable
     if not user or not user.get("id"):
         from uuid import uuid4
-        is_admin = request.email and "admin" in request.email.lower()
         user = {
             "id": f"mock-{uuid4()}",
             "email": request.email,
             "name": request.name,
-            "role": "ADMIN" if is_admin else "CITIZEN",
+            "role": "CITIZEN",
             "is_active": True,
             "created_at": datetime.now(timezone.utc),
             "department_id": None
@@ -144,14 +143,11 @@ async def login(
     if not user:
         if hasattr(db_session, "execute") and "MockResult" in str(await db_session.execute("SELECT 1")):
              from uuid import uuid4
-             # Respect the role passed from the login page if provided
-             provided_role = request.role.upper() if getattr(request, 'role', None) else None
-             is_admin = (request.email and "admin" in request.email.lower()) or provided_role == "ADMIN"
              user = {
                 "id": f"mock-{uuid4()}",
                 "email": request.email,
                 "name": "Dev User",
-                "role": "ADMIN" if is_admin else (provided_role or "CITIZEN"),
+                "role": "CITIZEN",
                 "is_active": True,
                 "created_at": datetime.now(timezone.utc),
                 "department_id": None
@@ -209,12 +205,11 @@ async def google_oauth(
     # FALLBACK: If DB is unreachable (MockSession returned empty), provide a Dev User
     if not user or not user.get("id"):
         from uuid import uuid4
-        is_admin = email and "admin" in email.lower()
         user = {
             "id": f"mock-{uuid4()}",
             "email": email or "dev@example.com",
             "name": google_user.get("name", "GrievanceGrid Developer"),
-            "role": "ADMIN" if is_admin else "CITIZEN",
+            "role": "CITIZEN",
             "is_active": True,
             "created_at": datetime.now(timezone.utc),
             "department_id": None

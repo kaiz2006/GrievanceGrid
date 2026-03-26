@@ -34,8 +34,6 @@ if settings.object_storage_provider.lower() == "local":
         name="object-storage",
     )
 
-app.add_middleware(RedisRateLimitMiddleware)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -43,6 +41,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(RedisRateLimitMiddleware)
 
 @app.get("/health")
 async def health_check():

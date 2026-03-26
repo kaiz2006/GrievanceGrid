@@ -10,6 +10,7 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { fileURLToPath } from "url";
+import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
@@ -188,6 +189,15 @@ function asLng(v: number): string {
 
 function asDec(v: number, digits = 2): string {
   return v.toFixed(digits);
+}
+
+function passwordFromEmail(email: string): string {
+  return email.split("@")[0] ?? "changeme";
+}
+
+function hashPasswordForSeed(plainText: string): string {
+  // Keep seed generation fast while still producing valid bcrypt hashes.
+  return bcrypt.hashSync(plainText, 4);
 }
 
 async function seed(): Promise<void> {
@@ -419,14 +429,16 @@ async function seed(): Promise<void> {
 
   function pushUsers(role: UserRole, count: number, prefix: string): void {
     for (let i = 1; i <= count; i += 1) {
+      const email = `${prefix}${i}@example.com`;
+      const plainTextPassword = passwordFromEmail(email);
       userSeed.push({
-        email: `${prefix}${i}@grievancegrid.local`,
+        email,
         name: `${role.toLowerCase()}_${i}`,
         role,
         auth_type: "BASIC",
-        password_hash: "$2b$10$hackathonplaceholderhashxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        password_hash: hashPasswordForSeed(plainTextPassword),
         phone: `+91-9${String(randomInt(rnd, 100000000, 999999999))}`,
-        is_active: rnd() > 0.01,
+        is_active: i === 1 ? true : rnd() > 0.01,
       });
     }
   }

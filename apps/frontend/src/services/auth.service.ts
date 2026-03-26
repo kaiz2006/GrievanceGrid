@@ -48,8 +48,8 @@ const persistAuthResponse = (response: AuthResponse): void => {
 
 export const authService = {
   // POST /auth/login - Login with email/password
-  login: async (email: string, password: string, role?: string): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password, role });
+  login: async (email: string, password: string): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>('/auth/login', { email, password });
     persistAuthResponse(response);
     return response;
   },

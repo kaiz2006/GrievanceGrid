@@ -367,13 +367,23 @@ const AIAssistantPage = () => {
                          </button>
                       </form>
                     ) : (
-                      <button
+                      <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => {
                           setCurrentSessionId(session.id);
                           if (window.innerWidth < 1024) setIsSidebarOpen(false);
                           setActiveDropdown(null);
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between transition-all duration-300 ${
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setCurrentSessionId(session.id);
+                            if (window.innerWidth < 1024) setIsSidebarOpen(false);
+                            setActiveDropdown(null);
+                          }
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between transition-all duration-300 cursor-pointer ${
                           currentSessionId === session.id 
                             ? 'bg-blue-600/15 text-blue-300 border border-blue-500/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]' 
                             : 'text-muted-foreground hover:bg-white/[0.08] hover:text-foreground'
@@ -395,7 +405,7 @@ const AIAssistantPage = () => {
                             <MoreVertical className="w-4 h-4" />
                           </button>
                         </div>
-                      </button>
+                      </div>
                     )}
 
                     {/* Custom 3-dots Dropdown Menu built with explicit React logic */}

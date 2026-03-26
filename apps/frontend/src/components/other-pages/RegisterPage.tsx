@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { UserPlus, Mail, Lock, User, Chrome, ArrowRight, X, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { UserPlus, Mail, Lock, User, Chrome, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,8 +14,7 @@ const RegisterPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "",
-    role: "CITIZEN"
+    password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();

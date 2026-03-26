@@ -33,8 +33,7 @@ class BasicAuthRequest(BaseModel):
     """Basic authentication credentials."""
     
     email: EmailStr = Field(..., description="User email address")
-    password: str = Field(..., min_length=8, description="User password")
-    role: str | None = Field(default=None, description="Requested role (for Dev Mode)")
+    password: str = Field(..., min_length=1, description="User password")
 
 
 class RegisterRequest(BaseModel):
@@ -43,7 +42,6 @@ class RegisterRequest(BaseModel):
     email: EmailStr = Field(..., description="User email address")
     password: str = Field(..., min_length=8, description="User password")
     name: str = Field(..., min_length=2, description="User full name")
-    role: RoleEnum | None = Field(default=RoleEnum.CITIZEN, description="Optional user role")
 
 
 

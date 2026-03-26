@@ -17,6 +17,8 @@
     "db:setup": "npm run db:generate && npm run db:push && npm run db:seed"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.45.1",
     "pg": "^8.11.0",
     "postgres": "^3.4.3",
