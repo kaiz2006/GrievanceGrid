@@ -220,17 +220,100 @@ async def create_grievance(
 	)
 
 
-@router.get("/{grievance_id:uuid}", response_model=GrievanceDetailsResponse)
+
+# =============================================================================
+# MY GRIEVANCES ENDPOINT
+# =============================================================================
+
+class MyGrievanceItem(BaseModel):
+	id: str
+	grid_id: str
+	title: str
+	category: str
+	status: str
+	priority: str
+	description: str
+	location_address: str | None = None
+	created_at: str
+	resolved_at: str | None = None
+	can_feedback: bool
+	can_contest: bool
+
+
+class MyGrievancesResponse(BaseModel):
+	count: int
+	items: list[MyGrievanceItem]
+
+
+@router.get("/me", response_model=MyGrievancesResponse)
+async def get_my_grievances(
+	limit: int = Query(default=20, ge=1, le=100),
+	offset: int = Query(default=0, ge=0),
+	current_user: dict = Depends(get_current_user),
+	db: AsyncSession = Depends(get_db_session),
+) -> MyGrievancesResponse:
+	"""Get grievances submitted by the current user."""
+	repo = GrievanceRepository(db)
+	rows = await repo.list_grievances_by_citizen(
+		citizen_id=current_user["id"],
+		limit=limit,
+		offset=offset,
+	)
+
+	items = []
+	for row in rows:
+		status = str(row["status"])
+		can_feedback = status == "RESOLVED"
+		can_contest = status in ("RESOLVED", "CONTESTED")
+
+		items.append(
+			MyGrievanceItem(
+				id=str(row["id"]),
+				grid_id=str(row["grid_id"]),
+				title=str(row["title"]),
+				category=str(row["category"]),
+				status=status,
+				priority=str(row["priority"]),
+				description=str(row["description"]),
+				location_address=row.get("location_address"),
+				created_at=_to_iso(row["created_at"]),
+				resolved_at=_to_iso(row["resolved_at"]) if row.get("resolved_at") else None,
+				can_feedback=can_feedback,
+				can_contest=can_contest,
+			)
+		)
+
+	return MyGrievancesResponse(count=len(items), items=items)
+
+
+@router.get("/{grievance_id}", response_model=GrievanceDetailsResponse)
 async def get_grievance(
-	grievance_id: UUID,
+	grievance_id: str,
 	db: AsyncSession = Depends(get_db_session),
 ) -> GrievanceDetailsResponse:
 	repo = GrievanceRepository(db)
-	grievance = await repo.get_by_id(str(grievance_id))
+	
+	# Try lookup by UUID or Grid ID
+	grievance = None
+	is_uuid = False
+	try:
+		UUID(grievance_id)
+		is_uuid = True
+		grievance = await repo.get_by_id(grievance_id)
+	except ValueError:
+		# Not a UUID, try Grid ID (e.g. GRI-2026-XXXXXX)
+		if grievance_id.upper().startswith("GRI-"):
+			grievance = await repo.get_by_grid_id(grievance_id.upper())
+	
 	if grievance is None:
-		raise HTTPException(status_code=404, detail="Grievance not found")
+		raise HTTPException(
+			status_code=404, 
+			detail=f"Grievance not found with ID: {grievance_id}"
+		)
 
-	timeline = await repo.get_timeline(str(grievance_id))
+	# Always use the internal UUID for subsequent lookups like timeline
+	internal_id = str(grievance["id"])
+	timeline = await repo.get_timeline(internal_id)
 	return GrievanceDetailsResponse(
 		grievance_id=str(grievance["id"]),
 		grid_id=str(grievance["grid_id"]),
@@ -437,69 +520,6 @@ async def contest_grievance(
 	)
 
 
-# =============================================================================
-# MY GRIEVANCES ENDPOINT
-# =============================================================================
-
-class MyGrievanceItem(BaseModel):
-	id: str
-	grid_id: str
-	title: str
-	category: str
-	status: str
-	priority: str
-	description: str
-	location_address: str | None = None
-	created_at: str
-	resolved_at: str | None = None
-	can_feedback: bool
-	can_contest: bool
-
-
-class MyGrievancesResponse(BaseModel):
-	count: int
-	items: list[MyGrievanceItem]
-
-
-@router.get("/me", response_model=MyGrievancesResponse)
-async def get_my_grievances(
-	limit: int = Query(default=20, ge=1, le=100),
-	offset: int = Query(default=0, ge=0),
-	current_user: dict = Depends(get_current_user),
-	db: AsyncSession = Depends(get_db_session),
-) -> MyGrievancesResponse:
-	"""Get grievances submitted by the current user."""
-	repo = GrievanceRepository(db)
-	rows = await repo.list_grievances_by_citizen(
-		citizen_id=current_user["id"],
-		limit=limit,
-		offset=offset,
-	)
-
-	items = []
-	for row in rows:
-		status = str(row["status"])
-		can_feedback = status == "RESOLVED"
-		can_contest = status in ("RESOLVED", "CONTESTED")
-
-		items.append(
-			MyGrievanceItem(
-				id=str(row["id"]),
-				grid_id=str(row["grid_id"]),
-				title=str(row["title"]),
-				category=str(row["category"]),
-				status=status,
-				priority=str(row["priority"]),
-				description=str(row["description"]),
-				location_address=row.get("location_address"),
-				created_at=_to_iso(row["created_at"]),
-				resolved_at=_to_iso(row["resolved_at"]) if row.get("resolved_at") else None,
-				can_feedback=can_feedback,
-				can_contest=can_contest,
-			)
-		)
-
-	return MyGrievancesResponse(count=len(items), items=items)
 
 
 # =============================================================================

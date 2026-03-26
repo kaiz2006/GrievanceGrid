@@ -45,6 +45,7 @@ import ProfilePage from "./components/other-pages/ProfilePage";
 import AIAssistantPage from "./components/other-pages/AIAssistantPage";
 // New officer workflow pages
 import FieldVerificationPage from "./components/other-pages/FieldVerificationPage";
+import OfficerDashboardPage from "./components/other-pages/OfficerDashboardPage";
 import OfficerWorkflowPage from "./components/other-pages/OfficerWorkflowPage";
 import MainLayout from "./components/MainLayout";
 
@@ -67,6 +68,10 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/citizen/dashboard" element={<MyGrievancesPage />} />
+            <Route path="/officer/dashboard" element={<OfficerDashboardPage />} />
+            <Route path="/crew/dashboard" element={<DispatchPage />} />
+            <Route path="/auditor/dashboard" element={<PendingAuditsPage />} />
             <Route path="/submit" element={<SubmitPage />} />
             <Route path="/track" element={<MyGrievancesPage />} />
             <Route path="/track/:grid_id" element={<TrackingPage />} />

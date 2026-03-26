@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import Shuffle from "./Shuffle";
+import { getRoleLandingPath } from "@/utils/roleLanding";
 
 const navLinks = ["Home", "Solutions", "Impact", "SLA Monitoring", "Resource Center"];
 
@@ -18,9 +19,7 @@ const Navbar = () => {
     setUserRole(role);
   }, [location.pathname]);
 
-  const dashboardPath = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR")
-    ? "/admin/dashboard"
-    : "/my-grievances";
+  const dashboardPath = getRoleLandingPath(userRole);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">

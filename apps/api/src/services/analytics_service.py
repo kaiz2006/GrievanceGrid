@@ -72,8 +72,8 @@ class AnalyticsService:
             """
             SELECT COUNT(*)::int
             FROM grievances
-            WHERE created_at >= date_trunc('day', :metric_date::timestamptz)
-              AND created_at < date_trunc('day', :metric_date::timestamptz) + INTERVAL '1 day'
+            WHERE created_at >= date_trunc('day', CAST(:metric_date AS timestamptz))
+              AND created_at < date_trunc('day', CAST(:metric_date AS timestamptz)) + INTERVAL '1 day'
             """,
             {"metric_date": snapshot_date},
         )
@@ -81,7 +81,7 @@ class AnalyticsService:
             """
             SELECT COUNT(*)::int
             FROM grievances
-            WHERE status = 'CONTESTED'::grievance_status
+            WHERE status = CAST('CONTESTED' AS grievance_status)
             """
         )
 
@@ -110,7 +110,7 @@ class AnalyticsService:
                 created_at
             ) VALUES (
                 :id,
-                date_trunc('day', :metric_date::timestamptz),
+                date_trunc('day', CAST(:metric_date AS timestamptz)),
                 :total_grievances,
                 :new_grievances,
                 :resolved_grievances,

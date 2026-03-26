@@ -35,7 +35,13 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, "..", ".env.local") });
 
-type UserRole = "CITIZEN" | "CREW" | "OFFICER" | "ADMIN" | "AUDITOR";
+type UserRole =
+  | "CITIZEN"
+  | "CREW"
+  | "OFFICER"
+  | "ADMIN"
+  | "AUDITOR"
+  | "DEPT_HEAD";
 type GrievanceCategory =
   | "ROADS"
   | "WATER_SUPPLY"
@@ -466,6 +472,7 @@ async function seed(): Promise<void> {
     OFFICER: [],
     CREW: [],
     CITIZEN: [],
+    DEPT_HEAD: [],
   };
   for (const user of insertedUsers) {
     userIdsByRole[user.role].push(user.id);

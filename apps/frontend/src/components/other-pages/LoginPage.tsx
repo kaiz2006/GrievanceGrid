@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 
 import { authService } from "@/services/auth.service";
 import { auth, googleProvider, signInWithPopup } from "@/lib/firebase";
+import { getRoleLandingPath } from "@/utils/roleLanding";
 
 type DemoCredential = {
   label: string;
@@ -44,9 +45,7 @@ const LoginPage = () => {
       console.log("[LOGIN SUCCESS]", response);
       
       const userRole = response.user.role;
-      const target = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR") 
-        ? "/admin/dashboard" 
-        : "/my-grievances";
+      const target = getRoleLandingPath(userRole);
       
       navigate(target);
     } catch (error: any) {
@@ -75,9 +74,7 @@ const LoginPage = () => {
       const userRole = response.user.role;
 
       console.log("[GOOGLE SIGN-IN SUCCESS]", response.user.id, userRole);
-      const target = (userRole === "ADMIN" || userRole === "OFFICER" || userRole === "CREW" || userRole === "AUDITOR") 
-        ? "/admin/dashboard" 
-        : "/my-grievances";
+      const target = getRoleLandingPath(userRole);
       
       navigate(target);
 

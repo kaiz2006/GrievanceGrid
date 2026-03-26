@@ -53,7 +53,7 @@ async def list_audits(
 	params: dict[str, Any] = {"limit": limit, "offset": offset}
 
 	if status:
-		where_clause += " AND contest_audit_status = :status::text"
+		where_clause += " AND contest_audit_status = CAST(:status AS text)"
 		params["status"] = status
 
 	rows = await repo.fetch_all(

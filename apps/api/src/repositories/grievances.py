@@ -58,8 +58,8 @@ class GrievanceRepository(BaseRepository):
                 :id,
                 :grievance_id,
                 :event_type,
-                :old_status::grievance_status,
-                :new_status::grievance_status,
+                CAST(:old_status AS grievance_status),
+                CAST(:new_status AS grievance_status),
                 :description,
                 :metadata,
                 CURRENT_TIMESTAMP
@@ -116,9 +116,9 @@ class GrievanceRepository(BaseRepository):
                 :citizen_id,
                 :title,
                 :description,
-                :category::grievance_category,
-                :priority::priority,
-                'CREATED'::grievance_status,
+                CAST(:category AS grievance_category),
+                CAST(:priority AS priority),
+                CAST('CREATED' AS grievance_status),
                 :latitude,
                 :longitude,
                 :location_address,
@@ -165,7 +165,7 @@ class GrievanceRepository(BaseRepository):
             ) VALUES (
                 :id,
                 :grievance_id,
-                'RESPONSE'::sla_type,
+                CAST('RESPONSE' AS sla_type),
                 :deadline_at,
                 false,
                 0,
@@ -197,7 +197,7 @@ class GrievanceRepository(BaseRepository):
             ) VALUES (
                 :id,
                 :grievance_id,
-                'RESOLUTION'::sla_type,
+                CAST('RESOLUTION' AS sla_type),
                 :deadline_at,
                 false,
                 0,
@@ -240,13 +240,13 @@ class GrievanceRepository(BaseRepository):
         params: dict[str, Any] = {"limit": limit, "offset": offset}
 
         if status:
-            where_clauses.append("g.status = :status::grievance_status")
+            where_clauses.append("g.status = CAST(:status AS grievance_status)")
             params["status"] = status
         if category:
-            where_clauses.append("g.category = :category::grievance_category")
+            where_clauses.append("g.category = CAST(:category AS grievance_category)")
             params["category"] = category
         if priority:
-            where_clauses.append("g.priority = :priority::priority")
+            where_clauses.append("g.priority = CAST(:priority AS priority)")
             params["priority"] = priority
         if department_id:
             where_clauses.append("g.assigned_department_id = :department_id")
@@ -359,11 +359,19 @@ class GrievanceRepository(BaseRepository):
         )
 
     async def get_by_grid_id(self, grid_id: str) -> dict[str, Any] | None:
-        """Get grievance details by public Grid ID."""
+        """Get grievance details by public Grid ID with joined metadata."""
         return await self.fetch_one(
             """
-            SELECT g.*
+            SELECT
+                g.*,
+                u.name AS citizen_name,
+                u.phone AS citizen_phone,
+                d.name AS assigned_department_name,
+                t.name AS assigned_team_name
             FROM grievances g
+            LEFT JOIN users u ON u.id = g.citizen_id
+            LEFT JOIN departments d ON d.id = g.assigned_department_id
+            LEFT JOIN teams t ON t.id = g.assigned_team_id
             WHERE g.grid_id = :grid_id
             """,
             {"grid_id": grid_id},
@@ -403,7 +411,7 @@ class GrievanceRepository(BaseRepository):
             """
             UPDATE grievances
             SET
-                status = :status::grievance_status,
+                status = CAST(:status AS grievance_status),
                 updated_at = CURRENT_TIMESTAMP,
                 resolved_at = CASE
                     WHEN :status IN ('RESOLVED', 'CLOSED') THEN CURRENT_TIMESTAMP
@@ -482,7 +490,7 @@ class GrievanceRepository(BaseRepository):
                 is_contested = true,
                 contest_reason = :reason,
                 contest_evidence_url = :evidence_photo,
-                status = 'CONTESTED'::grievance_status,
+                status = CAST('CONTESTED' AS grievance_status),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :grievance_id
             RETURNING *
@@ -511,7 +519,7 @@ class GrievanceRepository(BaseRepository):
             UPDATE grievances
             SET
                 assigned_department_id = :department_id,
-                status = 'ASSIGNED'::grievance_status,
+                status = CAST('ASSIGNED' AS grievance_status),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :grievance_id
             RETURNING *
@@ -541,13 +549,13 @@ class GrievanceRepository(BaseRepository):
             """
             UPDATE grievances
             SET
-                ai_category = :ai_category::grievance_category,
-                ai_priority = :ai_priority::priority,
+                ai_category = CAST(:ai_category AS grievance_category),
+                ai_priority = CAST(:ai_priority AS priority),
                 ai_summary = :ai_summary,
                 damage_severity = :damage_severity,
                 assigned_department_id = COALESCE(:assigned_department_id, assigned_department_id),
                 similar_cases_count = :similar_cases_count,
-                status = 'PENDING_ASSIGNMENT'::grievance_status,
+                status = CAST('PENDING_ASSIGNMENT' AS grievance_status),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :grievance_id
             RETURNING *
@@ -586,9 +594,9 @@ class GrievanceRepository(BaseRepository):
                 voice_recorded = true,
                 voice_url = COALESCE(:audio_url, voice_url),
                 ai_summary = COALESCE(:summary, ai_summary),
-                ai_category = COALESCE(:ai_category::grievance_category, ai_category),
-                ai_priority = COALESCE(:ai_priority::priority, ai_priority),
-                status = 'PENDING_ASSIGNMENT'::grievance_status,
+                ai_category = COALESCE(CAST(:ai_category AS grievance_category), ai_category),
+                ai_priority = COALESCE(CAST(:ai_priority AS priority), ai_priority),
+                status = CAST('PENDING_ASSIGNMENT' AS grievance_status),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = :grievance_id
             RETURNING *
@@ -647,7 +655,7 @@ class GrievanceRepository(BaseRepository):
         where_clause = ""
         params: dict[str, Any] = {}
         if from_date and to_date:
-            where_clause = "WHERE g.created_at BETWEEN :from_date::timestamptz AND :to_date::timestamptz"
+            where_clause = "WHERE g.created_at BETWEEN CAST(:from_date AS timestamptz) AND CAST(:to_date AS timestamptz)"
             params["from_date"] = from_date
             params["to_date"] = to_date
 

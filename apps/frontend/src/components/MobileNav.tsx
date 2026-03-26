@@ -1,11 +1,9 @@
 import { 
   LayoutDashboard, 
   Send, 
-  Search, 
   ShieldCheck, 
   TrendingUp, 
   Zap,
-  User as UserIcon,
   Menu,
   X,
   Wrench,
@@ -23,11 +21,15 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { getRoleLandingPath } from "@/utils/roleLanding";
 
 export const mobileMenuItems = [
-  { icon: LayoutDashboard, label: "Feed", href: "/dashboard", roles: ["CITIZEN"] },
-  { icon: Send, label: "Submit", href: "/submit" },
+  { icon: LayoutDashboard, label: "Feed", href: "/citizen/dashboard", roles: ["CITIZEN"] },
+  { icon: Send, label: "Submit", href: "/submit", roles: ["CITIZEN"] },
   { icon: ShieldCheck, label: "Admin", href: "/admin/dashboard", roles: ["ADMIN"] },
+  { icon: ShieldCheck, label: "Officer", href: "/officer/dashboard", roles: ["OFFICER"] },
+  { icon: ShieldCheck, label: "Crew", href: "/crew/dashboard", roles: ["CREW"] },
+  { icon: ShieldCheck, label: "Audit", href: "/auditor/dashboard", roles: ["AUDITOR"] },
 ];
 
 // Admin submenu items for mobile
@@ -46,6 +48,26 @@ const adminSubmenuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits" },
 ];
 
+const officerSubmenuItems = [
+  { icon: ShieldCheck, label: "Officer Dashboard", href: "/officer/dashboard" },
+  { icon: Activity, label: "Update Status", href: "/officer/workflow" },
+  { icon: Activity, label: "Field Verification", href: "/officer/field-verification" },
+  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits" },
+];
+
+const crewSubmenuItems = [
+  { icon: ShieldCheck, label: "Crew Dispatch", href: "/crew/dashboard" },
+  { icon: Activity, label: "Escalations", href: "/admin/escalations" },
+  { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches" },
+];
+
+const auditorSubmenuItems = [
+  { icon: Clock, label: "Pending Audits", href: "/auditor/dashboard" },
+  { icon: History, label: "Audit History", href: "/admin/audit-history" },
+  { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit" },
+  { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases" },
+];
+
 // Citizen submenu items for mobile
 const citizenSubmenuItems = [
   { icon: List, label: "My Grievances", href: "/my-grievances" },
@@ -56,14 +78,36 @@ const citizenSubmenuItems = [
 
 const MobileNav = () => {
   const location = useLocation();
-  const currentRole = localStorage.getItem("userRole") || "citizen";
+  const currentRole = (localStorage.getItem("userRole") || "CITIZEN").toUpperCase();
   const [showAdminMenu, setShowAdminMenu] = useState(false);
 
   const filteredItems = mobileMenuItems.filter(item => 
-    !item.roles || item.roles.some(role => role.toUpperCase() === currentRole.toUpperCase())
+    !item.roles || item.roles.some(role => role.toUpperCase() === currentRole)
   );
 
-  const isAdmin = currentRole.toUpperCase() === "ADMIN";
+  const roleSubmenuItems =
+    currentRole === "ADMIN"
+      ? adminSubmenuItems
+      : currentRole === "OFFICER"
+        ? officerSubmenuItems
+        : currentRole === "CREW"
+          ? crewSubmenuItems
+          : currentRole === "AUDITOR"
+            ? auditorSubmenuItems
+            : citizenSubmenuItems;
+
+  const roleMenuTitle =
+    currentRole === "ADMIN"
+      ? "Admin Portal"
+      : currentRole === "OFFICER"
+        ? "Officer Portal"
+        : currentRole === "CREW"
+          ? "Crew Portal"
+          : currentRole === "AUDITOR"
+            ? "Auditor Portal"
+            : "Citizen Portal";
+
+  const roleLandingPath = getRoleLandingPath(currentRole);
 
   return (
     <>
@@ -87,10 +131,10 @@ const MobileNav = () => {
       {showAdminMenu && (
         <div className="lg:hidden fixed top-16 inset-x-0 bottom-20 bg-background/95 backdrop-blur-xl z-[99] overflow-y-auto p-4">
           <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
-            {isAdmin ? "Admin Portal" : "Menu"}
+            {roleMenuTitle}
           </h3>
           <div className="grid grid-cols-2 gap-3">
-            {(isAdmin ? adminSubmenuItems : citizenSubmenuItems).map((item) => {
+            {roleSubmenuItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -115,7 +159,7 @@ const MobileNav = () => {
       {/* Bottom Navbar */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 h-20 bg-sidebar/80 backdrop-blur-xl border-t border-sidebar-border z-[100] flex items-center justify-around px-8 safe-area-bottom">
         {filteredItems.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive = location.pathname === item.href || (item.label !== "Submit" && location.pathname === roleLandingPath && item.href === roleLandingPath);
           return (
             <Link 
               key={item.label} 

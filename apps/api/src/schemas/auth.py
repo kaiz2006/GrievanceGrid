@@ -10,6 +10,7 @@ class RoleEnum(str, Enum):
     """User roles in the system."""
     
     CITIZEN = "CITIZEN"
+    CREW = "CREW"
     OFFICER = "OFFICER"
     ADMIN = "ADMIN"
     AUDITOR = "AUDITOR"

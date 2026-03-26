@@ -56,7 +56,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         </AnimatePresence>
 
         {/* Global Floating AI Assistant Widget - Only for Citizens */}
-        {localStorage.getItem("userRole") === "citizen" && location.pathname !== "/ai-assistant" && (
+        {localStorage.getItem("userRole")?.toUpperCase() === "CITIZEN" && location.pathname !== "/ai-assistant" && (
           <motion.div 
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

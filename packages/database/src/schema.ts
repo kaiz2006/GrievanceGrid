@@ -229,6 +229,14 @@ export const grievances = pgTable(
     is_contested: boolean("is_contested").default(false),
     contest_reason: text("contest_reason"),
     contest_evidence_url: text("contest_evidence_url"),
+    contest_audit_id: varchar("contest_audit_id", { length: 255 }),
+    contest_audit_status: varchar("contest_audit_status", { length: 50 }).default("PENDING"),
+    contest_risk_score: decimal("contest_risk_score", { precision: 3, scale: 2 }),
+    contest_ai_recommendation: text("contest_ai_recommendation"),
+    contest_ai_confidence: decimal("contest_ai_confidence", { precision: 3, scale: 2 }),
+    contest_validation_notes: text("contest_validation_notes"),
+    contest_validated_by: uuid("contest_validated_by").references(() => users.id),
+    contest_validated_at: timestamp("contest_validated_at", { withTimezone: true }),
 
     // Timestamps
     created_at: timestamp("created_at", { withTimezone: true })
@@ -247,6 +255,7 @@ export const grievances = pgTable(
     categoryIdx: index("grievances_category_idx").on(table.category),
     priorityIdx: index("grievances_priority_idx").on(table.priority),
     createdIdx: index("grievances_created_at_idx").on(table.created_at),
+    contestAuditIdx: index("grievances_contest_audit_id_idx").on(table.contest_audit_id),
     // PostGIS Spatial Index (created separately)
   })
 );

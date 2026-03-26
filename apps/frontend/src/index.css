@@ -49,6 +49,18 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 10% 10%;
     --sidebar-ring: 217 91% 60%;
+
+    /* Role Specific Accents */
+    --citizen: 217 91% 60%;
+    --citizen-subtle: 217 91% 60% / 0.1;
+    --officer: 245 82% 67%;
+    --officer-subtle: 245 82% 67% / 0.1;
+    --admin: 262 83% 58%;
+    --admin-subtle: 262 83% 58% / 0.1;
+    --auditor: 38 92% 50%;
+    --auditor-subtle: 38 92% 50% / 0.1;
+    --crew: 142 71% 45%;
+    --crew-subtle: 142 71% 45% / 0.1;
   }
 }
 
@@ -81,8 +93,18 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl;
+    @apply bg-card/40 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl;
   }
+
+  .glass-premium {
+    @apply bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.3)];
+  }
+
+  .glow-citizen { @apply shadow-[0_0_20px_var(--citizen-subtle)]; }
+  .glow-officer { @apply shadow-[0_0_20px_var(--officer-subtle)]; }
+  .glow-admin { @apply shadow-[0_0_20px_var(--admin-subtle)]; }
+  .glow-auditor { @apply shadow-[0_0_20px_var(--auditor-subtle)]; }
+  .glow-crew { @apply shadow-[0_0_20px_var(--crew-subtle)]; }
 
   .section-badge {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border text-sm text-muted-foreground tracking-widest uppercase;

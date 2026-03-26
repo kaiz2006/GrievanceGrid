@@ -188,7 +188,7 @@ class ClusterRepository(BaseRepository):
         params: dict[str, Any] = {"limit": limit}
 
         if cluster_type:
-            where_clauses.append("cluster_type = :cluster_type::cluster_type")
+            where_clauses.append("cluster_type = CAST(:cluster_type AS cluster_type)")
             params["cluster_type"] = cluster_type
         if is_active is not None:
             where_clauses.append("is_active = :is_active")

@@ -78,15 +78,19 @@ const menuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["ADMIN"] },
   
   // NEW: Officer Workflow Pages
+  { icon: CheckCircle, label: "Officer Dashboard", href: "/officer/dashboard", roles: ["ADMIN", "OFFICER"] },
   { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["ADMIN", "OFFICER"] },
   { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["ADMIN", "OFFICER"] },
+
+  // Crew and auditor role-specific dashboards
+  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["ADMIN", "CREW"] },
+  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["ADMIN", "AUDITOR"] },
   
   // Citizen-specific pages
-  { icon: List, label: "My Grievances", href: "/my-grievances", roles: ["CITIZEN"] },
   { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["CITIZEN"] },
   
   // Common/Citizen items
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ["CITIZEN"] },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/citizen/dashboard", roles: ["CITIZEN"] },
   { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
   { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
   { icon: User, label: "My Profile", href: "/profile", roles: ["CITIZEN", "ADMIN", "OFFICER"] },
