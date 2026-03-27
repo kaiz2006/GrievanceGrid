@@ -28,8 +28,63 @@ const AuditHistoryPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const result = await auditService.getAuditHistory(grievance_id || "grievance_123");
-      setEvents(result.events);
+      // DEMO MODE: Detailed audit trail for demonstration
+      await new Promise(resolve => setTimeout(resolve, 700));
+      
+      const demoEvents: AuditEvent[] = [
+        {
+          id: "ev_1",
+          grievance_id: grievance_id || "GRI-2026-1234",
+          event_type: "RESOLVED",
+          old_status: "IN_PROGRESS",
+          new_status: "RESOLVED",
+          description: "Final verification complete. Engineering team confirmed structural stability and safety compliance.",
+          actor_name: "Senior Auditor Sharma",
+          created_at: new Date(Date.now() - 3600000 * 2).toISOString()
+        },
+        {
+          id: "ev_2",
+          grievance_id: grievance_id || "GRI-2026-1234",
+          event_type: "IN_PROGRESS",
+          old_status: "ROUTED",
+          new_status: "IN_PROGRESS",
+          description: "Dispatch team arrived on site. Commencing structural scanning and reinforcement.",
+          actor_name: "Field Officer Kamal",
+          created_at: new Date(Date.now() - 3600000 * 12).toISOString()
+        },
+        {
+          id: "ev_3",
+          grievance_id: grievance_id || "GRI-2026-1234",
+          event_type: "ROUTED",
+          old_status: "AI_PROCESSED",
+          new_status: "ROUTED",
+          description: "Automatically routed to Department of Bridge Engineering based on geo-spatial severity.",
+          actor_name: "GrievanceGrid AI Core",
+          created_at: new Date(Date.now() - 3600000 * 14).toISOString()
+        },
+        {
+          id: "ev_4",
+          grievance_id: grievance_id || "GRI-2026-1234",
+          event_type: "AI_PROCESSED",
+          old_status: "CREATED",
+          new_status: "AI_PROCESSED",
+          description: "NLP Analysis: Critical structural risk identified. Sentiment: Urgent. Priority set to CRITICAL.",
+          actor_name: "GrievanceGrid AI Core",
+          created_at: new Date(Date.now() - 3600000 * 15).toISOString()
+        },
+        {
+          id: "ev_5",
+          grievance_id: grievance_id || "GRI-2026-1234",
+          event_type: "CREATED",
+          old_status: null,
+          new_status: "CREATED",
+          description: "Grievance submitted via Citizen Mobile App with high-res photo evidence.",
+          actor_name: "Anonymous Citizen",
+          created_at: new Date(Date.now() - 3600000 * 16).toISOString()
+        }
+      ];
+      
+      setEvents(demoEvents);
       setLoading(false);
     };
     fetchData();

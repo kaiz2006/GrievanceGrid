@@ -65,13 +65,17 @@ const SimilarCasesComponent: React.FC = () => {
 
   const fetchGrievances = async () => {
     setLoadingGrievances(true);
-    try {
-      const response: any = await grievanceService.getMyGrievances(200, 0);
-      const list = ((response?.grievances || response?.items || []) as any[]).map(normalizeGrievance);
-      setGrievances(list);
-    } finally {
-      setLoadingGrievances(false);
-    }
+    // DEMO MODE: Hardcoded list for instant loading
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const demoGrievances: GrievanceItem[] = [
+      { id: "g_1", grid_id: "GRI-2026-0045", title: "Frequent Power Surges in Block B", category: "Electricity", priority: "HIGH", status: "IN_PROGRESS", created_at: new Date().toISOString() },
+      { id: "g_2", grid_id: "GRI-2026-0089", title: "Uncollected Garbage - Main Road", category: "Sanitation", priority: "MEDIUM", status: "CREATED", created_at: new Date().toISOString() },
+      { id: "g_3", grid_id: "GRI-2026-0122", title: "Unauthorized Construction on Footpath", category: "Revenue", priority: "HIGH", status: "PENDING_VERIFICATION", created_at: new Date().toISOString() },
+      { id: "g_4", grid_id: "GRI-2026-0156", title: "Street Light Pole Damage", category: "Lighting", priority: "LOW", status: "ASSIGNED", created_at: new Date().toISOString() },
+      { id: "g_5", grid_id: "GRI-2026-0210", title: "Contaminated Water Supply", category: "Water", priority: "CRITICAL", status: "ESCALATED", created_at: new Date().toISOString() }
+    ];
+    setGrievances(demoGrievances);
+    setLoadingGrievances(false);
   };
 
   useEffect(() => {
@@ -81,12 +85,38 @@ const SimilarCasesComponent: React.FC = () => {
   const fetchSimilarCases = async (grievance: GrievanceItem) => {
     setSelectedGrievance(grievance);
     setLoadingCases(true);
-    try {
-      const response: any = await grievanceService.getSimilarCases(grievance.id, 8);
-      setCases((response?.cases || []) as SimilarCase[]);
-    } finally {
-      setLoadingCases(false);
-    }
+    // DEMO MODE: Pre-computed similarity results
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const demoCases: SimilarCase[] = [
+      {
+        grid_id: "HIST-2025-0922",
+        title: "Fluctuating Voltage in Block A Substation",
+        similarity_score: 0.94,
+        resolution_summary: "Replaced 400kVA transformer primary fuse and updated load balancing software.",
+        resolution_time_hours: 14,
+        department: "Electricity Dept"
+      },
+      {
+        grid_id: "HIST-2025-1104",
+        title: "Transformer Leakage Near Industrial Area",
+        similarity_score: 0.81,
+        resolution_summary: "Cleaned insulator bushings and topped up dielectric oil. Sealed gasket leaks.",
+        resolution_time_hours: 22,
+        department: "Engineering Division"
+      },
+      {
+        grid_id: "HIST-2024-0615",
+        title: "Underground Cable Fault - Phase 1",
+        similarity_score: 0.76,
+        resolution_summary: "Located insulation breach using TDR. Splice and joint repair completed.",
+        resolution_time_hours: 48,
+        department: "Electricity Dept"
+      }
+    ];
+    
+    setCases(demoCases);
+    setLoadingCases(false);
   };
 
   const filteredGrievances = useMemo(() => {

@@ -267,7 +267,7 @@ const SLAMonitoringPage = () => {
         </div>
 
         <div className="space-y-4">
-          {breaches.slice(0, 5).map((breach, i) => (
+          {breaches.slice(0, 8).map((breach, i) => (
             <motion.div
               key={breach.sla_id}
               initial={{ opacity: 0, x: -20 }}

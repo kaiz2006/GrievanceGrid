@@ -30,8 +30,23 @@ const ContestationAuditPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const result = await auditService.getAuditResult(audit_id || "audit_001");
-      setAudit(result);
+      // DEMO MODE: Using hardcoded audit result
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      const demoAudit: AuditResult = {
+        audit_id: audit_id || "audit_1092",
+        grievance_id: "GRI-2026-000844",
+        grid_id: "GRI-2026-000844",
+        status: "UNDER_REVIEW",
+        risk_score: 0.84,
+        reason: "Citizen contests the 'Resolved' status claiming the water leakage in Sector 4 persists despite the official report stating completion. Attached photo shows active flooding as of 2 hours ago.",
+        evidence_photo: "https://images.unsplash.com/photo-1585914641050-fa9883c4e21c?auto=format&fit=crop&q=80&w=1200",
+        evidence_severity: 0.92,
+        recommendation: "AI Analysis confirms high probability of valid contestation. Visual evidence shows ongoing water discharge. Immediate field re-verification and crew dispatch recommended. Escalating to Senior Engineering Lead.",
+        processed_at: new Date(Date.now() - 3600000 * 4).toISOString()
+      };
+      
+      setAudit(demoAudit);
       setLoading(false);
     };
     fetchData();

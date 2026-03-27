@@ -15,7 +15,8 @@ import {
   Clock,
   AlertOctagon,
   List,
-  User
+  User,
+  BookOpen
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
@@ -68,6 +69,7 @@ const auditorSubmenuItems = [
 // Citizen submenu items for mobile
 const citizenSubmenuItems = [
   { icon: List, label: "My Grievances", href: "/my-grievances" },
+  { icon: BookOpen, label: "Resources", href: "/resource-center" },
   { icon: Send, label: "Submit", href: "/submit" },
   { icon: User, label: "Profile", href: "/profile" },
 ];

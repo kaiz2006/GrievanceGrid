@@ -30,6 +30,7 @@ import {
   Route,
   Lightbulb,
   Mic,
+  BookOpen,
   // Citizen page icons
   List,
   User,
@@ -49,6 +50,7 @@ const menuItems = [
   { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
   { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
   { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["CITIZEN"] },
+  { icon: BookOpen, label: "Resources", href: "/resource-center", roles: ["CITIZEN"] },
   
   // Admin prioritized items
   { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["ADMIN"] },

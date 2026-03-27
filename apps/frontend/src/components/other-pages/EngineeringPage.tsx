@@ -54,21 +54,80 @@ const EngineeringPage = () => {
    useEffect(() => {
       const fetchSolved = async () => {
          setLoading(true);
-         try {
-            const result: any = await grievanceService.getMyGrievances(200, 0);
-            const all: EngineeringGrievance[] = result?.grievances || result?.items || [];
-            const solved = all
-               .filter((g) => isSolvedStatus(g.status))
-               .sort(
-                  (a, b) =>
-                     new Date(getResolvedTimestamp(b)).getTime() -
-                     new Date(getResolvedTimestamp(a)).getTime(),
-               );
-            setSolvedGrievances(solved);
-            setSelectedId(solved[0]?.id || null);
-         } finally {
-            setLoading(false);
-         }
+         // DEMO MODE: Using hardcoded resolved grievances for Engineering Verification
+         await new Promise(resolve => setTimeout(resolve, 800));
+         
+         const demoSolved: EngineeringGrievance[] = [
+            {
+               id: "eng_001",
+               grid_id: "GRI-2026-000442",
+               title: "Structural Crack in North Bridge Pylon",
+               category: "Infrastructure",
+               priority: "CRITICAL",
+               status: "RESOLVED",
+               description: "Deep structural fissure detected during routine inspection of the North Bridge pylon C-4.",
+               created_at: new Date(Date.now() - 7 * 24 * 3600000).toISOString(),
+               resolved_at: new Date(Date.now() - 2 * 24 * 3600000).toISOString(),
+               timeline: [
+                  { status: "RESOLVED", timestamp: new Date(Date.now() - 2 * 24 * 3600000).toISOString(), description: "Structural reinforcement successfully applied. Pylon integrity verified via ultrasonic testing." },
+                  { status: "IN_PROGRESS", timestamp: new Date(Date.now() - 4 * 24 * 3600000).toISOString(), description: "Injecting high-tensile epoxy and installing carbon fiber wraps." },
+                  { status: "FIELD_VERIFIED", timestamp: new Date(Date.now() - 5 * 24 * 3600000).toISOString(), description: "Engineering team confirmed depth of fissure is 4.5 inches. Immediate stabilization required." },
+                  { status: "REPORTED", timestamp: new Date(Date.now() - 7 * 24 * 3600000).toISOString(), description: "System alert: Unusual vibration detected by sensor B-12." }
+               ]
+            },
+            {
+               id: "eng_002",
+               grid_id: "GRI-2026-000512",
+               title: "Transformer Overheating - Substation 9",
+               category: "Power Grid",
+               priority: "HIGH",
+               status: "RESOLVED",
+               description: "Substation 9 transformer T-2 exhibiting thermal runaway conditions (115°C).",
+               created_at: new Date(Date.now() - 3 * 24 * 3600000).toISOString(),
+               resolved_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+               timeline: [
+                  { status: "RESOLVED", timestamp: new Date(Date.now() - 3600000 * 5).toISOString(), description: "Cooling system overhauled. Oil filtration complete. Load restored to 100%." },
+                  { status: "IN_PROGRESS", timestamp: new Date(Date.now() - 3600000 * 12).toISOString(), description: "Emergency shutdown initiated. Replacing faulty radiator fans and heat sensors." },
+                  { status: "REPORTED", timestamp: new Date(Date.now() - 3 * 24 * 3600000).toISOString(), description: "Thermal telemetry alert: Rapid temperature spike detected." }
+               ]
+            },
+            {
+               id: "eng_003",
+               grid_id: "GRI-2026-000601",
+               title: "Main Water Main Burst - Sector 12",
+               category: "Water Supply",
+               priority: "CRITICAL",
+               status: "RESOLVED",
+               description: "48-inch high-pressure water main rupture causing severe flooding on 5th Avenue.",
+               created_at: new Date(Date.now() - 2 * 24 * 3600000).toISOString(),
+               resolved_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+               timeline: [
+                  { status: "RESOLVED", timestamp: new Date(Date.now() - 3600000 * 2).toISOString(), description: "Pipeline section replaced. Pressure testing successful. Road restoration in progress." },
+                  { status: "IN_PROGRESS", timestamp: new Date(Date.now() - 3600000 * 15).toISOString(), description: "Excavating site. Isolating Segment 12-B for pipe bypass installation." },
+                  { status: "REPORTED", timestamp: new Date(Date.now() - 2 * 24 * 3600000).toISOString(), description: "Multiple reports of low pressure and surface flooding." }
+               ]
+            },
+            {
+               id: "eng_004",
+               grid_id: "GRI-2026-000688",
+               title: "Smart Traffic Signal Controller Defect",
+               category: "Traffic Management",
+               priority: "MEDIUM",
+               status: "RESOLVED",
+               description: "AI controller unit #ST-094 malfunctioning, causing irregular signal cycles at Central Junction.",
+               created_at: new Date(Date.now() - 5 * 24 * 3600000).toISOString(),
+               resolved_at: new Date(Date.now() - 24 * 3600000).toISOString(),
+               timeline: [
+                  { status: "RESOLVED", timestamp: new Date(Date.now() - 24 * 3600000).toISOString(), description: "Firmware v4.2.1 patched. Hardware diagnostic pass. Synchronization verified." },
+                  { status: "IN_PROGRESS", timestamp: new Date(Date.now() - 3 * 24 * 3600000).toISOString(), description: "Analyzing logic logs. Identified memory leak in pedestrian detection module." },
+                  { status: "REPORTED", timestamp: new Date(Date.now() - 5 * 24 * 3600000).toISOString(), description: "Citizen reports of persistent red light for over 10 minutes." }
+               ]
+            }
+         ];
+
+         setSolvedGrievances(demoSolved);
+         setSelectedId(demoSolved[0]?.id || null);
+         setLoading(false);
       };
       void fetchSolved();
    }, []);
