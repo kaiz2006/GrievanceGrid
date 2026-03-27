@@ -1,122 +1,109 @@
 "use client";
-import React, { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Github, Twitter, Linkedin, Mail, Instagram } from "lucide-react";
+import React from "react";
+import { Github, Twitter, Linkedin, Instagram } from "lucide-react";
 
 export default function Footer() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  // Mouse tracking for the spotlight effect
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const handleMouseMove = ({ clientX, clientY, currentTarget }: React.MouseEvent) => {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  };
-
   return (
-    <footer 
-      className="relative bg-black pt-24 pb-12 overflow-hidden border-t border-white/5"
-    >
-      {/* 1. TOP LINKS GRID */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 relative z-10">
-        <div className="col-span-2">
-          <div className="flex items-center gap-4 mb-6">
-            <img src="/logo.jpeg" className="w-10 h-10 object-contain rounded-xl border border-white/10" alt="GrievanceGrid Logo" />
-            <span className="text-xl font-black text-white uppercase tracking-tighter">GrievanceGrid</span>
-          </div>
-          <p className="text-zinc-500 max-w-xs text-sm leading-relaxed mb-6 font-mono">
-            Empowering public administrators to transform citizen complaints into actionable insights — making resolution faster, transparent, and more accountable.
-          </p>
-          <div className="flex gap-4">
-            <FooterIcon icon={<Twitter className="w-4 h-4" />} />
-            <FooterIcon icon={<Instagram className="w-4 h-4" />} />
-            <FooterIcon icon={<Linkedin className="w-4 h-4" />} />
-            <FooterIcon icon={<Github className="w-4 h-4" />} />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h4 className="text-xs font-mono text-zinc-300 uppercase tracking-[0.3em] mb-6">Product</h4>
-          <FooterLink label="Features" />
-          <FooterLink label="Pricing" />
-          <FooterLink label="Integrations" />
-          <FooterLink label="Changelog" />
-        </div>
-
-        <div className="space-y-4">
-          <h4 className="text-xs font-mono text-zinc-300 uppercase tracking-[0.3em] mb-6">Company</h4>
-          <FooterLink label="Documentation" />
-          <FooterLink label="Privacy Policy" />
-          <FooterLink label="Terms of Service" />
-          <FooterLink label="Contact" />
-        </div>
-      </div>
-
-      {/* 2. TRENDING BIG TEXT WITH CURSOR INTERACTIVITY */}
-      <div 
-        ref={containerRef}
-        onMouseMove={handleMouseMove}
-        className="relative w-full select-none px-4 mb-10 group cursor-none"
-      >
-        {/* Outline Layer (Static) */}
-        <h2 
-          className="text-[12vw] font-black leading-none text-center uppercase tracking-tighter opacity-10"
-          style={{ WebkitTextStroke: "1px white", color: "transparent" }}
-        >
+    <footer className="relative bg-black pt-32 pb-20 overflow-hidden">
+      {/* Background Watermark */}
+      <div className="absolute bottom-[-5%] left-1/2 -translate-x-1/2 w-full select-none pointer-events-none z-0">
+        <h2 className="text-[14vw] font-black leading-none text-center uppercase tracking-tighter text-white/[0.03] whitespace-nowrap">
           GrievanceGrid
         </h2>
-
-        {/* Reveal Layer (Spotlight) */}
-        <motion.h2 
-          className="absolute inset-0 text-[12vw] font-black leading-none text-center uppercase tracking-tighter z-20 pointer-events-none"
-          style={{ 
-            color: "white",
-            WebkitTextStroke: "1px white",
-            clipPath: useTransform(
-              [mouseX, mouseY],
-              ([x, y]) => `circle(150px at ${x}px ${y}px)`
-            )
-          }}
-        >
-          GrievanceGrid
-        </motion.h2>
-
-        {/* Subtle Bottom Glow following the mouse */}
-        <motion.div 
-           className="absolute top-0 left-0 w-[400px] h-[400px] bg-blue-600/20 blur-[120px] rounded-full z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
-           style={{ 
-             x: useSpring(useTransform(mouseX, (x) => x - 200), { stiffness: 100, damping: 30 }),
-             y: useSpring(useTransform(mouseY, (y) => y - 200), { stiffness: 100, damping: 30 })
-           }}
-        />
       </div>
 
-      {/* 3. COPYRIGHT BAR */}
-      <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">
-        <span>© 2026 GrievanceGrid Infrastructure Pvt. Ltd.</span>
-        <div className="flex gap-8">
-          <span>LATENCY: 14ms</span>
-          <span>STATUS: GRID_HEALTHY_V2</span>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="bg-[#0d0d0d] rounded-[2.5rem] border border-white/5 p-12 md:p-16 lg:p-20 shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
+            {/* Logo and Description */}
+            <div className="lg:col-span-5 flex flex-col items-start gap-8">
+              <div className="flex items-center gap-3">
+                <img src="/logo.jpeg" className="w-10 h-7 object-contain rounded-xl" alt="GrievanceGrid Logo" />
+                <span className="text-2xl font-bold text-white tracking-tight">GrievanceGrid</span>
+              </div>
+              <p className="text-zinc-500 text-lg leading-relaxed max-w-sm">
+                GrievanceGrid empowers public administrators to transform citizen complaints into actionable insights — making resolution faster, transparent, and more accountable.
+              </p>
+              <div className="flex gap-6">
+                <SocialIcon icon={<Twitter className="w-5 h-5" />} href="#" />
+                <SocialIcon icon={<Instagram className="w-5 h-5" />} href="#" />
+                <SocialIcon icon={<Linkedin className="w-5 h-5" />} href="#" />
+                <SocialIcon icon={<Github className="w-5 h-5" />} href="#" />
+              </div>
+            </div>
+
+            {/* Links Columns */}
+            <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-12 lg:gap-8">
+              <FooterColumn title="Product" links={[
+                { label: "Features", href: "#" },
+                { label: "Pricing", href: "#" },
+                { label: "Integrations", href: "#" },
+                { label: "Changelog", href: "#" },
+              ]} />
+              <FooterColumn title="Resources" links={[
+                { label: "Documentation", href: "#" },
+                { label: "Tutorials", href: "#" },
+                { label: "Blog", href: "#" },
+                { label: "Support", href: "#" },
+              ]} />
+              <FooterColumn title="Company" links={[
+                { label: "About", href: "#" },
+                { label: "Careers", href: "#" },
+                { label: "Contact", href: "#" },
+                { label: "Partners", href: "#" },
+              ]} />
+            </div>
+          </div>
+
+          {/* Footer Bottom */}
+          <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+            <span className="text-zinc-600 text-sm">
+              © 2025 GrievanceGrid. All rights reserved.
+            </span>
+            <div className="flex gap-8">
+              <FooterLegalLink label="Privacy Policy" href="#" />
+              <FooterLegalLink label="Terms of Service" href="#" />
+              <FooterLegalLink label="Cookies Settings" href="#" />
+            </div>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
 
-function FooterLink({ label }: { label: string }) {
+function FooterColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
-    <a href="#" className="block text-sm text-zinc-500 hover:text-blue-500 transition-colors font-mono">
-      {`> ${label}`}
+    <div className="flex flex-col gap-6">
+      <h4 className="text-white font-semibold text-sm tracking-wide">{title}</h4>
+      <ul className="flex flex-col gap-4">
+        {links.map((link) => (
+          <li key={link.label}>
+            <a href={link.href} className="text-zinc-500 hover:text-white transition-colors duration-200 text-sm">
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function SocialIcon({ icon, href }: { icon: React.ReactNode; href: string }) {
+  return (
+    <a 
+      href={href} 
+      className="text-zinc-600 hover:text-white transition-all duration-300 transform hover:scale-110"
+    >
+      {icon}
     </a>
   );
 }
 
-function FooterIcon({ icon }: { icon: React.ReactNode }) {
+function FooterLegalLink({ label, href }: { label: string; href: string }) {
   return (
-    <div className="w-8 h-8 rounded-none border border-white/10 flex items-center justify-center text-zinc-500 hover:border-blue-500 hover:text-blue-500 transition-all cursor-pointer">
-      {icon}
-    </div>
+    <a href={href} className="text-zinc-600 hover:text-zinc-400 transition-colors duration-200 text-sm">
+      {label}
+    </a>
   );
 }

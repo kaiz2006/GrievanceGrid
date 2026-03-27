@@ -68,10 +68,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               initial={{ opacity: 0, scale: 0.9, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 1.5, duration: 0.5 }}
-              className="glass-card bg-[#0b0f19]/90 backdrop-blur-xl border border-blue-500/30 text-sm md:text-base font-medium px-4 py-3 rounded-2xl rounded-br-sm shadow-[0_0_30px_rgba(37,99,235,0.25)] text-blue-100 max-w-[250px] md:max-w-[280px] pointer-events-none group-hover:bg-[#0b0f19] group-hover:border-blue-400/50 transition-colors"
+              className="glass-card bg-[#0b0f19]/90 backdrop-blur-xl border border-blue-500/30 text-[10px] md:text-sm font-medium px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow-[0_0_20px_rgba(37,99,235,0.2)] text-blue-500 max-w-[180px] md:max-w-[220px] pointer-events-none group-hover:bg-[#0b0f19] group-hover:border-blue-400/50 transition-colors"
             >
               <div className="flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
                 <span>I can help you in writing your issues / complaints instantly!</span>
               </div>
             </motion.div>
@@ -79,10 +79,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             {/* Floating Button */}
             <Button 
               asChild
-              className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-blue-600 hover:bg-blue-500 shadow-[0_0_25px_rgba(37,99,235,0.5)] transition-all duration-300 hover:scale-110 flex items-center justify-center p-0 border border-blue-400/30 hover:shadow-[0_0_35px_rgba(37,99,235,0.7)]"
+              className="w-11 h-11 md:w-13 md:h-13 rounded-full bg-blue-600 hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all duration-300 hover:scale-110 flex items-center justify-center p-0 border border-blue-400/30 hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]"
             >
               <a href="/ai-assistant">
-                <Bot className="w-6 h-6 md:w-8 md:h-8 text-white relative z-10" />
+                <Bot className="w-5 h-5 md:w-6 md:h-6 text-white relative z-10" />
                 <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-ping opacity-75" style={{ animationDuration: '3s' }} />
               </a>
             </Button>

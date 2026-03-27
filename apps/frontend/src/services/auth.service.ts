@@ -68,29 +68,27 @@ export const authService = {
 
   // POST /auth/logout - Logout user
   logout: async (): Promise<{ success: boolean }> => {
-    let response = { success: true };
-    try {
-      response = await apiClient.post<{ success: boolean }>("/auth/logout", {});
-    } catch (e) {
-      console.warn("Backend logout failed, proceeding with local cleanup", e);
-    } finally {
-      // ALWAYS clear local state
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("userEmail");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("userUid");
-      localStorage.removeItem("userPhoto");
-      
-      // Sign out from Firebase
-      try {
-        if (auth) await signOut(auth);
-      } catch(e) {
-        console.error("Firebase signout error", e);
-      }
+    // 1. ALWAYS clear local state FIRST and IMMEDIATELY
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userUid");
+    localStorage.removeItem("userPhoto");
+
+    // 2. Fire background cleanup (don't await)
+    // Backend logout
+    apiClient.post<{ success: boolean }>("/auth/logout", {})
+      .catch(e => console.warn("Background backend logout failed (this is acceptable after local cleanup)", e));
+    
+    // Firebase logout
+    if (auth) {
+      signOut(auth).catch(e => console.error("Background Firebase signout error", e));
     }
-    return response;
+
+    // 3. Return immediately so the UI can navigate
+    return { success: true };
   },
 
   // POST /auth/google - Google OAuth login
