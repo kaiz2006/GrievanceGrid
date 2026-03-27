@@ -1,6 +1,6 @@
 import { db } from "./index";
 import { sql } from "drizzle-orm";
-import { users, grievances, departments, teams } from "./schema";
+import { users, grievances, departments, teams, infrastructure_assets, daily_metrics, sla_timers, audit_logs } from "./schema";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { fileURLToPath } from "url";
@@ -58,6 +58,29 @@ async function hackathonSeed() {
       { department_id: deptRows[2].id, name: "SND-Cleaning", description: "Sanitation team", phone: "+91-1400-000003" },
       { department_id: deptRows[3].id, name: "ELD-Power", description: "Electrical team", phone: "+91-1400-000004" }
     ]);
+
+    // Insert Infrastructure Assets for Predictive Alerts
+    console.log("Inserting infrastructure assets...");
+    const assetTypes = ["TRANSFORMER", "WATER_PIPE", "ROAD_BRIDGE", "STREET_LIGHT_GRID", "SEWAGE_PUMP"];
+    const assets = [];
+    for (const dept of deptRows) {
+      for (let i = 0; i < 5; i++) {
+        assets.push({
+          department_id: dept.id,
+          asset_type: assetTypes[Math.floor(Math.random() * assetTypes.length)],
+          asset_name: `${dept.code}-Asset-${i + 1}`,
+          location_lat: (28.5 + Math.random() * 0.3).toFixed(8),
+          location_lng: (77.1 + Math.random() * 0.2).toFixed(8),
+          complaint_count_7d: Math.floor(Math.random() * 15),
+          complaint_count_30d: Math.floor(Math.random() * 50),
+          unresolved_count: Math.floor(Math.random() * 10),
+          failure_risk_score: (0.1 + Math.random() * 0.85).toFixed(2), // High risk for some
+          predicted_failure_date: new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000),
+          is_active: true
+        });
+      }
+    }
+    await db.insert(infrastructure_assets).values(assets);
 
     // Mock password hash - using bcrypt like demo seed
     const hashPassword = (pass: string) => hashPasswordForSeed(pass);
@@ -135,7 +158,38 @@ async function hackathonSeed() {
       });
     }
 
-    await db.insert(grievances).values(grievancesBatch);
+    await db.insert(grievances).values(grievancesBatch as any);
+
+    // Insert Daily Metrics for Trend Analysis
+    console.log("Inserting daily metrics...");
+    const metrics = [];
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      
+      const total = 500 + Math.floor(Math.random() * 500);
+      const resolved = Math.floor(total * (0.6 + Math.random() * 0.3));
+      
+      metrics.push({
+        metric_date: date,
+        total_grievances: total,
+        new_grievances: 20 + Math.floor(Math.random() * 80),
+        resolved_grievances: resolved,
+        escalated_grievances: Math.floor(total * 0.05),
+        contested_grievances: Math.floor(total * 0.02),
+        avg_resolution_time_hours: (12 + Math.random() * 48).toFixed(2),
+        sla_compliance_rate: (0.75 + Math.random() * 0.2).toFixed(2),
+        category_breakdown: {
+          "ROADS": Math.floor(total * 0.3),
+          "WATER_SUPPLY": Math.floor(total * 0.2),
+          "SANITATION": Math.floor(total * 0.15),
+          "ELECTRICITY": Math.floor(total * 0.15),
+          "OTHER": Math.floor(total * 0.2)
+        }
+      });
+    }
+    await db.insert(daily_metrics).values(metrics);
 
     console.log("\n🎉 Hackathon seeding completed!");
     console.log("\n📊 Dataset Summary:");

@@ -17,25 +17,37 @@ class AnalyticsService:
         self.grievance_repo = GrievanceRepository(db)
         self.sla_repo = SLARepository(db)
 
+import asyncio
+
     async def get_dashboard_payload(
         self,
         from_date: str | None = None,
         to_date: str | None = None,
     ) -> dict[str, Any]:
-        summary = await self.grievance_repo.get_dashboard_summary(from_date=from_date, to_date=to_date)
-        by_category = await self.grievance_repo.get_counts_by_category(from_date=from_date, to_date=to_date)
-        by_priority = await self.grievance_repo.get_counts_by_priority(from_date=from_date, to_date=to_date)
-        sla_compliance = await self.sla_repo.get_sla_compliance()
-        heat_map_data = await self.grievance_repo.get_heat_map_data(limit=200)
-        predictive_alerts = await self.grievance_repo.get_predictive_alerts(risk_threshold=0.75, limit=20)
+        # Run queries in parallel for performance optimization
+        summary_task = self.grievance_repo.get_dashboard_summary(from_date=from_date, to_date=to_date)
+        category_task = self.grievance_repo.get_counts_by_category(from_date=from_date, to_date=to_date)
+        priority_task = self.grievance_repo.get_counts_by_priority(from_date=from_date, to_date=to_date)
+        sla_task = self.sla_repo.get_sla_compliance()
+        heat_map_task = self.grievance_repo.get_heat_map_data(limit=200)
+        predictive_task = self.grievance_repo.get_predictive_alerts(risk_threshold=0.75, limit=20)
+
+        results = await asyncio.gather(
+            summary_task,
+            category_task,
+            priority_task,
+            sla_task,
+            heat_map_task,
+            predictive_task
+        )
 
         return {
-            "summary": summary,
-            "by_category": by_category,
-            "by_priority": by_priority,
-            "sla_compliance": sla_compliance,
-            "heat_map_data": heat_map_data,
-            "predictive_alerts": predictive_alerts,
+            "summary": results[0],
+            "by_category": results[1],
+            "by_priority": results[2],
+            "sla_compliance": results[3],
+            "heat_map_data": results[4],
+            "predictive_alerts": results[5],
         }
 
     async def list_infrastructure_assets(self) -> list[dict[str, Any]]:

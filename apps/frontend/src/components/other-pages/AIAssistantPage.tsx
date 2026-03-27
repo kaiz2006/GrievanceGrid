@@ -342,9 +342,11 @@ const AIAssistantPage = () => {
         title: draft.title,
         description: draft.description,
         category: draft.category,
+        priority: draft.severity || "MEDIUM", // Align with backend priority ENUM
         latitude: draft.latitude || 28.6139,
         longitude: draft.longitude || 77.2090,
         location_address: draft.location_address || "AI Extracted Location",
+        location_text: draft.location_address, // Providing redundant field for backend fallback
         before_photo_url: ""
       };
 
@@ -364,16 +366,25 @@ const AIAssistantPage = () => {
         }
         return s;
       }));
-    } catch {
+    } catch (error: any) {
+      console.error("Submission failed:", error);
       updateMessageDraftStatus(msgId, "idle");
+
+      const errorMessage = error.message || "Unknown error";
+      const errorDetail = error.response?.data?.detail
+        ? (typeof error.response.data.detail === 'string'
+            ? error.response.data.detail
+            : JSON.stringify(error.response.data.detail))
+        : "";
+
       setSessions(prev => prev.map(s => {
         if (s.id === currentSessionId) {
           return {
             ...s,
             messages: [...s.messages, {
-              id: Date.now().toString() + "_err",
+              id: Date.now().toString() + "_error",
               sender: "ai" as const,
-              text: "I encountered an error submitting your complaint. Please try again or submit manually from the Submit Grievance page."
+              text: `I encountered an error submitting your complaint: **${errorMessage}**. ${errorDetail ? `\n\nDetails: ${errorDetail}` : ""}\n\nPlease try again or submit manually from the [Submit Grievance](/submit) page.`,
             }],
             updatedAt: new Date()
           };

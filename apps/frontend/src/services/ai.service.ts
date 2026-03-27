@@ -10,6 +10,7 @@ export interface DraftReport {
   latitude?: number;
   longitude?: number;
   severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  priority?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"; // Alias for severity to match backend
 }
 
 export interface AIResponse {
@@ -73,14 +74,17 @@ Always respond with ONLY valid JSON (no markdown, no backticks):
 // Smart keyword → category mapping
 const detectCategory = (text: string): string => {
   const t = text.toLowerCase();
-  if (t.match(/\b(road|pothole|crack|highway|street|pavement|footpath|speed bump)\b/)) return "ROADS";
-  if (t.match(/\b(water|pipe|leakage|supply|tap|drain|flood|sewage|sewer)\b/)) return "WATER_SUPPLY";
-  if (t.match(/\b(garbage|trash|waste|littering|dustbin|sanitation|hygiene|smell)\b/)) return "SANITATION";
-  if (t.match(/\b(light|electricity|power|streetlight|wire|transformer|outage|blackout)\b/)) return "ELECTRICITY";
-  if (t.match(/\b(bus|metro|auto|transport|traffic|signal|road sign)\b/)) return "PUBLIC_TRANSPORT";
-  if (t.match(/\b(tree|pollution|noise|air|smoke|environment|park|garden)\b/)) return "ENVIRONMENT";
-  if (t.match(/\b(building|construction|encroachment|illegal|structure)\b/)) return "BUILDING_VIOLATION";
-  if (t.match(/\b(bridge|boundary wall|wall|infrastructure|public property)\b/)) return "INFRASTRUCTURE";
+  if (t.match(/\b(road|pavement|pothole|street|highway|path|lane)\b/)) return "ROADS";
+  if (t.match(/\b(water|leak|pipe|supply|drainage|sewage|tap)\b/)) {
+    if (t.match(/\b(sewage|drain|waste|dirty|smell)\b/)) return "SANITATION";
+    return "WATER_SUPPLY";
+  }
+  if (t.match(/\b(trash|garbage|dirt|cleaning|waste|litter|dump)\b/)) return "SANITATION";
+  if (t.match(/\b(electric|power|light|wire|blackout|transformer|current)\b/)) return "ELECTRICITY";
+  if (t.match(/\b(bus|metro|train|transport|station|transit|stop)\b/)) return "PUBLIC_TRANSPORT";
+  if (t.match(/\b(tree|park|garden|pollution|air|noise|animal|smoke)\b/)) return "ENVIRONMENT";
+  if (t.match(/\b(building|construction|encroachment|illegal|structure|wall|permit)\b/)) return "BUILDING_VIOLATION";
+  if (t.match(/\b(bridge|boundary wall|wall|infrastructure|public property|furniture|signage)\b/)) return "INFRASTRUCTURE";
   return "OTHER";
 };
 

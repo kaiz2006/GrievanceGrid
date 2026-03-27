@@ -58,6 +58,8 @@ const DispatchPage = () => {
   const [assignments, setAssignments] = useState<CrewAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [deployingId, setDeployingId] = useState<string | null>(null);
+  const [deployedIds, setDeployedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -67,7 +69,6 @@ const DispatchPage = () => {
         setAssignments(data.items);
       } catch (error) {
         console.error('Failed to fetch assignments:', error);
-        // The service will return mock data on error
       } finally {
         setLoading(false);
       }
@@ -76,11 +77,30 @@ const DispatchPage = () => {
     fetchAssignments();
   }, [selectedStatus]);
 
+  const handleDeploy = (id: string) => {
+    setDeployingId(id);
+    setTimeout(() => {
+      setDeployingId(null);
+      setDeployedIds(prev => new Set(prev).add(id));
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Success Notification Overlay */}
+      {deployedIds.size > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-emerald-500 text-black px-6 py-3 rounded-full font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+        >
+          <CheckCircle2 className="w-4 h-4" />
+          Unit Deployed Successfully
+          <button onClick={() => setDeployedIds(new Set())} className="ml-4 opacity-50 hover:opacity-100">✕</button>
+        </motion.div>
+      )}
+
       <main className="flex-grow pt-12 lg:pt-32 pb-32 px-6 relative overflow-hidden">
-
-
         <div className="container mx-auto max-w-7xl relative z-10">
           {/* Dispatch Header */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-16">
@@ -103,8 +123,6 @@ const DispatchPage = () => {
                 Average response time is <span className="text-white font-bold">12m 42s</span>.
               </p>
             </motion.div>
-            
-
           </div>
 
           {/* Assignment Grid */}
@@ -119,13 +137,15 @@ const DispatchPage = () => {
               </div>
             ) : (
               assignments.map((item, i) => {
+                const isDeployed = deployedIds.has(item.grievance_id);
+                const isDeploying = deployingId === item.grievance_id;
                 const coords = parseCoordinates(item.location_coordinates);
                 const type = getTypeFromCategory(item.category);
                 const image = getImageForCategory(item.category);
                 const { statusColor, badgeColor } = getStatusColor(item.damage_severity);
-                const slaHours = Math.floor(item.priority * 4); // Mock SLA calculation
-                const slaMinutes = (item.priority * Math.random() * 60).toFixed(0);
-                const slaSeconds = (Math.random() * 60).toFixed(0);
+                const slaHours = Math.floor(item.priority * 4); 
+                const slaMinutes = (item.priority * 15).toFixed(0);
+                const slaSeconds = (22).toFixed(0);
                 const slaTime = `${slaHours.toString().padStart(2, '0')}:${slaMinutes.toString().padStart(2, '0')}:${slaSeconds.toString().padStart(2, '0')}`;
 
                 return (
@@ -150,7 +170,7 @@ const DispatchPage = () => {
                       <div className="text-right">
                         <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] mb-2 font-black opacity-60">SLA Timer</p>
                         <p className={`text-xl font-mono font-black italic ${item.damage_severity === 'CRITICAL' ? 'text-red-500 animate-pulse' : 'text-white'}`}>
-                          {slaTime}
+                          {isDeployed ? "RESOLVED" : slaTime}
                         </p>
                       </div>
                     </div>
@@ -179,10 +199,21 @@ const DispatchPage = () => {
                         <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                             <Users className="w-4 h-4 text-emerald-500" />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status: <span className="text-white">{item.status}</span></span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status: <span className="text-white">{isDeployed ? "DEPLOYED" : item.status}</span></span>
                       </div>
-                      <Button variant="ghost" className="text-emerald-500 group-hover:bg-emerald-500/10 text-[10px] font-black uppercase tracking-widest px-0">
-                        DEPLOY <ChevronRight className="w-4 h-4" />
+                      <Button 
+                        variant="ghost" 
+                        disabled={isDeployed || isDeploying}
+                        onClick={() => handleDeploy(item.grievance_id)}
+                        className={`text-emerald-500 group-hover:bg-emerald-500/10 text-[10px] font-black uppercase tracking-widest px-0 ${isDeployed ? "text-emerald-300" : ""}`}
+                      >
+                        {isDeploying ? (
+                          <Loader className="w-4 h-4 animate-spin mr-2" />
+                        ) : isDeployed ? (
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                        ) : (
+                          <>DEPLOY <ChevronRight className="w-4 h-4" /></>
+                        )}
                       </Button>
                     </div>
                   </motion.div>

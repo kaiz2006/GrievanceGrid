@@ -190,7 +190,7 @@ async def get_team_assignments(
 		LEFT JOIN users u ON u.id = g.citizen_id
 		LEFT JOIN teams t ON t.id = g.assigned_team_id
 		{where_clause}
-		ORDER BY g.created_at DESC, CAST(g.priority AS priorit) DESC
+		ORDER BY g.created_at DESC, CAST(g.priority AS priority) DESC
 		LIMIT :limit OFFSET :offset
 		""",
 		params,

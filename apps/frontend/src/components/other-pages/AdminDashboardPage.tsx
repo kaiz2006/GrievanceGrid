@@ -391,30 +391,48 @@ const AdminDashboardPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-8 pb-10">
-                  <div className="h-[250px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadialBarChart 
-                        innerRadius="30%" 
-                        outerRadius="100%" 
-                        data={getRadialSectorData(data?.by_category)} 
-                        startAngle={180} 
-                        endAngle={0}
+                  <div className="mt-4 grid grid-cols-8 gap-1.5 p-2 bg-black/40 rounded-2xl border border-white/5 shadow-inner">
+                    {sectorHeatmapData.map((cell, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.005 }}
+                        className="aspect-square rounded-[4px] relative group cursor-crosshair"
+                        style={{ 
+                          backgroundColor: cell.load > 0.8 ? 'rgba(239, 68, 68, 0.8)' : 
+                                          cell.load > 0.6 ? 'rgba(245, 158, 11, 0.6)' : 
+                                          cell.load > 0.4 ? 'rgba(59, 130, 246, 0.4)' : 
+                                          'rgba(255, 255, 255, 0.05)'
+                        }}
                       >
-                        <RadialBar
-                          label={{ fill: '#fff', position: 'insideStart', fontSize: '8px' }}
-                          background
-                          dataKey="value"
-                        />
-                        <Legend 
-                          iconSize={10} 
-                          layout="vertical" 
-                          verticalAlign="middle" 
-                          align="right" 
-                          formatter={(value) => <span className="text-[8px] font-black text-muted-foreground uppercase">{value}</span>}
-                        />
-                        <Tooltip />
-                      </RadialBarChart>
-                    </ResponsiveContainer>
+                        {/* Tooltip Overlay */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50 pointer-events-none">
+                            <div className="bg-black/90 backdrop-blur-md border border-white/10 p-2 rounded-lg shadow-2xl min-w-[100px]">
+                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-1">Sector {cell.x},{cell.y}</p>
+                                <p className="text-[10px] font-black italic text-white mb-0.5">{cell.status}</p>
+                                <p className="text-[10px] font-black text-amber-500">{(cell.load * 100).toFixed(0)}% Load</p>
+                            </div>
+                        </div>
+                        {cell.load > 0.7 && (
+                          <div className="absolute inset-0 bg-white/10 animate-pulse rounded-[4px]" />
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                  <div className="mt-8 grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                       <p className="text-xl font-black text-red-500 italic">4</p>
+                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Critical</p>
+                    </div>
+                    <div className="text-center border-x border-white/5">
+                       <p className="text-xl font-black text-amber-500 italic">12</p>
+                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Warning</p>
+                    </div>
+                    <div className="text-center">
+                       <p className="text-xl font-black text-emerald-500 italic">48</p>
+                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Nominal</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
