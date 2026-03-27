@@ -9,6 +9,7 @@ from src.core.dependencies import require_admin
 from src.repositories.grievances import GrievanceRepository
 from src.repositories.operations import AuditLogRepository
 from src.repositories.slas import SLARepository
+from src.services.grievance_service import GrievanceService
 
 router = APIRouter()
 
@@ -64,6 +65,16 @@ class AuditHistoryResponse(BaseModel):
 
 class AssignDepartmentRequest(BaseModel):
 	department_id: str = Field(min_length=1)
+
+
+class RejectGrievanceRequest(BaseModel):
+	reason: str = Field(min_length=5, max_length=500)
+
+
+class RejectGrievanceResponse(BaseModel):
+	grievance_id: str
+	status: str
+	message: str
 
 
 @router.get("/escalations", response_model=AdminEscalationResponse)
@@ -306,4 +317,40 @@ async def assign_team(
 		team_id=payload.team_id,
 		status=str(updated["status"]),
 		eta_minutes=eta_minutes,
+	)
+
+
+@router.post("/grievances/{grievance_id}/reject", response_model=RejectGrievanceResponse)
+async def reject_grievance(
+	grievance_id: str,
+	payload: RejectGrievanceRequest,
+	admin_user: dict = Depends(require_admin),
+	db: AsyncSession = Depends(get_db_session),
+) -> RejectGrievanceResponse:
+	repo = GrievanceRepository(db)
+	existing = await repo.get_by_id(grievance_id)
+	if existing is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	if str(existing.get("status")) == "CLOSED":
+		raise HTTPException(status_code=400, detail="Grievance is already closed")
+
+	service = GrievanceService(db)
+	notes = f"Rejected by admin. Reason: {payload.reason}"
+	try:
+		updated = await service.update_status(
+			grievance_id=grievance_id,
+			new_status="CLOSED",
+			notes=notes,
+		)
+	except ValueError as exc:
+		raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+	if updated is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	return RejectGrievanceResponse(
+		grievance_id=grievance_id,
+		status=str(updated["status"]),
+		message="Grievance rejected successfully",
 	)

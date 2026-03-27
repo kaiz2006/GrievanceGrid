@@ -6,7 +6,6 @@ import {
   Clock,
   MapPin,
   Phone,
-  MessageSquare,
   AlertCircle,
   ChevronRight,
   TrendingUp,
@@ -24,6 +23,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { grievanceService } from '@/services/grievance.service';
 import { useTrackingWebSocket } from '@/hooks/useWebSocket';
+import { toast } from 'sonner';
 
 import MapComponent from '../map/MapComponent';
 import AIAssignmentFlow from '../AIAssignmentFlow';
@@ -160,15 +160,22 @@ const TrackingPage = () => {
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Tracking Resolution</h1>
             </div>
 
-            <div className="grid grid-cols-2 md:flex items-center gap-4">
-              <Button
-                variant="outline"
-                className="h-12 sm:h-14 px-4 sm:px-8 border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-xs sm:text-sm uppercase tracking-widest font-bold"
+            <div className="grid grid-cols-1 md:flex items-center justify-end gap-4">
+              <Button 
+                className="cta-button-primary h-12 sm:h-14 px-4 sm:px-8 shadow-[0_0_20px_rgba(59,130,246,0.3)] text-xs sm:text-sm uppercase tracking-widest font-bold"
+                onClick={async () => {
+                  try {
+                    await grievanceService.updateStatus(data.grid_id, "ESCALATED", "Manual escalation by user");
+                    toast.success('Grievance escalated successfully!');
+                    // Refresh data to show updated status
+                    const result = await grievanceService.getTrack(grid_id || '');
+                    setData(result);
+                  } catch (error) {
+                    console.error('Escalation failed:', error);
+                    toast.error('Failed to escalate grievance. Please try again.');
+                  }
+                }}
               >
-                <MessageSquare className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                Contact
-              </Button>
-              <Button className="cta-button-primary h-12 sm:h-14 px-4 sm:px-8 shadow-[0_0_20px_rgba(59,130,246,0.3)] text-xs sm:text-sm uppercase tracking-widest font-bold">
                 Escalate
                 <AlertCircle className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
@@ -287,24 +294,8 @@ const TrackingPage = () => {
                     <Clock className="h-5 w-5" />
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 space-y-4">
-                  <GrievanceSLA createdAt={data.created_at} />
-                  <div className="px-6 pb-6">
-                    <Button 
-                      variant="outline"
-                      className="w-full bg-blue-500/10 border-blue-500/20 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 font-black uppercase tracking-widest text-[10px] h-12"
-                      onClick={async () => {
-                        try {
-                          await fetch(`/api/v1/grievances/${data.grid_id}/simulate`, { method: 'POST' });
-                          alert('Simulation started. Status updates will follow every few minutes.');
-                        } catch (e) {
-                          console.error(e);
-                        }
-                      }}
-                    >
-                      Simulate Resolution Process
-                    </Button>
-                  </div>
+                <CardContent className="p-0 space-y-4 pb-6">
+                  {data?.created_at && <GrievanceSLA createdAt={data.created_at} />}
                 </CardContent>
               </Card>
 
@@ -363,17 +354,8 @@ const TrackingPage = () => {
                       className="pt-4"
                     >
                       <MapComponent
-                        center={
-                          teamLocation
-                            ? [teamLocation.lat, teamLocation.lng]
-                            : data.assigned_team_location
-                              ? [
-                                  data.assigned_team_location.latitude,
-                                  data.assigned_team_location.longitude,
-                                ]
-                              : [28.6139, 77.209]
-                        }
-                        zoom={15}
+                        useGps={true}
+                        showUserLocation={true}
                         markers={[
                           { position: [28.6139, 77.209], popupContent: 'Grievance Location' },
                           {
@@ -388,7 +370,8 @@ const TrackingPage = () => {
                             popupContent: 'Officer (Live Location)',
                           },
                         ]}
-                        className="w-full h-[250px] rounded-xl overflow-hidden"
+                        zoom={15}
+                        className="w-full h-64 rounded-2xl overflow-hidden"
                       />
 
                       {teamLocation && (

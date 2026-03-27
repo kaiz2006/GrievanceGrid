@@ -146,6 +146,16 @@ class GrievanceContestResponse(BaseModel):
 	message: str
 
 
+class GrievanceOptOutRequest(BaseModel):
+	reason: str | None = Field(default=None, max_length=500)
+
+
+class GrievanceOptOutResponse(BaseModel):
+	grievance_id: str
+	status: str
+	message: str
+
+
 class GrievanceListItem(BaseModel):
 	grievance_id: str
 	grid_id: str
@@ -517,6 +527,47 @@ async def contest_grievance(
 		audit_id=audit_id,
 		audit_task_id=audit_task_id,
 		message="Contestation received. AI audit initiated. You will be contacted within 24 hours.",
+	)
+
+
+@router.post("/{grievance_id:uuid}/opt-out", response_model=GrievanceOptOutResponse)
+async def opt_out_grievance(
+	grievance_id: UUID,
+	payload: GrievanceOptOutRequest,
+	current_user: dict = Depends(get_current_user),
+	db: AsyncSession = Depends(get_db_session),
+) -> GrievanceOptOutResponse:
+	repo = GrievanceRepository(db)
+	grievance = await repo.get_by_id(str(grievance_id))
+	if grievance is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	if str(grievance.get("citizen_id")) != str(current_user.get("id")):
+		raise HTTPException(status_code=403, detail="You can only opt out your own grievance")
+
+	if str(grievance.get("status")) == "CLOSED":
+		raise HTTPException(status_code=400, detail="Grievance is already closed")
+
+	service = GrievanceService(db)
+	reason = payload.reason.strip() if payload.reason else "No reason provided"
+	notes = f"Citizen opted out grievance. Reason: {reason}"
+
+	try:
+		updated = await service.update_status(
+			grievance_id=str(grievance_id),
+			new_status="CLOSED",
+			notes=notes,
+		)
+	except ValueError as exc:
+		raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+	if updated is None:
+		raise HTTPException(status_code=404, detail="Grievance not found")
+
+	return GrievanceOptOutResponse(
+		grievance_id=str(grievance_id),
+		status=str(updated["status"]),
+		message="Grievance opted out successfully",
 	)
 	
 

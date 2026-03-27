@@ -236,5 +236,17 @@ export const adminService = {
         eta_minutes: 15
       };
     });
+  },
+
+  // POST /admin/grievances/{id}/reject - Reject grievance
+  rejectGrievance: async (grievanceId: string, reason: string) => {
+    return apiClient.post(`/admin/grievances/${grievanceId}/reject`, { reason }, async () => {
+      await mockDelay(250);
+      return {
+        grievance_id: grievanceId,
+        status: "CLOSED",
+        message: "Grievance rejected successfully"
+      };
+    });
   }
 };

@@ -23,7 +23,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 relative z-10">
         <div className="col-span-2">
           <div className="flex items-center gap-4 mb-6">
-            <img src="/logo.jpeg" className="w-10 h-10 object-contain rounded-xl border border-white/10" alt="GrievanceGrid Logo" />
+            <img src="/logo.jpeg" className="w-10 h-10 object-contain" alt="GrievanceGrid Logo" />
             <span className="text-xl font-black text-white uppercase tracking-tighter">GrievanceGrid</span>
           </div>
           <p className="text-zinc-500 max-w-xs text-sm leading-relaxed mb-6 font-mono">
@@ -97,8 +97,6 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">
         <span>© 2026 GrievanceGrid Infrastructure Pvt. Ltd.</span>
         <div className="flex gap-8">
-          <span>LATENCY: 14ms</span>
-          <span>STATUS: GRID_HEALTHY_V2</span>
         </div>
       </div>
     </footer>

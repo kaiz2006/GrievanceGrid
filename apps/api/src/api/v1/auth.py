@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta, timezone
+from enum import Enum
 from fastapi import APIRouter, HTTPException, status, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -34,13 +35,37 @@ from src.schemas.auth import (
 router = APIRouter(tags=["Authentication"])
 
 
+def _normalize_role(role: object) -> str:
+    """Normalize role values coming from DB/enums/strings into canonical uppercase strings."""
+    if isinstance(role, Enum):
+        return str(role.value).upper()
+
+    raw = str(role or "CITIZEN").strip()
+    if "." in raw:
+        raw = raw.split(".")[-1]
+    return raw.upper() or "CITIZEN"
+
+
+def _infer_fallback_role(email: str | None) -> str:
+    """Infer role for known demo users when running in mock fallback mode."""
+    normalized = (email or "").strip().lower()
+    mapping = {
+        "officer1@example.com": "OFFICER",
+        "crew1@example.com": "CREW",
+        "auditor1@example.com": "AUDITOR",
+        "admin1@example.com": "ADMIN",
+    }
+    return mapping.get(normalized, "CITIZEN")
+
+
 async def _issue_tokens(user: dict, auth_type: str) -> dict:
     user_id = str(user["id"])
+    normalized_role = _normalize_role(user.get("role"))
     token_data = {
         "sub": user_id,
         "email": user["email"],
         "name": user["name"],
-        "role": str(user["role"]),
+        "role": normalized_role,
         "auth_type": auth_type,
     }
     access_token = create_access_token(token_data)
@@ -61,7 +86,7 @@ async def _issue_tokens(user: dict, auth_type: str) -> dict:
             "id": user_id,
             "email": user["email"],
             "name": user["name"],
-            "role": str(user["role"]),
+            "role": normalized_role,
             "is_active": user["is_active"],
 
             "created_at": user["created_at"].isoformat() if user["created_at"] else "",
@@ -141,18 +166,19 @@ async def login(
     
     # FALLBACK: If DB is unreachable or user not found in mock mode
     if not user:
-        if hasattr(db_session, "execute") and "MockResult" in str(await db_session.execute("SELECT 1")):
+        if type(db_session).__name__ == "MockSession":
              from uuid import uuid4
+             fallback_role = _infer_fallback_role(request.email)
              user = {
                 "id": f"mock-{uuid4()}",
                 "email": request.email,
                 "name": "Dev User",
-                "role": "CITIZEN",
+                "role": fallback_role,
                 "is_active": True,
                 "created_at": datetime.now(timezone.utc),
                 "department_id": None
             }
-             logger.warning(f"DB OFFLINE: Using Mock Fallback ({user['role']}) login for {request.email}")
+             logger.warning(f"DB OFFLINE: Using Mock Fallback ({fallback_role}) login for {request.email}")
         else:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

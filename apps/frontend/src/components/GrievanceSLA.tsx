@@ -14,40 +14,61 @@ const GrievanceSLA = ({ createdAt, slaDurationHours = 24 }: GrievanceSLAProps) =
 
   useEffect(() => {
     const calculateTime = () => {
-      const created = new Date(createdAt).getTime();
-      const deadline = created + slaDurationHours * 60 * 60 * 1000;
-      const now = new Date().getTime();
-      const difference = deadline - now;
+      try {
+        if (!createdAt) {
+          setTimeComponents({ h: '--', m: '--', s: '--' });
+          setProgress(0);
+          setIsBreached(false);
+          return;
+        }
 
-      if (difference <= 0) {
-        setTimeComponents({ h: '00', m: '00', s: '00' });
-        setProgress(100);
-        setIsBreached(true);
-        return;
+        const created = new Date(createdAt).getTime();
+        if (isNaN(created)) {
+          console.warn('GrievanceSLA: Invalid date string', createdAt);
+          setTimeComponents({ h: '--', m: '--', s: '--' });
+          setProgress(0);
+          setIsBreached(false);
+          return;
+        }
+
+        const totalSLA = slaDurationHours * 60 * 60 * 1000;
+        const deadline = created + totalSLA;
+        const now = new Date().getTime();
+        const difference = deadline - now;
+
+        if (difference <= 0) {
+          setTimeComponents({ h: '00', m: '00', s: '00' });
+          setProgress(100);
+          setIsBreached(true);
+          return;
+        }
+
+        // Calculate HH:MM:SS
+        const hours = Math.max(0, Math.floor((difference / (1000 * 60 * 60))));
+        const minutes = Math.max(0, Math.floor((difference / (1000 * 60)) % 60));
+        const seconds = Math.max(0, Math.floor((difference / 1000) % 60));
+
+        setTimeComponents({
+          h: String(hours).padStart(2, '0').slice(0, 2),
+          m: String(minutes).padStart(2, '0').slice(0, 2),
+          s: String(seconds).padStart(2, '0').slice(0, 2),
+        });
+
+        // Percentage: (Elapsed / Total) * 100
+        const elapsed = now - created;
+        const p = Math.min(Math.max(0, (elapsed / totalSLA) * 100), 100);
+        setProgress(p);
+        setIsBreached(false);
+      } catch (error) {
+        console.error('Error calculating SLA time:', error);
+        setTimeComponents({ h: '--', m: '--', s: '--' });
+        setProgress(0);
+        setIsBreached(false);
       }
-
-      // Calculate HH:MM:SS
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      setTimeComponents({
-        h: String(hours).padStart(2, '0'),
-        m: String(minutes).padStart(2, '0'),
-        s: String(seconds).padStart(2, '0'),
-      });
-
-      // Percentage: (Elapsed / Total) * 100
-      const elapsed = now - created;
-      const total = deadline - created;
-      const p = Math.min((elapsed / total) * 100, 100);
-      setProgress(p);
-      setIsBreached(false);
     };
 
     calculateTime();
-    // Update every 100ms for smooth progress, though timer digits only change every 1000ms
-    const interval = setInterval(calculateTime, 100);
+    const interval = setInterval(calculateTime, 1000);
     return () => clearInterval(interval);
   }, [createdAt, slaDurationHours]);
 
@@ -117,18 +138,20 @@ const GrievanceSLA = ({ createdAt, slaDurationHours = 24 }: GrievanceSLAProps) =
             Grid Progress
           </span>
           <span className={isBreached ? 'text-red-500' : 'text-blue-500 font-mono'}>
-            {Math.round(progress)}%
+            {progress > 0 ? `${Math.round(progress)}%` : '--%'}
           </span>
         </div>
         <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            className={`h-full relative ${isBreached ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.5)]'}`}
-            transition={{ duration: 0.1, ease: 'linear' }}
-          >
-            <div className="absolute inset-0 bg-white/20 animate-pulse" />
-          </motion.div>
+          {progress > 0 && (
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              className={`h-full relative ${isBreached ? 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.5)]'}`}
+              transition={{ duration: 0.1, ease: 'linear' }}
+            >
+              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            </motion.div>
+          )}
         </div>
       </div>
 

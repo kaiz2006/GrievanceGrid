@@ -6,7 +6,6 @@ import {
   TrendingUp, 
   ShieldCheck, 
   Layers, 
-  FileText, 
   Settings, 
   LogOut,
   ChevronLeft,
@@ -15,7 +14,6 @@ import {
   X,
   Home,
   Zap,
-  Layout,
   Globe,
   Cpu,
   Users,
@@ -34,7 +32,6 @@ import {
   Lightbulb,
   // Citizen page icons
   List,
-  Mic,
   User,
   // Officer workflow icons
   CheckCircle,
@@ -55,7 +52,6 @@ const menuItems = [
   { icon: Search, label: "Forensic", href: "/admin/forensic", roles: ["ADMIN"] },
   { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox", roles: ["ADMIN"] },
   { icon: ShieldCheck, label: "Fraud Detection", href: "/admin/fraud-detection", roles: ["ADMIN"] },
-  { icon: Layout, label: "Mission Control", href: "/admin/mission-control", roles: ["ADMIN"] },
   { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["ADMIN"] },
   { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["ADMIN"] },
   { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["ADMIN"] },
@@ -78,24 +74,19 @@ const menuItems = [
   { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["ADMIN"] },
   
   // NEW: Officer Workflow Pages
-  { icon: CheckCircle, label: "Officer Dashboard", href: "/officer/dashboard", roles: ["ADMIN", "OFFICER"] },
-  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["ADMIN", "OFFICER"] },
-  { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["ADMIN", "OFFICER"] },
+  { icon: CheckCircle, label: "Officer Dashboard", href: "/officer/dashboard", roles: ["OFFICER"] },
+  { icon: CheckCircle, label: "Field Verification", href: "/officer/field-verification", roles: ["OFFICER"] },
+  { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["OFFICER"] },
 
   // Crew and auditor role-specific dashboards
-  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["ADMIN", "CREW"] },
-  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["ADMIN", "AUDITOR"] },
-  
-  // Citizen-specific pages
-  { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["CITIZEN"] },
+  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["CREW"] },
+  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["AUDITOR"] },
   
   // Common/Citizen items
   { icon: LayoutDashboard, label: "Dashboard", href: "/citizen/dashboard", roles: ["CITIZEN"] },
   { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
   { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
   { icon: User, label: "My Profile", href: "/profile", roles: ["CITIZEN", "ADMIN", "OFFICER"] },
-  { icon: Layers, label: "Impact", href: "/impact", roles: ["CITIZEN"] },
-  { icon: FileText, label: "Resources", href: "/resource-center", roles: ["CITIZEN"] },
 ];
 
 const Sidebar = () => {
@@ -128,8 +119,8 @@ const Sidebar = () => {
       <div className="w-full h-full flex flex-col overflow-hidden">
         <div className="h-24 flex items-center px-6 mb-4">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.4)] overflow-hidden">
-              <img src="/logo.jpeg" className="w-full h-full object-cover" alt="Logo" />
+            <div className="w-10 h-10 flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="/logo.jpeg" className="w-full h-full object-contain" alt="Logo" />
             </div>
             <motion.div 
               animate={{ 

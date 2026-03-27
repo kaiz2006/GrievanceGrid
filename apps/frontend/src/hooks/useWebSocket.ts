@@ -132,7 +132,13 @@ export const useTrackingWebSocket = (gridId: string | null) => {
   const [eta, setEta] = useState<string | null>(null);
   const [teamLocation, setTeamLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  const wsUrl = gridId ? `${import.meta.env.VITE_WS_URL || "ws://localhost:8000"}/ws/track/${gridId}` : null;
+  const getWsUrl = () => {
+    if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${window.location.host}`;
+  };
+
+  const wsUrl = gridId ? `${getWsUrl()}/ws/track/${gridId}` : null;
 
   const { isConnected, isConnecting } = useWebSocket(wsUrl, {
     onMessage: (message) => {

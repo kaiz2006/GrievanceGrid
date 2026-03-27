@@ -1,8 +1,11 @@
 // Auth Service for GrievanceGrid
 // Following API SPEC Section - Authentication
-import { apiClient, mockDelay } from "./api.client";
+import { apiClient } from "./api.client";
 import { UserRole } from "@/types";
 import { auth, signOut } from "@/lib/firebase";
+
+// Mock delay function
+const mockDelay = (ms: number = 300) => new Promise(resolve => setTimeout(resolve, ms));
 
 export interface User {
   id: string;
@@ -63,7 +66,25 @@ export const authService = {
 
   // GET /auth/me - Get current user
   me: async (): Promise<User> => {
-    return apiClient.get("/auth/me");
+    return apiClient.get("/auth/me", async () => {
+      await mockDelay(200);
+      
+      const userRole = localStorage.getItem("userRole");
+      const userEmail = localStorage.getItem("userEmail");
+      const userName = localStorage.getItem("userName");
+      const userUid = localStorage.getItem("userUid");
+      
+      if (!userRole || !userEmail) {
+        throw new Error("Not authenticated");
+      }
+      
+      return {
+        id: userUid || "unknown",
+        email: userEmail,
+        name: userName || "Unknown User",
+        role: userRole as UserRole,
+      };
+    });
   },
 
   // POST /auth/logout - Logout user

@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Clock, AlertTriangle, CheckCircle2, TrendingUp, BarChart3, RefreshCw, Filter } from "lucide-react";
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
+  ResponsiveContainer, Legend 
+} from "recharts";
 import { slaService, SLABreachItem } from "@/services/sla.service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { getSLATrendData } from "@/lib/chart-utils";
 
 const SLAMonitoringPage = () => {
   const [breaches, setBreaches] = useState<SLABreachItem[]>([]);
@@ -90,7 +95,102 @@ const SLAMonitoringPage = () => {
         ))}
       </div>
 
-      {/* SLA Compliance Progress */}
+      {/* SLA Analytics Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <Card className="lg:col-span-2 glass-premium border-white/5 bg-white/[0.01] p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-xl font-black tracking-tight text-white italic">SLA Integrity Trend</h3>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">7-Day operational performance across all sectors</p>
+            </div>
+            <Activity className="w-5 h-5 text-blue-500" />
+          </div>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={getSLATrendData()}>
+                <defs>
+                  <linearGradient id="breachGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="fixGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                <XAxis 
+                  dataKey="day" 
+                  stroke="#ffffff20" 
+                  fontSize={11} 
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  stroke="#ffffff20" 
+                  fontSize={11} 
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(10, 10, 10, 0.9)', borderColor: 'rgba(59, 130, 246, 0.2)', borderRadius: '12px' }}
+                />
+                <Area type="monotone" dataKey="breaches" stroke="#ef4444" fillOpacity={1} fill="url(#breachGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="fixed" stroke="#10b981" fillOpacity={1} fill="url(#fixGrad)" strokeWidth={2} />
+                <Legend verticalAlign="top" align="right" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card className="glass-premium border-white/5 bg-white/[0.01] p-8 flex flex-col justify-center items-center">
+            <div className="text-center mb-6">
+                <h3 className="text-xl font-black tracking-tight text-white italic text-left">System Health</h3>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1 text-left">Real-time stability score</p>
+            </div>
+            <div className="relative w-full aspect-square max-w-[200px]">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle 
+                        cx="50" cy="50" r="45" 
+                        fill="none" 
+                        stroke="rgba(255,255,255,0.05)" 
+                        strokeWidth="8"
+                    />
+                    <circle 
+                        cx="50" cy="50" r="45" 
+                        fill="none" 
+                        stroke="url(#healthGradient)" 
+                        strokeWidth="8"
+                        strokeDasharray="282.7"
+                        strokeDashoffset={282.7 * (1 - 0.984)}
+                        strokeLinecap="round"
+                        className="drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                    />
+                    <defs>
+                        <linearGradient id="healthGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#3b82f6" />
+                            <stop offset="100%" stopColor="#10b981" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-4xl font-black italic tracking-tighter text-white">98.4</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Stable</span>
+                </div>
+            </div>
+            <div className="w-full mt-8 space-y-3">
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground">Uptime</span>
+                    <span className="text-emerald-400">99.99%</span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                    <span className="text-muted-foreground">Error Rate</span>
+                    <span className="text-red-400">0.02%</span>
+                </div>
+            </div>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         <Card className="glass-card border-white/5 bg-white/[0.01]">
           <CardHeader>

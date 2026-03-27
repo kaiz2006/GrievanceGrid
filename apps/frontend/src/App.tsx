@@ -22,7 +22,6 @@ import TransparencyPage from "./components/other-pages/TransparencyPage";
 import ForensicPage from "./components/other-pages/ForensicPage";
 import CrisisInboxPage from "./components/other-pages/CrisisInboxPage";
 import FraudDetectionPage from "./components/other-pages/FraudDetectionPage";
-import MissionControlPage from "./components/other-pages/MissionControlPage";
 import DispatchPage from "./components/other-pages/DispatchPage";
 import EngineeringPage from "./components/other-pages/EngineeringPage";
 import IndustrialInterfacePage from "./components/other-pages/IndustrialInterfacePage";
@@ -81,7 +80,6 @@ const App = () => (
             <Route path="/admin/forensic" element={<ForensicPage />} />
             <Route path="/admin/crisis-inbox" element={<CrisisInboxPage />} />
             <Route path="/admin/fraud-detection" element={<FraudDetectionPage />} />
-            <Route path="/admin/mission-control" element={<MissionControlPage />} />
             <Route path="/admin/dispatch" element={<DispatchPage />} />
             <Route path="/admin/engineering" element={<EngineeringPage />} />
             <Route path="/admin/industrial" element={<IndustrialInterfacePage />} />

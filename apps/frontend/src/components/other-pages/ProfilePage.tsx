@@ -2,29 +2,25 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Shield,
-  Bell,
-  Edit3,
-  Save,
-  Camera,
-  LogOut,
-  ChevronRight,
-  FileText,
-  Star,
-  Clock
+  User, Mail, Phone, MapPin, Shield, Bell,
+  Edit3, Save, Camera, LogOut, ChevronRight,
+  FileText, Star, Clock
 } from "lucide-react";
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, Cell 
+} from 'recharts';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { authService } from "@/services/auth.service";
+import { grievanceService } from "@/services/grievance.service";
+import { getStatusDistribution } from "@/lib/chart-utils";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
+  const [grievances, setGrievances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -34,6 +30,11 @@ const ProfilePage = () => {
     email: "",
     phone: "",
     address: ""
+  });
+  const [stats, setStats] = useState({
+    total: 0,
+    resolved: 0,
+    pending: 0
   });
 
   useEffect(() => {
@@ -46,13 +47,30 @@ const ProfilePage = () => {
 
       setLoading(true);
       try {
-        const result = await authService.me();
-        setUser(result);
+        const [profileResult, grievanceResult] = await Promise.all([
+          authService.me(),
+          grievanceService.getMyGrievances()
+        ]);
+
+        setUser(profileResult);
         setFormData({
-          name: result.name || "",
-          email: result.email || "",
-          phone: result.phone || "",
+          name: profileResult.name || "",
+          email: profileResult.email || "",
+          phone: profileResult.phone || "",
           address: ""
+        });
+
+        const items = (grievanceResult as any).grievances || (grievanceResult as any).items || [];
+        setGrievances(items);
+        
+        const resolved = items.filter((g: any) => 
+          ["RESOLVED", "CLOSED", "VERIFIED"].includes(g.status?.toUpperCase())
+        ).length;
+
+        setStats({
+          total: items.length,
+          resolved: resolved,
+          pending: items.length - resolved
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -254,30 +272,67 @@ const ProfilePage = () => {
               </Card>
 
               {/* Activity Summary */}
-              <Card className="glass-card border-white/5 bg-white/[0.02]">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-green-500" />
-                    Activity Summary
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="p-4 rounded-2xl bg-white/5 text-center">
-                      <p className="text-2xl font-bold text-blue-500">12</p>
-                      <p className="text-xs text-muted-foreground mt-1">Total Reports</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="glass-card border-white/5 bg-white/[0.02]">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-green-500" />
+                      Activity Summary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-4 rounded-2xl bg-white/5 text-center">
+                        <p className="text-2xl font-bold text-blue-500">{stats.total}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Total Reports</p>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-white/5 text-center">
+                        <p className="text-2xl font-bold text-green-500">{stats.resolved}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Resolved</p>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-white/5 text-center">
+                        <p className="text-2xl font-bold text-amber-500">{stats.pending}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Pending</p>
+                      </div>
                     </div>
-                    <div className="p-4 rounded-2xl bg-white/5 text-center">
-                      <p className="text-2xl font-bold text-green-500">8</p>
-                      <p className="text-xs text-muted-foreground mt-1">Resolved</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-white/5 text-center">
-                      <p className="text-2xl font-bold text-amber-500">4</p>
-                      <p className="text-xs text-muted-foreground mt-1">Pending</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card className="glass-card border-white/5 bg-white/[0.02]">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                      Resolution Velocity
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[140px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={getStatusDistribution(grievances)}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                        <XAxis 
+                          dataKey="name" 
+                          stroke="#ffffff20" 
+                          fontSize={10} 
+                          tickLine={false}
+                          axisLine={false}
+                        />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', borderColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}
+                          cursor={{ fill: 'transparent' }}
+                        />
+                        <Bar 
+                          dataKey="count" 
+                          radius={[4, 4, 0, 0]}
+                          maxBarSize={40}
+                        >
+                          {getStatusDistribution(grievances).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.name === 'Resolved' ? '#10b981' : '#3b82f6'} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
 
             {/* Right Column - Quick Links */}

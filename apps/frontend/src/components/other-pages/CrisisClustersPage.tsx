@@ -147,13 +147,13 @@ const CrisisClustersPage = () => {
 
                 <div className="h-[500px]">
                   <MapComponent
-                    center={[28.6139, 77.2090]}
-                    zoom={12}
+                    useGps={true}
+                    showUserLocation={true}
                     markers={clusters.map(c => ({
                       position: [c.centroid_lat, c.centroid_lng],
                       popupContent: `${c.cluster_id}: ${c.member_count} grievances (${((c.crisis_score || 0) * 100).toFixed(0)}% crisis)`
                     }))}
-                    className="w-full h-full"
+                    zoom={14}
                   />
                 </div>
 

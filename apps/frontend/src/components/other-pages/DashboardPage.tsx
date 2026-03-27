@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Search, Filter, Clock, CheckCircle2, AlertCircle, MapPin, Calendar, ArrowRight, Bot, Sparkles } from "lucide-react";
+import { 
+  Plus, Search, Filter, Clock, CheckCircle2, AlertCircle, 
+  MapPin, Calendar, ArrowRight, Bot, Sparkles 
+} from "lucide-react";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
+  ResponsiveContainer, Area, PieChart, Pie, Cell, Legend 
+} from 'recharts';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { grievanceService } from "@/services/grievance.service";
+import { getEnhancedTrendData, getCategoryData } from "@/lib/chart-utils";
 
 const DashboardPage = () => {
   const [grievances, setGrievances] = useState<any[]>([]);
@@ -139,6 +147,113 @@ const DashboardPage = () => {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Grid Insights Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* Trend Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="glass-card border-white/5 bg-white/[0.02] p-8"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-bold tracking-tight">Grid Activity Trend</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Grievance inflow over the last 7 days</p>
+                </div>
+                <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <Bot className="w-5 h-5 text-blue-500" />
+                </div>
+              </div>
+              
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={getEnhancedTrendData(grievances)}>
+                    <defs>
+                      <linearGradient id="lineColor" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                    <XAxis 
+                      dataKey="date" 
+                      stroke="#ffffff20" 
+                      fontSize={11} 
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      stroke="#ffffff20" 
+                      fontSize={11} 
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', borderColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}
+                      itemStyle={{ color: '#3b82f6' }}
+                    />
+                    <Area type="monotone" dataKey="count" stroke="#3b82f6" fillOpacity={1} fill="url(#lineColor)" />
+                    <Line 
+                      type="monotone" 
+                      dataKey="count" 
+                      stroke="#3b82f6" 
+                      strokeWidth={3}
+                      dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#000' }}
+                      activeDot={{ r: 6, fill: '#3b82f6', strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </motion.div>
+
+            {/* Category Chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="glass-card border-white/5 bg-white/[0.02] p-8"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-bold tracking-tight">Issue Distribution</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Common report categories across the grid</p>
+                </div>
+                <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <Sparkles className="w-5 h-5 text-green-500" />
+                </div>
+              </div>
+
+              <div className="h-[300px] w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={getCategoryData(grievances)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={8}
+                      dataKey="value"
+                    >
+                      {getCategoryData(grievances).map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={[ '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6' ][index % 5]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', borderColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value) => <span className="text-xs text-muted-foreground font-mono uppercase">{value}</span>}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </motion.div>
           </div>
 
           {/* Filters & Search */}

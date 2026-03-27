@@ -25,7 +25,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
       <div className="container mx-auto flex items-center justify-between h-20 px-6">
         <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <img src="/logo.jpeg" className="w-10 h-10 object-contain rounded-lg" alt="GrievanceGrid Logo" />
+          <img src="/logo.jpeg" className="w-10 h-10 object-contain" alt="GrievanceGrid Logo" />
           <Shuffle 
             text="GrievanceGrid"
             tag="span"
@@ -58,12 +58,12 @@ const Navbar = () => {
 
         <div className="hidden lg:block">
           {isLoggedIn ? (
-            <Link to={dashboardPath} className="cta-button-primary text-xs px-6 py-3 gap-2">
+            <Link to={dashboardPath} className="bg-white text-black hover:bg-white/90 font-bold transition-all px-6 py-3 rounded-full text-xs flex items-center gap-2">
               <LayoutDashboard className="w-4 h-4" />
               DASHBOARD
             </Link>
           ) : (
-            <Link to="/login" className="cta-button-primary text-xs px-6 py-3">
+            <Link to="/login" className="bg-white text-black hover:bg-white/90 font-bold transition-all px-6 py-3 rounded-full text-xs">
               GET STARTED
             </Link>
           )}
@@ -99,7 +99,7 @@ const Navbar = () => {
           {isLoggedIn ? (
             <Link 
               to={dashboardPath} 
-              className="cta-button-primary text-xs px-6 py-3 w-full justify-center gap-2"
+              className="bg-white text-black hover:bg-white/90 font-bold transition-all px-6 py-3 rounded-full text-xs w-full flex justify-center items-center gap-2"
               onClick={() => setMobileOpen(false)}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -108,7 +108,7 @@ const Navbar = () => {
           ) : (
             <Link 
               to="/login" 
-              className="cta-button-primary text-xs px-6 py-3 w-full justify-center"
+              className="bg-white text-black hover:bg-white/90 font-bold transition-all px-6 py-3 rounded-full text-xs w-full flex justify-center"
               onClick={() => setMobileOpen(false)}
             >
               GET STARTED

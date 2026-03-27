@@ -23,6 +23,45 @@ import MapComponent from "../map/MapComponent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+// Generate heatmap grid data
+const generateHeatmapData = () => {
+  const gridSize = 10;
+  const data = [];
+  
+  for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      // Create realistic risk patterns with hotspots
+      let intensity = Math.random() * 0.3; // Base random intensity
+      
+      // Add some hotspots
+      const centerX1 = 2, centerY1 = 3;
+      const centerX2 = 7, centerY2 = 6;
+      const centerX3 = 4, centerY3 = 8;
+      
+      const dist1 = Math.sqrt(Math.pow(i - centerX1, 2) + Math.pow(j - centerY1, 2));
+      const dist2 = Math.sqrt(Math.pow(i - centerX2, 2) + Math.pow(j - centerY2, 2));
+      const dist3 = Math.sqrt(Math.pow(i - centerX3, 2) + Math.pow(j - centerY3, 2));
+      
+      intensity += Math.exp(-dist1 / 2) * 0.7; // Hotspot 1
+      intensity += Math.exp(-dist2 / 3) * 0.5; // Hotspot 2
+      intensity += Math.exp(-dist3 / 2.5) * 0.6; // Hotspot 3
+      
+      intensity = Math.min(intensity, 1); // Cap at 1
+      
+      data.push({
+        x: i,
+        y: j,
+        intensity: intensity,
+        risk: intensity > 0.8 ? 'Critical' : intensity > 0.6 ? 'High' : intensity > 0.4 ? 'Medium' : 'Low'
+      });
+    }
+  }
+  
+  return data;
+};
+
+const heatmapData = generateHeatmapData();
+
 const assetTypeIcons: Record<string, typeof Zap> = {
   TRANSFORMER: Battery,
   WATER_MAIN: Droplets,
@@ -233,24 +272,84 @@ const PredictiveMaintenancePage = () => {
 
             {/* Right Column - Map & Details */}
             <div className="lg:col-span-5 space-y-8">
-              {/* Risk Map */}
+              {/* Risk Heatmap */}
               <div className="rounded-[2.5rem] bg-white/[0.02] border border-white/5 overflow-hidden">
                 <div className="p-6 border-b border-white/5">
-                  <h3 className="text-lg font-bold flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-blue-500" />
-                    Risk Heatmap
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold flex items-center gap-3">
+                      <MapPin className="w-5 h-5 text-blue-500" />
+                      Risk Heatmap
+                    </h3>
+                    <div className="flex items-center gap-4 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded"></div>
+                        <span className="text-muted-foreground">Low</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                        <span className="text-muted-foreground">Medium</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded"></div>
+                        <span className="text-muted-foreground">High</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded"></div>
+                        <span className="text-muted-foreground">Critical</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="h-[300px] relative">
-                  <MapComponent
-                    center={[28.6139, 77.2090]}
-                    zoom={12}
-                    markers={assets.slice(0, 5).map(a => ({
-                      position: [28.6 + Math.random() * 0.05, 77.2 + Math.random() * 0.05],
-                      popupContent: `${a.asset_name}: ${((a.failure_risk_score || 0) * 100).toFixed(0)}% risk`
-                    }))}
-                    className="w-full h-full"
-                  />
+                <div className="p-6">
+                  <div className="grid grid-cols-10 gap-1 aspect-square">
+                    {heatmapData.map((cell, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.01 }}
+                        className={`
+                          relative rounded cursor-pointer transition-all duration-200 hover:scale-110 hover:z-10
+                          ${cell.intensity > 0.8 ? 'bg-red-500' : 
+                            cell.intensity > 0.6 ? 'bg-orange-500' : 
+                            cell.intensity > 0.4 ? 'bg-yellow-500' : 
+                            cell.intensity > 0.2 ? 'bg-green-500' : 'bg-green-600'}
+                        `}
+                        style={{ 
+                          opacity: 0.3 + (cell.intensity * 0.7),
+                          boxShadow: cell.intensity > 0.7 ? '0 0 20px rgba(239, 68, 68, 0.5)' : 'none'
+                        }}
+                        title={`Sector ${cell.x},${cell.y}: ${cell.risk} Risk (${(cell.intensity * 100).toFixed(0)}%)`}
+                      >
+                        {cell.intensity > 0.7 && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Heatmap Statistics */}
+                  <div className="grid grid-cols-4 gap-4 mt-6">
+                    {[
+                      { label: 'Critical Areas', value: heatmapData.filter(d => d.risk === 'Critical').length, color: 'text-red-500' },
+                      { label: 'High Risk', value: heatmapData.filter(d => d.risk === 'High').length, color: 'text-orange-500' },
+                      { label: 'Medium Risk', value: heatmapData.filter(d => d.risk === 'Medium').length, color: 'text-yellow-500' },
+                      { label: 'Low Risk', value: heatmapData.filter(d => d.risk === 'Low').length, color: 'text-green-500' },
+                    ].map((stat, i) => (
+                      <div key={stat.label} className="text-center p-3 rounded-lg bg-white/5">
+                        <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-4 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <p className="text-sm text-blue-400">
+                      <strong>AI Analysis:</strong> 3 critical hotspots detected. Immediate inspection recommended for sectors (2,3), (7,6), and (4,8).
+                    </p>
+                  </div>
                 </div>
               </div>
 

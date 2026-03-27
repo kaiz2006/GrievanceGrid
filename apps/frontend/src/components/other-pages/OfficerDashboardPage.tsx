@@ -2,24 +2,15 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
-  Play,
-  ArrowRight,
-  RefreshCw,
-  ShieldCheck,
-  TrendingUp,
-  Briefcase,
-  Search,
-  ChevronRight,
-  Filter,
-  MapPin,
-  Calendar,
-  Layers,
-  Activity
+  LayoutDashboard, Clock, CheckCircle2, AlertTriangle, Play,
+  ArrowRight, RefreshCw, ShieldCheck, TrendingUp, Briefcase,
+  Search, ChevronRight, Filter, MapPin, Calendar, Layers, Activity,
+  BarChart3
 } from "lucide-react";
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +18,7 @@ import { grievanceService } from "@/services/grievance.service";
 import { analyticsService } from "@/services/analytics.service";
 import GrievanceSLA from "@/components/GrievanceSLA";
 import { DashboardAnalytics } from "@/types/analytics";
+import { getOfficerTaskData, getCategoryData } from "@/lib/chart-utils";
 
 const OfficerDashboardPage = () => {
   const [grievances, setGrievances] = useState<any[]>([]);
@@ -41,7 +33,13 @@ const OfficerDashboardPage = () => {
           analyticsService.getDashboard()
         ]);
         
-        setGrievances((grievanceResult as any).grievances || (grievanceResult as any).items || []);
+        console.log('🔍 Dashboard Debug - Grievance Result:', grievanceResult);
+        console.log('🔍 Dashboard Debug - Analytics Result:', analyticsResult);
+        
+        const grievancesData = (grievanceResult as any).grievances || (grievanceResult as any).items || grievanceResult || [];
+        console.log('🔍 Dashboard Debug - Parsed Grievances:', grievancesData);
+        
+        setGrievances(grievancesData);
         setAnalytics(analyticsResult);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -95,10 +93,7 @@ const OfficerDashboardPage = () => {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
             <main className="flex-grow pt-12 lg:pt-32 pb-12 px-6 relative overflow-hidden">
-                {/* Background Glows */}
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[140px] pointer-events-none" />
+
 
                 <div className="container mx-auto max-w-7xl relative z-10">
                     {/* Dashboard Header */}
@@ -132,6 +127,80 @@ const OfficerDashboardPage = () => {
                         </div>
                     </div>
     
+                    {/* Analytics Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                        <Card className="glass-premium border-white/5 bg-white/[0.01] glow-officer">
+                            <CardHeader>
+                                <CardTitle className="text-xl font-black flex items-center gap-3 italic">
+                                    <PieChart className="w-5 h-5 text-indigo-400" />
+                                    Task Distribution
+                                </CardTitle>
+                                <CardDescription className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                                    Status breakdown of your assignments
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="h-[300px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={getOfficerTaskData(grievances)}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={60}
+                                            outerRadius={80}
+                                            paddingAngle={5}
+                                            dataKey="value"
+                                        >
+                                            {getOfficerTaskData(grievances).map((entry: any, index: number) => (
+                                                <Cell key={`cell-${index}`} fill={['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'][index % 5]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                            itemStyle={{ color: '#fff' }}
+                                        />
+                                        <Legend verticalAlign="bottom" height={36}/>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="glass-premium border-white/5 bg-white/[0.01] glow-citizen">
+                            <CardHeader>
+                                <CardTitle className="text-xl font-black flex items-center gap-3 italic">
+                                    <BarChart3 className="w-5 h-5 text-blue-400" />
+                                    Category Breakdown
+                                </CardTitle>
+                                <CardDescription className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                                    Workload by grievance category
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="h-[300px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={getCategoryData(grievances).slice(0, 5)}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                        <XAxis 
+                                            dataKey="name" 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                                        />
+                                        <YAxis 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                                        />
+                                        <Tooltip 
+                                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                          contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                                        />
+                                        <Bar dataKey="value" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={30} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+                    </div>
+
                     {/* Metrics Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                         {[
@@ -283,7 +352,7 @@ const OfficerDashboardPage = () => {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-3 shrink-0">
-                            {g.status !== "RESOLVED" && (
+                            {g.status !== "RESOLVED" && g.created_at && (
                               <div className="w-56 scale-90 origin-right">
                                 <GrievanceSLA createdAt={g.created_at} />
                               </div>

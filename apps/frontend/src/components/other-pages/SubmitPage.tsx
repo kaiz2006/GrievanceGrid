@@ -187,6 +187,14 @@ const SubmitPage = () => {
       };
       const response = await grievanceService.submit(payload);
       console.log("[SUBMIT SUCCESS]", response);
+      
+      // Auto-trigger simulation for the lifecycle
+      try {
+        await grievanceService.simulate(response.grid_id);
+      } catch (simError) {
+        console.warn("Auto-simulation trigger failed, but grievance was submitted:", simError);
+      }
+      
       setSubmittedData(response);
 
 
@@ -574,35 +582,45 @@ const SubmitPage = () => {
                   Back
                 </Button>
 
-                {currentStep < steps.length - 1 ? (
-                  <Button
-                    type="button"
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className={`h-14 px-12 text-base transition-all duration-300 ${isStepValid() ? 'cta-button-primary bg-blue-600 hover:bg-blue-500 opacity-100' : 'bg-white/5 text-muted-foreground border border-white/10 opacity-50 cursor-not-allowed'}`}
-                  >
-                    Continue
-                    <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting || !isStepValid()}
-                    className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500 animate-in fade-in zoom-in duration-300"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Report
-                        <Send className="ml-2 h-5 w-5" />
-                      </>
-                    )}
-                  </Button>
-                )}
+                <div className="flex items-center gap-4">
+                  {currentStep < steps.length - 1 ? (
+                    <Button
+                      key="continue-btn"
+                      type="button"
+                      onClick={nextStep}
+                      disabled={!isStepValid()}
+                      className={`h-14 px-12 text-base transition-all duration-300 ${
+                        isStepValid() 
+                          ? 'cta-button-primary bg-blue-600 hover:bg-blue-500 opacity-100 shadow-[0_0_20px_rgba(37,99,235,0.3)]' 
+                          : 'bg-white/5 text-muted-foreground border border-white/10 opacity-50 cursor-not-allowed'
+                      }`}
+                    >
+                      {currentStep === 0 && "Next: Details"}
+                      {currentStep === 1 && "Next: Category"}
+                      {currentStep === 2 && "Next: Media"}
+                      <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  ) : (
+                    <Button
+                      key="submit-btn"
+                      type="submit"
+                      disabled={isSubmitting || !isStepValid()}
+                      className="cta-button-primary h-14 px-12 text-base bg-blue-600 hover:bg-blue-500 shadow-[0_0_30px_rgba(37,99,235,0.4)] animate-in fade-in zoom-in duration-300"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          Submit Report
+                          <Send className="ml-2 h-5 w-5" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             </form>
           </div>

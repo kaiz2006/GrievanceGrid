@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { grievanceService } from "@/services/grievance.service";
+import { adminService } from "@/services/admin.service";
 import MapComponent from "../map/MapComponent";
 import { calculateDistance } from "@/utils/geo.utils";
 import { toast } from "sonner";
@@ -45,6 +46,7 @@ const GrievanceDetailPage = () => {
   const [gpsVerified, setGpsVerified] = useState(false);
   const [similarCases, setSimilarCases] = useState<SimilarCase[]>([]);
   const [showSimilarCases, setShowSimilarCases] = useState(true);
+  const [rejecting, setRejecting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,6 +122,21 @@ const GrievanceDetailPage = () => {
     }, 1500);
   };
 
+  const handleRejectGrievance = async () => {
+    if (!id) return;
+
+    try {
+      setRejecting(true);
+      await adminService.rejectGrievance(id, "Rejected by admin after review");
+      setData((prev: any) => (prev ? { ...prev, status: "CLOSED" } : prev));
+      toast.success("Grievance rejected successfully");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to reject grievance");
+    } finally {
+      setRejecting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -175,6 +192,13 @@ const GrievanceDetailPage = () => {
             <div className="grid grid-cols-2 md:flex gap-4">
               <button className="px-4 py-3 sm:px-8 sm:py-4 rounded-2xl bg-white/5 border border-white/10 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-white/10 transition-colors">
                 Transfer
+              </button>
+              <button
+                onClick={handleRejectGrievance}
+                disabled={rejecting || String(data?.status || "").toUpperCase() === "CLOSED"}
+                className="px-4 py-3 sm:px-8 sm:py-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {rejecting ? "Rejecting..." : "Reject"}
               </button>
               <button className="px-4 py-3 sm:px-8 sm:py-4 rounded-2xl bg-blue-600 text-white shadow-[0_0_30px_rgba(37,99,235,0.4)] text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
                 Assign
@@ -237,9 +261,10 @@ const GrievanceDetailPage = () => {
                 </div>
                 <div className="w-full md:w-64 aspect-square rounded-[2rem] bg-black border border-white/10 overflow-hidden relative group">
                    <MapComponent 
-                      center={[data.location.latitude, data.location.longitude]} 
-                      zoom={16}
+                      useGps={true}
+                      showUserLocation={true}
                       markers={[{ position: [data.location.latitude, data.location.longitude], popupContent: "Grievance Site" }]}
+                      zoom={16}
                       className="w-full h-full"
                    />
                 </div>

@@ -63,11 +63,11 @@ const AIAssignmentFlow = ({ currentStatus = "" }: { currentStatus?: string }) =>
   // Mapping currentStatus to a 5-step index
   const getStepIndex = (status: string) => {
     const s = status.toUpperCase();
-    if (s === "PENDING") return 0;
-    if (s === "AI_ANALYSIS" || s === "ACKNOWLEDGED") return 1;
+    if (s === "CREATED" || s === "PENDING") return 0;
+    if (s === "PENDING_ASSIGNMENT" || s === "AI_ANALYSIS" || s === "ACKNOWLEDGED") return 1;
     if (s === "ASSIGNED") return 2;
-    if (s === "IN_PROGRESS") return 3;
-    if (s === "RESOLVED" || s === "COMPLETED") return 4;
+    if (s === "IN_PROGRESS" || s === "VERIFYING") return 3;
+    if (s === "RESOLVED" || s === "COMPLETED" || s === "CLOSED") return 4;
     return 1; // Default to AI analysis if we are tracking
   };
 

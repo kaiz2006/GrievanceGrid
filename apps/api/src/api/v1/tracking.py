@@ -29,7 +29,9 @@ class TeamLocation(BaseModel):
 
 class TrackingResponse(BaseModel):
 	grid_id: str
+	status: str
 	current_status: str
+	created_at: str | None = None
 	current_sla_type: str | None = None
 	sla_remaining_seconds: int | None = None
 	sla_deadlines: dict[str, str]
@@ -167,7 +169,9 @@ async def track_grievance(
 
 	return TrackingResponse(
 		grid_id=grievance["grid_id"],
+		status=grievance["status"],
 		current_status=grievance["status"],
+		created_at=_to_datetime(grievance["created_at"]).isoformat(),
 		current_sla_type=current_sla_type,
 		sla_remaining_seconds=sla_remaining_seconds,
 		sla_deadlines=sla_deadlines,

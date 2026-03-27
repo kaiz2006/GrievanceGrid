@@ -100,11 +100,6 @@
     @apply bg-white/[0.03] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.3)];
   }
 
-  .glow-citizen { @apply shadow-[0_0_20px_var(--citizen-subtle)]; }
-  .glow-officer { @apply shadow-[0_0_20px_var(--officer-subtle)]; }
-  .glow-admin { @apply shadow-[0_0_20px_var(--admin-subtle)]; }
-  .glow-auditor { @apply shadow-[0_0_20px_var(--auditor-subtle)]; }
-  .glow-crew { @apply shadow-[0_0_20px_var(--crew-subtle)]; }
 
   .section-badge {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border text-sm text-muted-foreground tracking-widest uppercase;
@@ -138,6 +133,43 @@
 
   .marquee-reverse {
     animation: marquee-reverse 25s linear infinite;
+  }
+
+  /* Global Recharts contrast fixes for dark dashboard surfaces */
+  .recharts-cartesian-axis-tick text,
+  .recharts-cartesian-axis .recharts-text,
+  .recharts-polar-angle-axis .recharts-text,
+  .recharts-polar-radius-axis .recharts-text,
+  .recharts-legend-item-text,
+  .recharts-label,
+  .recharts-label-list text,
+  .recharts-text {
+    fill: rgba(255, 255, 255, 0.88) !important;
+  }
+
+  .recharts-cartesian-grid line,
+  .recharts-cartesian-axis line,
+  .recharts-cartesian-axis path,
+  .recharts-polar-grid line,
+  .recharts-polar-grid path {
+    stroke: rgba(255, 255, 255, 0.14) !important;
+  }
+
+  .recharts-default-tooltip {
+    background: rgba(8, 10, 14, 0.96) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .recharts-tooltip-label,
+  .recharts-tooltip-item-name,
+  .recharts-tooltip-item-separator,
+  .recharts-tooltip-item-value,
+  .recharts-tooltip-wrapper,
+  .recharts-tooltip-wrapper * {
+    color: rgba(255, 255, 255, 0.92) !important;
+    fill: rgba(255, 255, 255, 0.92) !important;
   }
 }
 

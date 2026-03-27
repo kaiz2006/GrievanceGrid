@@ -466,6 +466,8 @@ async function seed(): Promise<void> {
   }
   console.log(`[seed] users=${insertedUsers.length}`);
 
+  const citizen1User = insertedUsers.find((u) => u.email === "citizen1@example.com");
+
   const userIdsByRole: Record<UserRole, string[]> = {
     ADMIN: [],
     AUDITOR: [],
@@ -608,7 +610,10 @@ async function seed(): Promise<void> {
 
       grievanceBatch.push({
         grid_id: `GRI-${year}-${String(grievanceCursor).padStart(6, "0")}`,
-        citizen_id: pickOne(rnd, userIdsByRole.CITIZEN),
+        citizen_id:
+          offset === 0 && i < 10 && citizen1User
+            ? citizen1User.id
+            : pickOne(rnd, userIdsByRole.CITIZEN),
         assigned_team_id: assignedTeamId,
         assigned_officer_id: assignedOfficerId,
         title,

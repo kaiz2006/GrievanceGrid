@@ -17,7 +17,8 @@ import {
   Filter,
   Search,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Bot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,11 +31,13 @@ import { grievanceService } from "@/services/grievance.service";
 import { adminService } from "@/services/admin.service";
 
 const statusOptions = [
-  { value: "ACKNOWLEDGED", label: "Acknowledged", icon: User, color: "blue" },
+  { value: "PENDING", label: "Pending", icon: Clock, color: "orange" },
+  { value: "AI_PROCESSED", label: "AI Processed", icon: Bot, color: "blue" },
+  { value: "ROUTED", label: "Routed", icon: ShieldCheck, color: "indigo" },
+  { value: "ASSIGNED", label: "Assigned", icon: User, color: "blue" },
   { value: "IN_PROGRESS", label: "In Progress", icon: Play, color: "amber" },
-  { value: "ON_HOLD", label: "On Hold", icon: Clock, color: "orange" },
   { value: "RESOLVED", label: "Resolved", icon: CheckCircle2, color: "green" },
-  { value: "REJECTED", label: "Rejected", icon: XCircle, color: "red" },
+  { value: "ESCALATED", label: "Escalated", icon: AlertTriangle, color: "red" },
 ];
 
 const OfficerWorkflowPage = () => {
@@ -56,8 +59,8 @@ const OfficerWorkflowPage = () => {
     setLoading(true);
     try {
       // Get grievances assigned to current officer
-      const result = await grievanceService.getMyGrievances();
-      setGrievances((result as any).grievances || (result as any).items || []);
+      const result = await grievanceService.getOfficerGrievances();
+      setGrievances((result as any).items || []);
     } catch (error) {
       console.error("Failed to fetch grievances:", error);
     }
@@ -88,22 +91,30 @@ const OfficerWorkflowPage = () => {
     setUpdating(false);
   };
 
-  const filteredGrievances = grievances.filter(g => {
+  const filteredGrievances = grievances.filter((g) => {
     const matchesSearch = 
       g.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       g.grid_id?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || g.status === statusFilter;
+    const matchesStatus = 
+      statusFilter === "all" || 
+      g.status === statusFilter ||
+      (statusFilter === "PENDING" && (g.status === "PENDING" || g.status === "CREATED"));
     return matchesSearch && matchesStatus;
   });
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { class: string; icon: any }> = {
+      PENDING: { class: "bg-orange-500/10 text-orange-500 border-orange-500/20", icon: Clock },
+      AI_PROCESSED: { class: "bg-blue-500/10 text-blue-500 border-blue-500/20", icon: Bot },
+      ROUTED: { class: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20", icon: ShieldCheck },
+      ASSIGNED: { class: "bg-blue-500/10 text-blue-500 border-blue-500/20", icon: User },
       CREATED: { class: "bg-blue-500/10 text-blue-500 border-blue-500/20", icon: Clock },
       ACKNOWLEDGED: { class: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20", icon: User },
       IN_PROGRESS: { class: "bg-amber-500/10 text-amber-500 border-amber-500/20", icon: Play },
       ON_HOLD: { class: "bg-orange-500/10 text-orange-500 border-orange-500/20", icon: AlertTriangle },
       RESOLVED: { class: "bg-green-500/10 text-green-500 border-green-500/20", icon: CheckCircle2 },
       REJECTED: { class: "bg-red-500/10 text-red-500 border-red-500/20", icon: XCircle },
+      ESCALATED: { class: "bg-red-500/10 text-red-500 border-red-500/20", icon: AlertTriangle },
     };
     const config = statusConfig[status] || statusConfig.CREATED;
     const Icon = config.icon;

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { grievanceService } from "@/services/grievance.service";
 import GrievanceSLA from "@/components/GrievanceSLA";
+import { toast } from "sonner";
 
 interface Grievance {
   id: string;
@@ -37,6 +38,7 @@ interface Grievance {
   resolved_at?: string;
   can_feedback: boolean;
   can_contest: boolean;
+  can_opt_out: boolean;
 }
 
 const MyGrievancesPage = () => {
@@ -44,6 +46,7 @@ const MyGrievancesPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [optingOutId, setOptingOutId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,13 +63,31 @@ const MyGrievancesPage = () => {
         location: g.location?.address || "Selected Location",
         created_at: g.created_at || new Date().toISOString(),
         can_feedback: g.status === "RESOLVED",
-        can_contest: g.status === "RESOLVED"
+        can_contest: g.status === "RESOLVED",
+        can_opt_out: g.can_opt_out ?? !["RESOLVED", "CLOSED", "CONTESTED"].includes(String(g.status || "").toUpperCase())
       }));
       setGrievances(mapped);
       setLoading(false);
     };
     fetchData();
   }, []);
+
+  const handleOptOut = async (grievanceId: string) => {
+    try {
+      setOptingOutId(grievanceId);
+      await grievanceService.optOut(grievanceId, "Citizen requested opt-out");
+      setGrievances((prev) => prev.map((g) => (
+        g.id === grievanceId
+          ? { ...g, status: "CLOSED", can_opt_out: false, can_feedback: false, can_contest: false }
+          : g
+      )));
+      toast.success("Grievance opted out successfully");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to opt out grievance");
+    } finally {
+      setOptingOutId(null);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -100,7 +121,10 @@ const MyGrievancesPage = () => {
     const matchesSearch =
       g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       g.grid_id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || g.status === statusFilter;
+    const matchesStatus = 
+      statusFilter === "all" || 
+      g.status === statusFilter ||
+      (statusFilter === "PENDING" && (g.status === "PENDING" || g.status === "CREATED"));
     return matchesSearch && matchesStatus;
   });
 
@@ -135,10 +159,7 @@ const MyGrievancesPage = () => {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
             <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
-                {/* Background Grid & Glows */}
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[160px] pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+
 
                 <div className="container mx-auto max-w-6xl relative z-10">
                     {/* Header */}
@@ -162,24 +183,13 @@ const MyGrievancesPage = () => {
                         </motion.div>
 
                         <div className="flex flex-col gap-4">
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 glow-citizen px-8"
-                            >
-                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em] mb-1">Community Impact</p>
-                                <p className="text-3xl font-black text-emerald-400 font-mono tracking-tighter">
-                                    +{stats.resolved * 12} <span className="text-xs uppercase ml-1 opacity-60">Citizen Credits</span>
-                                </p>
-                            </motion.div>
                             <Button className="h-14 px-8 bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all hover:scale-105 active:scale-95" asChild>
                                 <Link to="/submit">
                                     <Plus className="w-5 h-5 mr-2" />
                                     Report New Failure
                                 </Link>
                             </Button>
-                        </div>
-                    </div>
+                        </div>                    </div>
 
                     {/* Quick Track Card */}
                     <Card className="glass-card border-blue-500/20 bg-blue-500/5 mb-12 overflow-hidden relative">
@@ -242,7 +252,7 @@ const MyGrievancesPage = () => {
               />
             </div>
             <div className="flex bg-white/[0.02] p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
-              {["all", "IN_PROGRESS", "RESOLVED", "PENDING"].map((status) => (
+              {["all", "IN_PROGRESS", "RESOLVED", "CREATED"].map((status) => (
                 <button
                   key={status}
                   onClick={() => setStatusFilter(status)}
@@ -333,7 +343,7 @@ const MyGrievancesPage = () => {
 
                            {/* Action Hub */}
                           <div className="flex flex-col lg:w-72 gap-6 shrink-0">
-                            {grievance.status !== "RESOLVED" && (
+                            {grievance.status !== "RESOLVED" && grievance.created_at && (
                               <GrievanceSLA createdAt={grievance.created_at} />
                             )}
                             
@@ -360,6 +370,17 @@ const MyGrievancesPage = () => {
                                   <RotateCcw className="w-4 h-4 mr-2" />
                                   Contest Result
                                 </Link>
+                              </Button>
+                            )}
+                            {grievance.can_opt_out && (
+                              <Button
+                                variant="outline"
+                                className="w-full h-14 px-8 border-orange-500/30 bg-orange-500/5 text-orange-400 hover:bg-orange-500 hover:text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all"
+                                onClick={() => handleOptOut(grievance.id)}
+                                disabled={optingOutId === grievance.id}
+                              >
+                                <XCircle className="w-4 h-4 mr-2" />
+                                {optingOutId === grievance.id ? "Opting Out..." : "Opt Out"}
                               </Button>
                             )}
                             <Button 

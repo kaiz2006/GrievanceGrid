@@ -44,10 +44,14 @@ export const grievanceService = {
       if (match) {
         return {
           grid_id: gridId,
+          status: match.status,
           current_status: match.status,
+          created_at: match.created_at,
           timeline: match.timeline,
           sla: match.sla,
-          assigned_team: { name: "Team Alpha-3", contact: "+91-98765-43210", eta_minutes: 15 }
+          sla_remaining_seconds: Math.floor((new Date(match.sla.resolution_sla.deadline).getTime() - Date.now()) / 1000),
+          assigned_team: { name: "Team Alpha-3", contact: "+91-98765-43210", eta_minutes: 15 },
+          assigned_team_location: { latitude: 28.6145, longitude: 77.2105 }
         };
       }
       throw new Error("Grievance not found");
@@ -103,6 +107,49 @@ export const grievanceService = {
     });
   },
 
+  // GET /grievances/officer - Get grievances assigned to current officer
+  getOfficerGrievances: async () => {
+    return apiClient.get("/grievances/officer", async () => {
+      await mockDelay(300);
+      const all = getMockGrievances();
+      // For demo, return grievances that are IN_PROGRESS, ASSIGNED, or have been processed by AI
+      const officerGrievances = all.filter(g => 
+        ["IN_PROGRESS", "ASSIGNED", "ROUTED", "AI_PROCESSED"].includes(g.status) || 
+        (g.priority === "CRITICAL" && g.status !== "RESOLVED")
+      );
+      
+      // Add officer assignment details
+      return {
+        count: officerGrievances.length,
+        items: officerGrievances.map(g => ({
+          ...g,
+          assigned_officer: "Rajesh Kumar",
+          officer_id: "officer_001",
+          department: "Public Works Department",
+          assigned_at: new Date(Date.now() - Math.random() * 86400000).toISOString()
+        }))
+      };
+    });
+  },
+
+  // POST /grievances/{id}/opt-out - Citizen opts out grievance
+  optOut: async (id: string, reason?: string) => {
+    return apiClient.post(`/grievances/${id}/opt-out`, { reason }, async () => {
+      await mockDelay(250);
+      const g = getMockGrievanceById(id);
+      if (g) {
+        g.status = "CLOSED";
+        g.timeline.unshift({
+          status: "CLOSED",
+          timestamp: new Date().toISOString(),
+          description: `Citizen opted out${reason ? `: ${reason}` : ""}`,
+        });
+        saveMockGrievance(g);
+      }
+      return { grievance_id: id, status: "CLOSED", message: "Grievance opted out successfully" };
+    });
+  },
+
   // POST /verify - Submit resolution verification (two-factor)
   submitVerification: async (grievanceId: string, photo: File, location: { latitude: number; longitude: number }, notes: string) => {
     return apiClient.post("/verify", { grievance_id: grievanceId, location, notes }, async () => {
@@ -118,10 +165,7 @@ export const grievanceService = {
 
   // GET /grievances/me - Get current user's grievances (For demo, just returns all)
   getMyGrievances: async (limit: number = 20, offset: number = 0) => {
-    return apiClient.get(`/grievances/me?limit=${limit}&offset=${offset}`, async () => {
-      await mockDelay(300);
-      return { grievances: getMockGrievances(), total: getMockGrievances().length };
-    });
+    return apiClient.get(`/grievances/me?limit=${limit}&offset=${offset}`);
   },
 
   // GET /grievances/{id}/similar - Get similar cases via vector search
@@ -157,6 +201,14 @@ export const grievanceService = {
           }
         ]
       };
+    });
+  },
+
+  // POST /grievances/{id}/simulate - Trigger resolution simulation
+  simulate: async (gridId: string) => {
+    return apiClient.post(`/grievances/${gridId}/simulate`, {}, async () => {
+      await mockDelay(300);
+      return { message: "Simulation started", task_id: "sim_" + Date.now() };
     });
   }
 };

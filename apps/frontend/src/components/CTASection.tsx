@@ -19,7 +19,7 @@ const CTASection = () => {
             <p className="section-subtext mb-10">
               Join the growing list of cities using GrievanceGrid to improve transparency and efficiency.
             </p>
-            <a href="/contact" className="cta-button-primary group">
+            <a href="/contact" className="bg-white text-black hover:bg-white/90 font-bold transition-all px-10 py-5 rounded-full text-sm tracking-widest uppercase inline-flex items-center gap-3 group">
               GET STARTED NOW
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </a>

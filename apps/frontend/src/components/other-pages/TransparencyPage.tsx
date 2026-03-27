@@ -7,7 +7,9 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Cell
+  Cell,
+  LineChart,
+  Line
 } from "recharts";
 import { 
   Gavel, 
@@ -32,6 +34,16 @@ const chartData = [
   { name: "Fri", value: 36 },
   { name: "Sat", value: 24 },
   { name: "Sun", value: 20 },
+];
+
+// Performance data for the line chart
+const performanceData = [
+  { month: "Jan", efficiency: 78, accuracy: 82, speed: 75 },
+  { month: "Feb", efficiency: 82, accuracy: 85, speed: 78 },
+  { month: "Mar", efficiency: 85, accuracy: 88, speed: 82 },
+  { month: "Apr", efficiency: 88, accuracy: 91, speed: 85 },
+  { month: "May", efficiency: 92, accuracy: 94, speed: 89 },
+  { month: "Jun", efficiency: 95, accuracy: 96, speed: 92 },
 ];
 
 const directives = [
@@ -173,27 +185,30 @@ const TransparencyPage = () => {
               </div>
             </div>
 
-            {/* Sidebar Actions */}
+            {/* Sidebar - Single Additional Graph */}
             <div className="lg:col-span-4 space-y-8">
-              {/* Tactical Action Card */}
-              <div className="bg-white/[0.04] rounded-[2.5rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden">
-                <div className="flex items-center gap-4 mb-6 relative z-10">
-                  <div className="bg-blue-500/10 p-3 rounded-2xl">
-                    <Activity className="w-5 h-5 text-blue-500" />
+              {/* Performance Line Chart */}
+              <div className="bg-white/[0.02] rounded-[2.5rem] p-6 border border-white/5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-blue-500/10 p-2 rounded-xl">
+                    <TrendingUp className="w-4 h-4 text-blue-500" />
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold">Predictive Logic</h4>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Next-Gen Audit</p>
-                  </div>
+                  <h4 className="text-sm font-bold">Performance Trends</h4>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed mb-8 relative z-10">
-                  Algorithm suggests <span className="text-blue-500 font-bold">4 high-priority</span> audits based on current grievance patterns. Review required within 24 hours.
-                </p>
-                <button className="w-full bg-blue-600 text-white py-4 rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-blue-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all relative z-10">
-                  Launch Audit Suite
-                </button>
-                <div className="absolute -bottom-4 -right-4 opacity-5">
-                  <Zap className="w-32 h-32 text-blue-500" />
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={performanceData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" />
+                      <XAxis dataKey="month" tick={{ fill: '#ffffff40', fontSize: 9 }} />
+                      <YAxis tick={{ fill: '#ffffff40', fontSize: 9 }} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #ffffff10', borderRadius: '8px' }}
+                      />
+                      <Line type="monotone" dataKey="efficiency" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6', r: 3 }} />
+                      <Line type="monotone" dataKey="accuracy" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', r: 3 }} />
+                      <Line type="monotone" dataKey="speed" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b', r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
 

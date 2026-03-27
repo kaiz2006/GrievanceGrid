@@ -16,7 +16,6 @@ import {
   Clock,
   AlertOctagon,
   List,
-  Mic,
   User
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -72,7 +71,6 @@ const auditorSubmenuItems = [
 const citizenSubmenuItems = [
   { icon: List, label: "My Grievances", href: "/my-grievances" },
   { icon: Send, label: "Submit", href: "/submit" },
-  { icon: Mic, label: "Voice Submit", href: "/submit-voice" },
   { icon: User, label: "Profile", href: "/profile" },
 ];
 
