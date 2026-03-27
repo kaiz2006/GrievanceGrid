@@ -296,6 +296,49 @@ async def get_my_grievances(
 	return MyGrievancesResponse(count=len(items), items=items)
 
 
+# =============================================================================
+# ASSIGNED GRIEVANCES ENDPOINT (For Officers/Departments)
+# =============================================================================
+
+@router.get("/assigned", response_model=GrievanceListResponse)
+async def get_assigned_grievances(
+	limit: int = Query(default=50, ge=1, le=200),
+	offset: int = Query(default=0, ge=0),
+	current_user: dict = Depends(get_current_user),
+	db: AsyncSession = Depends(get_db_session),
+) -> GrievanceListResponse:
+	"""Get grievances assigned to the current user's department."""
+	dept_id = current_user.get("department_id")
+	if not dept_id:
+		return GrievanceListResponse(count=0, items=[])
+
+	repo = GrievanceRepository(db)
+	items = await repo.list_grievances(
+		department_id=str(dept_id),
+		limit=limit,
+		offset=offset,
+	)
+
+	return GrievanceListResponse(
+		count=len(items),
+		items=[
+			GrievanceListItem(
+				grievance_id=str(item["id"]),
+				grid_id=str(item["grid_id"]),
+				status=str(item["status"]),
+				title=str(item["title"]),
+				category=str(item["category"]),
+				priority=str(item["priority"]),
+				ai_category=str(item["ai_category"]) if item.get("ai_category") else None,
+				ai_priority=str(item["ai_priority"]) if item.get("ai_priority") else None,
+				assigned_department_id=str(item["assigned_department_id"]) if item.get("assigned_department_id") else None,
+				submitted_at=_to_iso(item.get("created_at")),
+			)
+			for item in items
+		],
+	)
+
+
 @router.get("/{grievance_id}", response_model=GrievanceDetailsResponse)
 async def get_grievance(
 	grievance_id: str,

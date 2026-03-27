@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
@@ -16,8 +17,6 @@ class AnalyticsService:
     def __init__(self, db: AsyncSession) -> None:
         self.grievance_repo = GrievanceRepository(db)
         self.sla_repo = SLARepository(db)
-
-import asyncio
 
     async def get_dashboard_payload(
         self,

@@ -20,9 +20,10 @@ import {
   Loader
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { crewService, type CrewAssignment } from "@/services/crew.service";
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip, Legend } from "recharts";
 
 const getTypeFromCategory = (category: string): string => {
   if (category.toLowerCase().includes('emergency')) return 'Emergency';
@@ -36,8 +37,18 @@ const getImageForCategory = (category: string): string => {
   return 'https://images.unsplash.com/photo-1544006659-f0b21884cb1d?auto=format&fit=crop&q=80&w=400';
 };
 
-const getStatusColor = (severity: string): { statusColor: string; badgeColor: string } => {
-  switch (severity) {
+const getSeverityLabel = (severity: number | string | undefined): string => {
+  if (typeof severity === 'string') return severity;
+  const num = typeof severity === 'number' ? severity : 0;
+  if (num >= 0.8) return 'CRITICAL';
+  if (num >= 0.5) return 'HIGH';
+  if (num >= 0.3) return 'MEDIUM';
+  return 'LOW';
+};
+
+const getStatusColor = (severity: number | string | undefined): { statusColor: string; badgeColor: string } => {
+  const label = getSeverityLabel(severity);
+  switch (label) {
     case 'CRITICAL':
       return { statusColor: 'border-red-600', badgeColor: 'bg-red-600/10 text-red-500' };
     case 'HIGH':
@@ -61,14 +72,28 @@ const DispatchPage = () => {
   const [deployingId, setDeployingId] = useState<string | null>(null);
   const [deployedIds, setDeployedIds] = useState<Set<string>>(new Set());
 
+  const DUMMY_ASSIGNMENTS: CrewAssignment[] = [
+    { grievance_id: "crew-a01", grid_id: "GRI-2026-002011", status: "ASSIGNED", assigned_team_id: "team-01", assigned_team_name: "Alpha Squad", title: "Substation Fault - Sector 5", priority: 0.9, category: "Electrical Substation", location_city: "New Delhi", location_coordinates: "28.6139,77.2090", damage_description: "Main transformer tripped, affecting 800 households", damage_severity: "CRITICAL", ai_summary: "High-risk electrical failure requiring immediate intervention", reporter_name: "Ramesh Kumar", reporter_email: "rk@example.com", contact_phone: "+91-98001-00001", created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString() },
+    { grievance_id: "crew-a02", grid_id: "GRI-2026-002034", status: "IN_PROGRESS", assigned_team_id: "team-02", assigned_team_name: "Beta Unit", title: "Relay Calibration - NH-8 Junction", priority: 0.6, category: "Relay Calibration", location_city: "Gurugram", location_coordinates: "28.4595,77.0266", damage_description: "Traffic signal relay out of sync causing gridlock", damage_severity: "HIGH", ai_summary: "Moderate urgency. Manual calibration needed.", reporter_name: "Priya S", reporter_email: "ps@example.com", contact_phone: "+91-98001-00002", created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
+    { grievance_id: "crew-a03", grid_id: "GRI-2026-002056", status: "ASSIGNED", assigned_team_id: "team-03", assigned_team_name: "Delta Force", title: "Water Main Burst - Block B", priority: 0.8, category: "Water Supply Emergency", location_city: "Noida", location_coordinates: "28.5355,77.3910", damage_description: "Underground pipe burst, road flooded", damage_severity: "HIGH", ai_summary: "Immediate excavation and repair needed", reporter_name: "Sunil Verma", reporter_email: "sv@example.com", contact_phone: "+91-98001-00003", created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() },
+    { grievance_id: "crew-a04", grid_id: "GRI-2026-002071", status: "PENDING_VERIFICATION", assigned_team_id: "team-01", assigned_team_name: "Alpha Squad", title: "Road Cave-in Near Flyover", priority: 0.5, category: "Road Maintenance", location_city: "Faridabad", location_coordinates: "28.4089,77.3178", damage_description: "Sinkhole appeared underneath service road", damage_severity: "MEDIUM", ai_summary: "Risk of further collapse. Barricade and repair.", reporter_name: "Anjali R", reporter_email: "ar@example.com", contact_phone: "+91-98001-00004", created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString() },
+    { grievance_id: "crew-a05", grid_id: "GRI-2026-002088", status: "ASSIGNED", assigned_team_id: "team-04", assigned_team_name: "Omega Team", title: "Street Light Column Broken", priority: 0.3, category: "Public Lighting", location_city: "Ghaziabad", location_coordinates: "28.6692,77.4538", damage_description: "Column bent by vehicle, poses hazard to pedestrians", damage_severity: "MEDIUM", ai_summary: "Low urgency but safety concern. Replace column.", reporter_name: "Mohit D", reporter_email: "md@example.com", contact_phone: "+91-98001-00005", created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString() },
+    { grievance_id: "crew-a06", grid_id: "GRI-2026-002099", status: "IN_PROGRESS", assigned_team_id: "team-02", assigned_team_name: "Beta Unit", title: "Emergency Maintenance - Old Substation", priority: 0.95, category: "Electrical Substation", location_city: "New Delhi", location_coordinates: "28.6270,77.2100", damage_description: "60-year-old substation showing arc flash signs", damage_severity: "CRITICAL", ai_summary: "Imminent failure risk. Emergency shutdown and replacement.", reporter_name: "Deepak S", reporter_email: "ds@example.com", contact_phone: "+91-98001-00006", created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString() },
+  ];
+
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
         setLoading(true);
         const data = await crewService.getAssignments(selectedStatus || undefined);
-        setAssignments(data.items);
+        if (data.items && data.items.length > 0) {
+          setAssignments(data.items);
+        } else {
+          setAssignments(DUMMY_ASSIGNMENTS);
+        }
       } catch (error) {
-        console.error('Failed to fetch assignments:', error);
+        console.warn('API unavailable, using demo crew data:', error);
+        setAssignments(DUMMY_ASSIGNMENTS);
       } finally {
         setLoading(false);
       }
@@ -77,12 +102,21 @@ const DispatchPage = () => {
     fetchAssignments();
   }, [selectedStatus]);
 
-  const handleDeploy = (id: string) => {
+  const handleDeploy = async (id: string) => {
     setDeployingId(id);
-    setTimeout(() => {
-      setDeployingId(null);
+    try {
+      // Set status to IN_PROGRESS when deploying
+      await crewService.updateStatus(id, "IN_PROGRESS", "Unit dispatched to grid location.");
       setDeployedIds(prev => new Set(prev).add(id));
-    }, 1500);
+      
+      // Refresh assignments to get updated statuses from server
+      const data = await crewService.getAssignments(selectedStatus || undefined);
+      setAssignments(data.items);
+    } catch (error) {
+      console.error('Deployment failed:', error);
+    } finally {
+      setDeployingId(null);
+    }
   };
 
   return (
@@ -137,12 +171,13 @@ const DispatchPage = () => {
               </div>
             ) : (
               assignments.map((item, i) => {
-                const isDeployed = deployedIds.has(item.grievance_id);
+                const isDeployed = deployedIds.has(item.grievance_id) || item.status === 'IN_PROGRESS';
                 const isDeploying = deployingId === item.grievance_id;
-                const coords = parseCoordinates(item.location_coordinates);
-                const type = getTypeFromCategory(item.category);
-                const image = getImageForCategory(item.category);
-                const { statusColor, badgeColor } = getStatusColor(item.damage_severity);
+                const coords = parseCoordinates(item.location_coordinates || '0,0');
+                const type = getTypeFromCategory(item.category || '');
+                const image = getImageForCategory(item.category || '');
+                const severityLabel = getSeverityLabel(item.damage_severity);
+                const { statusColor, badgeColor } = getStatusColor(severityLabel);
                 const slaHours = Math.floor(item.priority * 4); 
                 const slaMinutes = (item.priority * 15).toFixed(0);
                 const slaSeconds = (22).toFixed(0);
@@ -163,9 +198,9 @@ const DispatchPage = () => {
                     <div className="flex justify-between items-start mb-8 relative z-10">
                       <div>
                         <Badge variant="outline" className={`text-[9px] font-black uppercase tracking-widest ${badgeColor} border-none p-0`}>
-                          {item.damage_severity}
+                          {severityLabel}
                         </Badge>
-                        <h3 className="text-2xl font-black italic mt-3 text-white tracking-tighter leading-tight group-hover:text-emerald-400 transition-colors uppercase">Grid #{item.grievance_id.split('-')[1] || 'UNKNOWN'}</h3>
+                        <h3 className="text-2xl font-black italic mt-3 text-white tracking-tighter leading-tight group-hover:text-emerald-400 transition-colors uppercase">Grid #{item.grievance_id.split('-')[1] || item.grid_id || 'UNKNOWN'}</h3>
                       </div>
                       <div className="text-right">
                         <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] mb-2 font-black opacity-60">SLA Timer</p>
@@ -221,6 +256,74 @@ const DispatchPage = () => {
               })
             )}
           </section>
+
+          {/* Polygon Radar Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            {/* Unit Capability Radar */}
+            <Card className="glass-premium border-white/5 bg-white/[0.01] glow-crew">
+              <CardHeader>
+                <CardTitle className="text-xl font-black flex items-center gap-3 italic">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                  Unit Capability Radar
+                </CardTitle>
+                <CardDescription className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                  6-axis team readiness & field competency polygon
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={[
+                    { axis: 'Response Time', value: 88 },
+                    { axis: 'Equipment Ready', value: 92 },
+                    { axis: 'Coverage Area', value: 74 },
+                    { axis: 'Comms Quality', value: 85 },
+                    { axis: 'Incident Close', value: 79 },
+                    { axis: 'Safety Protocol', value: 96 },
+                  ]}>
+                    <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                    <PolarAngleAxis dataKey="axis" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 9, fontWeight: 700 }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 8 }} axisLine={false} />
+                    <Radar name="Crew Readiness" dataKey="value" stroke="#10b981" fill="#10b981" fillOpacity={0.2} strokeWidth={2} dot={{ fill: '#10b981', r: 3 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }} itemStyle={{ color: '#fff' }} formatter={(v: any) => [`${v}%`]} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Mission Tempo Polygon */}
+            <Card className="glass-premium border-white/5 bg-white/[0.01]">
+              <CardHeader>
+                <CardTitle className="text-xl font-black flex items-center gap-3 italic">
+                  <TrendingUp className="w-5 h-5 text-blue-400" />
+                  Mission Tempo Polygon
+                </CardTitle>
+                <CardDescription className="text-[10px] uppercase tracking-widest font-bold opacity-60">
+                  7-day deployment frequency vs completion rhythm
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={[
+                    { day: 'Mon', deployed: 14, completed: 11 },
+                    { day: 'Tue', deployed: 20, completed: 16 },
+                    { day: 'Wed', deployed: 18, completed: 15 },
+                    { day: 'Thu', deployed: 22, completed: 20 },
+                    { day: 'Fri', deployed: 17, completed: 16 },
+                    { day: 'Sat', deployed: 9, completed: 9 },
+                    { day: 'Sun', deployed: 5, completed: 5 },
+                  ]}>
+                    <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                    <PolarAngleAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: 700 }} />
+                    <PolarRadiusAxis angle={90} tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 8 }} axisLine={false} />
+                    <Radar name="Deployed" dataKey="deployed" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} strokeWidth={2} />
+                    <Radar name="Completed" dataKey="completed" stroke="#10b981" fill="#10b981" fillOpacity={0.25} strokeWidth={2} dot={{ fill: '#10b981', r: 3 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }} itemStyle={{ color: '#fff' }} />
+                    <Legend wrapperStyle={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Dispatch Queue Table */}
           <Card className="glass-premium border-white/5 bg-white/[0.01] overflow-hidden rounded-[3rem]">
@@ -305,8 +408,8 @@ const DispatchPage = () => {
                           <td className="px-10 py-8 text-[10px] text-muted-foreground font-black uppercase tracking-widest">{item.location_city}</td>
                           <td className="px-10 py-8 text-[10px] text-white font-black uppercase tracking-widest">{item.category}</td>
                           <td className="px-10 py-8">
-                            <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest ${item.damage_severity === 'CRITICAL' ? 'bg-red-600/10 text-red-500' : item.damage_severity === 'HIGH' ? 'bg-orange-600/10 text-orange-500' : item.damage_severity === 'MEDIUM' ? 'bg-blue-600/10 text-blue-500' : 'bg-white/5 text-muted-foreground'} border-none px-3 py-1.5 rounded-lg`}>
-                              {item.damage_severity}
+                            <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest ${getSeverityLabel(item.damage_severity) === 'CRITICAL' ? 'bg-red-600/10 text-red-500' : getSeverityLabel(item.damage_severity) === 'HIGH' ? 'bg-orange-600/10 text-orange-500' : getSeverityLabel(item.damage_severity) === 'MEDIUM' ? 'bg-blue-600/10 text-blue-500' : 'bg-white/5 text-muted-foreground'} border-none px-3 py-1.5 rounded-lg`}>
+                              {getSeverityLabel(item.damage_severity)}
                             </Badge>
                           </td>
                           <td className="px-10 py-8">

@@ -8,7 +8,7 @@ interface GrievanceSLAProps {
 }
 
 const Digit = ({ value }: { value: string }) => (
-  <div className="relative overflow-hidden h-14 w-[0.85em] flex items-center justify-center bg-white/[0.03] rounded-lg border border-white/5 mx-[1px]">
+  <div className="relative overflow-hidden h-12 w-9 flex items-center justify-center bg-white/[0.03] rounded-lg border border-white/5 mx-[1px] shrink-0">
     <AnimatePresence mode="popLayout">
       <motion.span
         key={value}
@@ -16,7 +16,7 @@ const Digit = ({ value }: { value: string }) => (
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -20, opacity: 0 }}
         transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-        className="absolute font-black tabular-nums"
+        className="absolute font-black tabular-nums text-2xl"
       >
         {value}
       </motion.span>
@@ -101,18 +101,18 @@ const GrievanceSLA = ({ createdAt, slaDurationHours = 24 }: GrievanceSLAProps) =
       </div>
 
       <div className="text-center relative z-10">
-        <div className={`text-5xl ${isBreached ? 'text-red-500/80' : 'text-white'} font-mono flex items-center justify-center`}>
-          <div className="flex">
+        <div className={`${isBreached ? 'text-red-500/80' : 'text-white'} font-mono flex items-center justify-center flex-nowrap`}>
+          <div className="flex shrink-0">
             <Digit value={h[0]} />
             <Digit value={h[1]} />
           </div>
           <Colon />
-          <div className="flex">
+          <div className="flex shrink-0">
             <Digit value={m[0]} />
             <Digit value={m[1]} />
           </div>
           <Colon />
-          <div className="flex">
+          <div className="flex shrink-0">
             <Digit value={s[0]} />
             <Digit value={s[1]} />
           </div>

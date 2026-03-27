@@ -29,7 +29,6 @@ import IndustrialInterfacePage from "./components/other-pages/IndustrialInterfac
 import PredictiveMaintenancePage from "./components/other-pages/PredictiveMaintenancePage";
 import CrisisClustersPage from "./components/other-pages/CrisisClustersPage";
 import ContestationAuditPage from "./components/other-pages/ContestationAuditPage";
-import VoiceResultPage from "./components/other-pages/VoiceResultPage";
 import SLABreachPage from "./components/other-pages/SLABreachPage";
 import EscalationManagementPage from "./components/other-pages/EscalationManagementPage";
 import AuditHistoryPage from "./components/other-pages/AuditHistoryPage";
@@ -86,7 +85,6 @@ const App = () => (
             <Route path="/admin/predictive-maintenance" element={<PredictiveMaintenancePage />} />
             <Route path="/admin/crisis-clusters" element={<CrisisClustersPage />} />
             <Route path="/admin/contestation-audit" element={<ContestationAuditPage />} />
-            <Route path="/admin/voice-results" element={<VoiceResultPage />} />
             <Route path="/admin/sla-breaches" element={<SLABreachPage />} />
             <Route path="/admin/escalations" element={<EscalationManagementPage />} />
             <Route path="/admin/audit-history" element={<AuditHistoryPage />} />

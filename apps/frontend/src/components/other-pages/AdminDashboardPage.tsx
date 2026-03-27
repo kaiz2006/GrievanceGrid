@@ -14,62 +14,53 @@ import { Link } from "react-router-dom";
 import { adminService } from "@/services/admin.service";
 import { grievanceService } from "@/services/grievance.service";
 import MapComponent from "../map/MapComponent";
+import SectorOperationalChart, { SectorOperationalPoint } from "./SectorOperationalChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getRadialSectorData, getSLAPercentageData, getAdminTrendData } from "@/lib/chart-utils";
 import { toast } from "sonner";
 
-// Generate sector load heatmap data
-const generateSectorHeatmapData = () => {
-  const gridSize = 8;
-  const data = [];
-  
-  for (let i = 0; i < gridSize; i++) {
-    for (let j = 0; j < gridSize; j++) {
-      // Create realistic load patterns with hotspots
-      let load = Math.random() * 0.4; // Base random load
-      
-      // Add load hotspots (busy sectors)
-      const centerX1 = 1, centerY1 = 2;
-      const centerX2 = 6, centerY2 = 5;
-      const centerX3 = 3, centerY3 = 6;
-      
-      const dist1 = Math.sqrt(Math.pow(i - centerX1, 2) + Math.pow(j - centerY1, 2));
-      const dist2 = Math.sqrt(Math.pow(i - centerX2, 2) + Math.pow(j - centerY2, 2));
-      const dist3 = Math.sqrt(Math.pow(i - centerX3, 2) + Math.pow(j - centerY3, 2));
-      
-      load += Math.exp(-dist1 / 1.5) * 0.6; // Hotspot 1
-      load += Math.exp(-dist2 / 2) * 0.4; // Hotspot 2  
-      load += Math.exp(-dist3 / 1.8) * 0.5; // Hotspot 3
-      
-      load = Math.min(load, 1); // Cap at 1
-      
-      data.push({
-        x: i,
-        y: j,
-        load: load,
-        status: load > 0.8 ? 'Overloaded' : load > 0.6 ? 'High' : load > 0.4 ? 'Medium' : 'Low',
-        grievances: Math.floor(load * 50) + Math.floor(Math.random() * 10)
-      });
-    }
-  }
-  
-  return data;
-};
+const sectorOpsBaseData: SectorOperationalPoint[] = [
+  { sector: "S-01", incoming: 44, resolved: 38, slaRisk: 27 },
+  { sector: "S-02", incoming: 39, resolved: 33, slaRisk: 35 },
+  { sector: "S-03", incoming: 52, resolved: 30, slaRisk: 74 },
+  { sector: "S-04", incoming: 36, resolved: 31, slaRisk: 42 },
+  { sector: "S-05", incoming: 28, resolved: 26, slaRisk: 20 },
+  { sector: "S-06", incoming: 47, resolved: 35, slaRisk: 63 },
+  { sector: "S-07", incoming: 42, resolved: 37, slaRisk: 33 },
+  { sector: "S-08", incoming: 31, resolved: 29, slaRisk: 18 },
+];
 
-const sectorHeatmapData = generateSectorHeatmapData();
+const incidentHeatmapHotspots = [
+  { top: "18%", left: "26%", size: "220px", color: "rgba(239,68,68,0.52)", blur: "68px", delay: "0s", duration: "4.6s" },
+  { top: "36%", left: "58%", size: "300px", color: "rgba(245,158,11,0.40)", blur: "84px", delay: "1.2s", duration: "5.4s" },
+  { top: "60%", left: "42%", size: "240px", color: "rgba(239,68,68,0.48)", blur: "74px", delay: "0.5s", duration: "5s" },
+  { top: "70%", left: "74%", size: "180px", color: "rgba(234,88,12,0.34)", blur: "58px", delay: "1.8s", duration: "4.2s" },
+  { top: "44%", left: "18%", size: "160px", color: "rgba(251,191,36,0.28)", blur: "52px", delay: "0.9s", duration: "4.8s" },
+];
 
 const AdminDashboardPage = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [grievances, setGrievances] = useState<any[]>([]);
 
+  const unwrapApiPayload = (payload: any) => {
+    if (!payload || typeof payload !== "object") return payload;
+
+    // Some environments return `{ data: ... }` while others return payload directly.
+    if (payload.data && typeof payload.data === "object") {
+      return payload.data;
+    }
+
+    return payload;
+  };
+
   const handleReseedData = () => {
     try {
       // Clear existing data
       localStorage.removeItem('grievance_grid_demo_db');
-      
+
       // Show success message
       toast.success('Database cleared! Refresh the page to re-seed with new data.');
       
@@ -85,15 +76,22 @@ const AdminDashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dashboardData, grievancesData] = await Promise.all([
+        const [dashboardResponse, grievancesResponse] = await Promise.all([
           adminService.getDashboard(),
-          grievanceService.getOfficerGrievances()
+          grievanceService.getMyGrievances(100, 0)
         ]);
+
+        const dashboardData = unwrapApiPayload(dashboardResponse);
+        const grievancesData = unwrapApiPayload(grievancesResponse);
+        const grievanceItems = grievancesData?.items || grievancesData?.grievances || [];
+
         setData(dashboardData);
-        setGrievances(grievancesData.items || []);
+        setGrievances(Array.isArray(grievanceItems) ? grievanceItems : []);
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+        setData(null);
+        setGrievances([]);
         setLoading(false);
       }
     };
@@ -119,6 +117,7 @@ const AdminDashboardPage = () => {
   };
 
   const normalizePercent = (value: unknown): number | null => {
+    if (value === null || value === undefined) return null;
     const numeric = typeof value === "number" ? value : Number(value);
     if (!Number.isFinite(numeric)) return null;
     if (numeric > 0 && numeric <= 1) return numeric * 100;
@@ -128,13 +127,29 @@ const AdminDashboardPage = () => {
   const totalGrievances = data?.summary?.total_grievances ?? 0;
   const resolvedGrievances = data?.summary?.resolved ?? 0;
   const fallbackResolutionCompliance =
-    totalGrievances > 0 ? (resolvedGrievances / totalGrievances) * 100 : 0;
+    totalGrievances > 0 ? (resolvedGrievances / totalGrievances) * 100 : null;
+
+  const listTotalGrievances = grievances.length;
+  const listResolvedGrievances = grievances.filter((g) => {
+    const status = String(g?.status || "").toUpperCase();
+    return status === "RESOLVED" || status === "CLOSED";
+  }).length;
+  const listResolutionCompliance =
+    listTotalGrievances > 0 ? (listResolvedGrievances / listTotalGrievances) * 100 : null;
+
   const apiResolutionCompliance = normalizePercent(data?.sla_compliance?.resolution_sla_met);
   const resolutionCompliance =
-    apiResolutionCompliance !== null && apiResolutionCompliance > 0
-      ? apiResolutionCompliance
-      : fallbackResolutionCompliance;
-  const resolutionBreaches = Math.max(0, 100 - resolutionCompliance);
+    apiResolutionCompliance ?? fallbackResolutionCompliance ?? listResolutionCompliance;
+
+  const resolutionBreaches =
+    resolutionCompliance === null || !Number.isFinite(resolutionCompliance) 
+      ? null 
+      : Math.max(0, 100 - resolutionCompliance);
+
+  const slaChartData =
+    resolutionCompliance === null
+      ? [{ name: "Unavailable", value: 100, fill: "rgba(148,163,184,0.35)" }]
+      : getSLAPercentageData({ resolution_sla_met: resolutionCompliance });
 
   const actionQueue = [
     { id: "GRV-1102", type: "Escalated", time: "12m ago", priority: "High", office: "Public Works" },
@@ -142,13 +157,26 @@ const AdminDashboardPage = () => {
     { id: "GRV-1108", type: "New Report", time: "34m ago", priority: "Medium", office: "Traffic Control" },
   ];
 
-  // Convert grievances to map markers
+  const sectorOpsData = sectorOpsBaseData.map((sector, idx) => {
+    const variability = grievances.length > 0 ? (grievances.length + idx * 7) % 6 : idx % 3;
+    const incoming = sector.incoming + variability;
+    const resolved = Math.max(0, Math.min(incoming, sector.resolved + Math.max(0, variability - 2)));
+    const slaRisk = Math.min(100, Math.max(8, sector.slaRisk + variability * 2 - 3));
+
+    return {
+      ...sector,
+      incoming,
+      resolved,
+      slaRisk,
+    };
+  });
+
   const grievanceMarkers = grievances
-    .filter(g => g.location && g.location.latitude && g.location.longitude)
-    .map(g => ({
+    .filter((g) => g?.location?.latitude && g?.location?.longitude)
+    .map((g) => ({
       position: [g.location.latitude, g.location.longitude] as [number, number],
       popupContent: `${g.priority}: ${g.title} (${g.grid_id})`,
-      iconColor: g.priority === 'CRITICAL' ? 'red' : g.priority === 'HIGH' ? 'orange' : 'black'
+      iconColor: g.priority === 'CRITICAL' ? 'red' : g.priority === 'HIGH' ? 'orange' : 'black',
     }));
 
   return (
@@ -258,15 +286,15 @@ const AdminDashboardPage = () => {
                 <ResponsiveContainer width="100%" height={260}>
                   <PieChart>
                     <Pie
-                      data={getSLAPercentageData({ resolution_sla_met: resolutionCompliance })}
+                      data={slaChartData}
                       cx="50%"
                       cy="50%"
                       innerRadius={70}
                       outerRadius={100}
-                      paddingAngle={10}
+                      paddingAngle={resolutionCompliance === null ? 0 : 10}
                       dataKey="value"
                     >
-                      {getSLAPercentageData({ resolution_sla_met: resolutionCompliance }).map((entry, index) => (
+                      {slaChartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.fill} stroke="rgba(255,255,255,0.05)" />
                       ))}
                     </Pie>
@@ -275,11 +303,15 @@ const AdminDashboardPage = () => {
                 </ResponsiveContainer>
               </div>
                 <div className="text-center">
-                  <p className="text-2xl font-black text-emerald-400 italic">{resolutionCompliance.toFixed(1)}%</p>
+                  <p className="text-2xl font-black text-emerald-400 italic">
+                    {resolutionCompliance === null ? "N/A" : `${resolutionCompliance.toFixed(1)}%`}
+                  </p>
                   <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Compliance</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-black text-red-500 italic">{resolutionBreaches.toFixed(1)}%</p>
+                  <p className="text-2xl font-black text-red-500 italic">
+                    {resolutionBreaches === null ? "N/A" : `${resolutionBreaches.toFixed(1)}%`}
+                  </p>
                   <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Breaches</p>
                 </div>
             </Card>
@@ -314,6 +346,21 @@ const AdminDashboardPage = () => {
             ))}
           </div>
 
+          <Card className="glass-premium border-white/5 bg-white/[0.01] mb-8">
+            <CardHeader className="px-8 pt-8 pb-4">
+              <CardTitle className="text-xl font-black italic flex items-center gap-3 text-white">
+                <BarChart3 className="w-5 h-5 text-blue-500" />
+                Sector Load Analysis
+              </CardTitle>
+              <CardDescription className="text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                Incoming vs resolved tickets with SLA risk trajectory
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-8 pb-8">
+              <SectorOperationalChart data={sectorOpsData} />
+            </CardContent>
+          </Card>
+
           {/* Main Content Area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -340,6 +387,26 @@ const AdminDashboardPage = () => {
                       zoom={14}
                       className="w-full h-full"
                     />
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none z-10 opacity-35 group-hover:opacity-70 transition-opacity duration-700">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_22%,rgba(239,68,68,0.12),transparent_30%),radial-gradient(circle_at_60%_35%,rgba(245,158,11,0.10),transparent_32%),radial-gradient(circle_at_42%_62%,rgba(239,68,68,0.14),transparent_34%),radial-gradient(circle_at_74%_70%,rgba(234,88,12,0.09),transparent_30%)]" />
+                    {incidentHeatmapHotspots.map((hotspot, i) => (
+                      <div
+                        key={`incident-heatspot-${i}`}
+                        className="absolute rounded-full"
+                        style={{
+                          top: hotspot.top,
+                          left: hotspot.left,
+                          width: hotspot.size,
+                          height: hotspot.size,
+                          background: hotspot.color,
+                          filter: `blur(${hotspot.blur})`,
+                          transform: "translate(-50%, -50%)",
+                          animation: `pulse ${hotspot.duration} ease-in-out ${hotspot.delay} infinite`,
+                        }}
+                      />
+                    ))}
+                    <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_0%,rgba(255,255,255,0.05)_48%,transparent_100%)] opacity-20" />
                   </div>
                   <div className="absolute bottom-8 left-8 right-8 p-6 rounded-2xl bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/5 flex items-center justify-between z-20">
                     <div className="flex items-center gap-4">
@@ -382,60 +449,6 @@ const AdminDashboardPage = () => {
                 </CardContent>
               </Card>
 
-              {/* Sector Load Analysis - Transformed with Radial Chart */}
-              <Card className="glass-premium border-white/5 bg-white/[0.01]">
-                <CardHeader className="px-8 pt-8 pb-4">
-                  <CardTitle className="text-xl font-black italic flex items-center gap-3 text-white">
-                    <BarChart3 className="w-5 h-5 text-blue-500" />
-                    Sector Load Analysis
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-8 pb-10">
-                  <div className="mt-4 grid grid-cols-8 gap-1.5 p-2 bg-black/40 rounded-2xl border border-white/5 shadow-inner">
-                    {sectorHeatmapData.map((cell, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: i * 0.005 }}
-                        className="aspect-square rounded-[4px] relative group cursor-crosshair"
-                        style={{ 
-                          backgroundColor: cell.load > 0.8 ? 'rgba(239, 68, 68, 0.8)' : 
-                                          cell.load > 0.6 ? 'rgba(245, 158, 11, 0.6)' : 
-                                          cell.load > 0.4 ? 'rgba(59, 130, 246, 0.4)' : 
-                                          'rgba(255, 255, 255, 0.05)'
-                        }}
-                      >
-                        {/* Tooltip Overlay */}
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50 pointer-events-none">
-                            <div className="bg-black/90 backdrop-blur-md border border-white/10 p-2 rounded-lg shadow-2xl min-w-[100px]">
-                                <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-1">Sector {cell.x},{cell.y}</p>
-                                <p className="text-[10px] font-black italic text-white mb-0.5">{cell.status}</p>
-                                <p className="text-[10px] font-black text-amber-500">{(cell.load * 100).toFixed(0)}% Load</p>
-                            </div>
-                        </div>
-                        {cell.load > 0.7 && (
-                          <div className="absolute inset-0 bg-white/10 animate-pulse rounded-[4px]" />
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                  <div className="mt-8 grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                       <p className="text-xl font-black text-red-500 italic">4</p>
-                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Critical</p>
-                    </div>
-                    <div className="text-center border-x border-white/5">
-                       <p className="text-xl font-black text-amber-500 italic">12</p>
-                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Warning</p>
-                    </div>
-                    <div className="text-center">
-                       <p className="text-xl font-black text-emerald-500 italic">48</p>
-                       <p className="text-[8px] font-black text-muted-foreground uppercase opacity-40">Nominal</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>

@@ -60,69 +60,84 @@ export interface AuditStatsResponse {
   avg_risk_score?: number;
 }
 
+export interface AuditResult {
+  audit_id: string;
+  grievance_id: string;
+  grid_id: string;
+  reason: string;
+  status: string;
+  risk_score: number;
+  evidence_photo?: string;
+  evidence_severity: number | null;
+  processed_at: string;
+  recommendation: string;
+}
+
+export interface ContestationResult {
+  status: string;
+  audit_triggered: boolean;
+  audit_id: string;
+  message: string;
+}
+
+export interface AuditEvent {
+  id: string;
+  grievance_id: string;
+  event_type: string;
+  old_status?: string;
+  new_status?: string;
+  description: string;
+  actor_name: string;
+  created_at: string;
+}
+
+export interface AuditHistoryResponse {
+  grievance_id: string;
+  count: number;
+  events: AuditEvent[];
+}
+
 // Supported audit statuses
 export type AuditStatus = "PENDING" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
 
 export const auditService = {
   // GET /audits - Get pending audits (with optional status filter)
   getPendingAudits: async (status?: AuditStatus, limit = 50, offset = 0): Promise<AuditListResponse> => {
-    try {
-      const params = new URLSearchParams();
-      if (status) params.append("status", status);
-      params.append("limit", limit.toString());
-      params.append("offset", offset.toString());
-      
-      const query = params.toString() ? `?${params.toString()}` : "";
-      return await apiClient.get<AuditListResponse>(`/audits${query}`);
-    } catch (error) {
-      console.warn('Backend unavailable, falling back to mock audits.');
-      return {
-        count: 5,
-        audits: [
-          {
-            audit_id: "aud_001",
-            grievance_id: "g_101",
-            grid_id: "GRI-2026-V9W2",
-            reason: "Resolution quality below 70% threshold",
-            status: "PENDING",
-            risk_score: 82,
-            created_at: new Date(Date.now() - 172800000).toISOString()
-          },
-          {
-            audit_id: "aud_002",
-            grievance_id: "g_102",
-            grid_id: "GRI-2026-L5P4",
-            reason: "Citizen contested resolution proof",
-            status: "UNDER_REVIEW",
-            risk_score: 95,
-            created_at: new Date(Date.now() - 86400000).toISOString()
-          },
-          {
-            audit_id: "aud_003",
-            grievance_id: "g_103",
-            grid_id: "GRI-2026-M1K9",
-            reason: "SLA breach - Critical infrastructure",
-            status: "PENDING",
-            risk_score: 88,
-            created_at: new Date(Date.now() - 43200000).toISOString()
-          },
-          {
-            audit_id: "aud_004",
-            grievance_id: "g_104",
-            grid_id: "GRI-2026-Q3Z8",
-            reason: "AI anomaly detection: Hardware mismatch",
-            status: "PENDING",
-            risk_score: 75,
-            created_at: new Date(Date.now() - 21600000).toISOString()
-          }
-        ]
-      };
-    }
+    const params = new URLSearchParams();
+    if (status) params.append("status", status);
+    params.append("limit", limit.toString());
+    params.append("offset", offset.toString());
+    
+    const query = params.toString() ? `?${params.toString()}` : "";
+    return await apiClient.get<AuditListResponse>(`/audits${query}`);
   },
 
   // GET /audits/{audit_id} - Get audit detail
   getAuditDetail: async (auditId: string): Promise<AuditDetailResponse> => {
-    return apiClient.get(`/audits/${auditId}`);
+    return await apiClient.get<AuditDetailResponse>(`/audits/${auditId}`);
+  },
+
+  // GET /audits/{audit_id} (UI-friendly shape for contestation page)
+  getAuditResult: async (auditId: string): Promise<AuditResult> => {
+    const detail = await auditService.getAuditDetail(auditId);
+    const normalizedRisk = typeof detail.risk_score === "number"
+      ? detail.risk_score > 1
+        ? detail.risk_score / 100
+        : detail.risk_score
+      : 0.5;
+
+    return {
+      audit_id: detail.audit_id,
+      grievance_id: detail.grievance_id,
+      grid_id: detail.grid_id,
+      reason: detail.reason,
+      status: detail.status,
+      risk_score: normalizedRisk,
+      evidence_photo: detail.evidence_photo_url,
+      evidence_severity: detail.ai_confidence ?? null,
+      processed_at: detail.updated_at || detail.created_at,
+      recommendation: detail.ai_recommendation || "Proceed with manual validation by audit team.",
+    };
   },
 
   // POST /audits/{audit_id}/validate - Validate audit (approve/reject)
@@ -133,17 +148,11 @@ export const auditService = {
 
   // GET /audits/stats - Get audit statistics
   getAuditStats: async (): Promise<AuditStatsResponse> => {
-    try {
-      return await apiClient.get<AuditStatsResponse>("/audits/stats");
-    } catch (error) {
-      return {
-        total_contested: 24,
-        pending_review: 8,
-        approved: 12,
-        rejected: 4,
-        approval_rate: 75,
-        avg_risk_score: 84
-      };
-    }
+    return await apiClient.get<AuditStatsResponse>("/audits/stats");
+  },
+
+  // GET /grievances/{grievance_id}/audit - Full immutable timeline
+  getAuditHistory: async (grievanceId: string): Promise<AuditHistoryResponse> => {
+    return await apiClient.get<AuditHistoryResponse>(`/grievances/${grievanceId}/audit`);
   }
 };

@@ -1,172 +1,239 @@
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  Compass, 
-  Layers, 
-  Activity, 
-  Cpu, 
-  Terminal, 
-  ShieldCheck, 
-  Clock, 
-  Download, 
-  Zap,
-  Search,
-  Bell,
-  MoreVertical,
-  Maximize2
-} from "lucide-react";
+import { Activity, CheckCircle2, Clock, Cpu, FileText, Search } from "lucide-react";
+import { grievanceService } from "@/services/grievance.service";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
-const metrics = [
-  { label: "Structural Delta", val: "0.024mm", percent: 12, color: "bg-emerald-500" },
-  { label: "Thermal Gradient", val: "42.1°C", percent: 65, color: "bg-amber-500" },
-  { label: "Signal Integrity", val: "99.8%", percent: 99, color: "bg-blue-500" },
-  { label: "Verification ID", val: "#VER-9902-X", subtitle: "AUTO-GENERATED" },
-];
+type EngineeringGrievance = {
+   id: string;
+   grid_id: string;
+   title: string;
+   category?: string;
+   priority?: string;
+   status: string;
+   description?: string;
+   created_at?: string;
+   resolved_at?: string;
+   timeline?: Array<{ status?: string; timestamp?: string; description?: string }>;
+};
 
-const timeline = [
-  { time: "14:02:11", title: "LiDAR Scan Init", desc: "Batch verification started", dotColor: "bg-amber-500" },
-  { time: "14:05:45", title: "Delta Sync Success", desc: "Comparison mapped to grid", dotColor: "bg-blue-500" },
-  { time: "14:12:00", title: "Report Compile", desc: "Pending finalize...", dotColor: "bg-white/20", faded: true },
-];
+const isSolvedStatus = (status?: string) => {
+   const normalized = String(status || "").toUpperCase();
+   return normalized === "RESOLVED" || normalized === "CLOSED";
+};
+
+const getResolvedTimestamp = (g: EngineeringGrievance) => {
+   if (g.resolved_at) return g.resolved_at;
+   const event = (g.timeline || []).find((t) => isSolvedStatus(t.status));
+   return event?.timestamp || g.created_at || new Date().toISOString();
+};
+
+const getBeforeAfterNarrative = (g: EngineeringGrievance) => {
+   const timeline = g.timeline || [];
+   const firstEvent = timeline[timeline.length - 1] || timeline[0];
+   const resolvedEvent = timeline.find((t) => isSolvedStatus(t.status)) || timeline[0];
+
+   return {
+      before:
+         firstEvent?.description ||
+         g.description ||
+         "Initial field issue documented by complaint intake.",
+      after:
+         resolvedEvent?.description ||
+         "Resolution completed and verified by engineering workflow.",
+   };
+};
 
 const EngineeringPage = () => {
-  return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative">
-        <div className="container mx-auto">
-          {/* Telemetry Header */}
-          <div className="bg-white/[0.02] border border-white/5 rounded-[2rem] p-8 flex flex-col md:flex-row justify-between items-center gap-8 mb-8 shadow-2xl relative overflow-hidden group">
-             <div className="flex gap-12 relative z-10">
-                <div>
-                   <p className="text-[10px] uppercase tracking-widest text-blue-500 font-black mb-1">Coordinate Lat</p>
-                   <p className="text-2xl font-mono font-black text-white tracking-widest italic">40.7128° N</p>
-                </div>
-                <div>
-                   <p className="text-[10px] uppercase tracking-widest text-blue-500 font-black mb-1">Coordinate Long</p>
-                   <p className="text-2xl font-mono font-black text-white tracking-widest italic">74.0060° W</p>
-                </div>
-                <div>
-                   <p className="text-[10px] uppercase tracking-widest text-blue-500 font-black mb-1">Accuracy</p>
-                   <p className="text-2xl font-mono font-black text-white tracking-widest italic">±0.42m</p>
-                </div>
-             </div>
-             <div className="flex gap-4 relative z-10">
-                <button className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">Export KML</button>
-                <button className="px-6 py-2.5 bg-blue-600/10 border border-blue-500/20 text-blue-500 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all">Re-Sync</button>
-             </div>
-             <div className="absolute top-0 right-0 p-8 opacity-5">
-                <Compass className="w-24 h-24 text-blue-500 animate-spin-slow" />
-             </div>
-          </div>
+   const [loading, setLoading] = useState(true);
+   const [solvedGrievances, setSolvedGrievances] = useState<EngineeringGrievance[]>([]);
+   const [query, setQuery] = useState("");
+   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Main Viewport */}
-            <div className="lg:col-span-8 flex flex-col gap-8">
-              {/* Dual Comparison View */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[550px]">
-                 {/* Before View */}
-                 <div className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-black/40 group">
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=600')] bg-cover opacity-20 grayscale group-hover:scale-105 transition-transform duration-1000" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
-                       <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Baseline: 08-OCT-23</span>
-                    </div>
-                    <div className="absolute bottom-6 left-8">
-                       <h3 className="text-xl font-bold text-white tracking-tight">Pre-Installation Surface</h3>
-                       <p className="text-xs text-muted-foreground font-medium mt-1">Scanning completed via LiDAR Drone Alpha</p>
-                    </div>
-                 </div>
+   useEffect(() => {
+      const fetchSolved = async () => {
+         setLoading(true);
+         try {
+            const result: any = await grievanceService.getMyGrievances(200, 0);
+            const all: EngineeringGrievance[] = result?.grievances || result?.items || [];
+            const solved = all
+               .filter((g) => isSolvedStatus(g.status))
+               .sort(
+                  (a, b) =>
+                     new Date(getResolvedTimestamp(b)).getTime() -
+                     new Date(getResolvedTimestamp(a)).getTime(),
+               );
+            setSolvedGrievances(solved);
+            setSelectedId(solved[0]?.id || null);
+         } finally {
+            setLoading(false);
+         }
+      };
+      void fetchSolved();
+   }, []);
 
-                 {/* Current View */}
-                 <div className="relative rounded-[2.5rem] overflow-hidden border border-blue-500/30 bg-black/40 group">
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581094281212-d1987adae50e?auto=format&fit=crop&q=80&w=600')] bg-cover opacity-60 contrast-125 group-hover:scale-105 transition-transform duration-1000" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-900/40 via-transparent to-transparent" />
-                    
-                    {/* UI Overlay Pins */}
-                    <motion.div 
-                      animate={{ scale: [1, 1.2, 1] }} 
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute top-1/3 left-1/2 w-6 h-6 -ml-3 bg-blue-500 border-4 border-background rounded-full shadow-[0_0_20px_#3b82f6] cursor-pointer" 
-                    />
+   const filtered = useMemo(() => {
+      const q = query.trim().toLowerCase();
+      if (!q) return solvedGrievances;
+      return solvedGrievances.filter((g) => {
+         return (
+            g.grid_id?.toLowerCase().includes(q) ||
+            g.title?.toLowerCase().includes(q) ||
+            g.category?.toLowerCase().includes(q)
+         );
+      });
+   }, [query, solvedGrievances]);
 
-                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-blue-600 rounded-full shadow-lg shadow-blue-600/20">
-                       <span className="text-[9px] font-black text-white uppercase tracking-widest">Current Verification</span>
-                    </div>
-                    <div className="absolute bottom-6 left-8">
-                       <h3 className="text-xl font-bold text-white tracking-tight">Verification Output</h3>
-                       <p className="text-xs text-blue-500 font-bold mt-1">Real-time delta analysis: 98.4% congruence</p>
-                    </div>
-                 </div>
-              </div>
+   const selected = filtered.find((g) => g.id === selectedId) || filtered[0] || null;
+   const narrative = selected ? getBeforeAfterNarrative(selected) : null;
 
-              {/* Analysis Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                 {metrics.map((m, i) => (
-                   <div key={i} className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 shadow-xl">
-                      <p className="text-[10px] uppercase font-black tracking-widest text-blue-500 mb-2">{m.label}</p>
-                      <p className={`font-mono font-black tracking-widest ${m.val.startsWith('#') ? 'text-blue-400 text-lg' : 'text-white text-2xl'}`}>{m.val}</p>
-                      {m.percent !== undefined && (
-                        <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${m.percent}%` }} className={`h-full ${m.color}`} />
-                        </div>
-                      )}
-                      {m.subtitle && <p className="text-[9px] font-black opacity-30 uppercase mt-2">{m.subtitle}</p>}
-                   </div>
-                 ))}
-              </div>
-            </div>
-
-            {/* AI Analysis Sidebar */}
-            <div className="lg:col-span-4 flex flex-col gap-6">
-               <section className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 shadow-2xl flex flex-col gap-8">
-                  <div className="flex items-center gap-3">
+   return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col">
+         <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative">
+            <div className="container mx-auto max-w-7xl">
+               <div className="mb-8 rounded-[2rem] border border-white/5 bg-white/[0.02] p-8">
+                  <div className="flex items-center gap-3 mb-2">
                      <Cpu className="w-5 h-5 text-blue-500" />
-                     <h2 className="text-sm font-black uppercase tracking-widest">AI Analysis</h2>
+                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Engineering Verification</span>
                   </div>
-                  
-                  <div className="p-6 bg-blue-500/5 border-l-2 border-blue-500 rounded-r-2xl">
-                     <p className="text-[11px] leading-relaxed text-muted-foreground font-medium italic">
-                        <span className="text-blue-500 font-black not-italic uppercase tracking-widest block mb-1">Anomalies Detected:</span>
-                        High thermal variance detected in Segment-B. Structural integrity remains within safety thresholds. Suggesting coolant verification.
-                     </p>
-                  </div>
+                  <h1 className="text-4xl md:text-5xl font-black tracking-tight italic text-white">Resolved Grievance Analysis</h1>
+                  <p className="text-muted-foreground mt-2">Open any solved grievance to inspect before/after verification details.</p>
+               </div>
 
-                  <div className="space-y-4">
-                     <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest opacity-40">
-                        <span>AI Confidence</span>
-                        <span className="text-blue-500">94.2%</span>
+               <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                  <section className="xl:col-span-4 rounded-[2rem] border border-white/5 bg-white/[0.02] p-6">
+                     <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-black uppercase tracking-[0.2em] text-blue-500">Solved Grievances</h2>
+                        <Badge className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400">{filtered.length}</Badge>
                      </div>
-                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: "94.2%" }} className="h-full bg-blue-600" />
-                     </div>
-                  </div>
 
-                  <div className="flex-1 space-y-8 overflow-y-auto pr-2 custom-scrollbar min-h-[250px]">
-                     <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500/50">Event Timeline</h3>
-                     <div className="space-y-10 relative">
-                        <div className="absolute left-2.5 top-0 bottom-0 w-[1px] bg-white/5" />
-                        {timeline.map((item, i) => (
-                          <div key={i} className={`relative pl-10 group ${item.faded ? 'opacity-30' : ''}`}>
-                             <div className={`absolute left-0 top-1 w-5 h-5 bg-[#0a0a0a] border border-white/10 rounded-full flex items-center justify-center z-10 ${!item.faded ? 'border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.2)]' : ''}`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${item.dotColor}`} />
-                             </div>
-                             <p className="text-[10px] font-mono font-black text-blue-500/60 mb-1">{item.time}</p>
-                             <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{item.title}</p>
-                             <p className="text-[10px] text-muted-foreground font-medium">{item.desc}</p>
-                          </div>
-                        ))}
+                     <div className="relative mb-4">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                           value={query}
+                           onChange={(e) => setQuery(e.target.value)}
+                           placeholder="Search solved grievances"
+                           className="pl-9 bg-black/30 border-white/10"
+                        />
                      </div>
-                  </div>
 
-                  <button className="w-full py-4 mt-auto rounded-2xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-blue-600 hover:text-white transition-all shadow-xl shadow-blue-600/0 hover:shadow-blue-600/20">
-                     Finalize Report
-                  </button>
-               </section>
+                     <div className="space-y-3 max-h-[630px] overflow-y-auto pr-1">
+                        {loading && <p className="text-xs text-muted-foreground">Loading solved grievances...</p>}
+
+                        {!loading && filtered.length === 0 && (
+                           <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-xs text-muted-foreground">
+                              No solved grievances found.
+                           </div>
+                        )}
+
+                        {filtered.map((g) => {
+                           const active = selected?.id === g.id;
+                           return (
+                              <button
+                                 key={g.id}
+                                 onClick={() => setSelectedId(g.id)}
+                                 className={`w-full text-left rounded-2xl border p-4 transition-all ${
+                                    active
+                                       ? "border-blue-500/40 bg-blue-500/10"
+                                       : "border-white/10 bg-black/30 hover:border-white/20"
+                                 }`}
+                              >
+                                 <div className="flex items-start justify-between gap-3 mb-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">{g.grid_id}</p>
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                 </div>
+                                 <p className="text-sm font-bold text-white line-clamp-2">{g.title}</p>
+                                 <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+                                    <span>{g.category || "General"}</span>
+                                    <span>{new Date(getResolvedTimestamp(g)).toLocaleDateString()}</span>
+                                 </div>
+                              </button>
+                           );
+                        })}
+                     </div>
+                  </section>
+
+                  <section className="xl:col-span-8 rounded-[2rem] border border-white/5 bg-white/[0.02] p-6 md:p-8">
+                     {!selected && (
+                        <div className="h-[620px] rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-muted-foreground">
+                           Select a solved grievance to view before/after analysis.
+                        </div>
+                     )}
+
+                     {selected && narrative && (
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                              <div>
+                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 mb-1">Analysis Case</p>
+                                 <h2 className="text-2xl md:text-3xl font-black italic text-white tracking-tight">{selected.title}</h2>
+                              </div>
+                              <div className="flex gap-2">
+                                 <Badge className="bg-white/10 border-white/20 text-white">{selected.grid_id}</Badge>
+                                 <Badge className="bg-emerald-500/10 border-emerald-500/20 text-emerald-400">Solved</Badge>
+                              </div>
+                           </div>
+
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                              <article className="relative min-h-[320px] overflow-hidden rounded-[2rem] border border-white/10 bg-black/40">
+                                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1200')] bg-cover opacity-25 grayscale" />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                                 <div className="relative z-10 p-6 flex h-full flex-col justify-end">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-2">Before</p>
+                                    <p className="text-sm text-white/90 leading-relaxed">{narrative.before}</p>
+                                 </div>
+                              </article>
+
+                              <article className="relative min-h-[320px] overflow-hidden rounded-[2rem] border border-blue-500/30 bg-black/40">
+                                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1581094281212-d1987adae50e?auto=format&fit=crop&q=80&w=1200')] bg-cover opacity-60" />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-blue-950/70 to-transparent" />
+                                 <div className="relative z-10 p-6 flex h-full flex-col justify-end">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">After</p>
+                                    <p className="text-sm text-white/95 leading-relaxed">{narrative.after}</p>
+                                 </div>
+                              </article>
+                           </div>
+
+                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Status</p>
+                                 <p className="text-lg font-black text-emerald-400">{selected.status}</p>
+                              </div>
+                              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Priority</p>
+                                 <p className="text-lg font-black text-amber-400">{selected.priority || "NORMAL"}</p>
+                              </div>
+                              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Resolved On</p>
+                                 <p className="text-lg font-black text-blue-400">{new Date(getResolvedTimestamp(selected)).toLocaleDateString()}</p>
+                              </div>
+                           </div>
+
+                           <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+                              <div className="flex items-center gap-2 mb-3">
+                                 <Activity className="w-4 h-4 text-blue-500" />
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Resolution Timeline</p>
+                              </div>
+                              <div className="space-y-3">
+                                 {(selected.timeline || []).slice(0, 6).map((t, idx) => (
+                                    <div key={`${t.timestamp || idx}`} className="flex items-start gap-3 text-xs">
+                                       <Clock className="w-3.5 h-3.5 text-muted-foreground mt-0.5" />
+                                       <div>
+                                          <p className="text-white font-bold uppercase tracking-wide">{t.status || "EVENT"}</p>
+                                          <p className="text-muted-foreground">{t.description || "No event description"}</p>
+                                       </div>
+                                    </div>
+                                 ))}
+                              </div>
+                           </div>
+                        </motion.div>
+                     )}
+                  </section>
+               </div>
             </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+         </main>
+      </div>
+   );
 };
 
 export default EngineeringPage;

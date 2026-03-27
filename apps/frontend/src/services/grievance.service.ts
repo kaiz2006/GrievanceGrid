@@ -107,29 +107,9 @@ export const grievanceService = {
     });
   },
 
-  // GET /grievances/officer - Get grievances assigned to current officer
-  getOfficerGrievances: async () => {
-    return apiClient.get("/grievances/officer", async () => {
-      await mockDelay(300);
-      const all = getMockGrievances();
-      // For demo, return grievances that are IN_PROGRESS, ASSIGNED, or have been processed by AI
-      const officerGrievances = all.filter(g => 
-        ["IN_PROGRESS", "ASSIGNED", "ROUTED", "AI_PROCESSED"].includes(g.status) || 
-        (g.priority === "CRITICAL" && g.status !== "RESOLVED")
-      );
-      
-      // Add officer assignment details
-      return {
-        count: officerGrievances.length,
-        items: officerGrievances.map(g => ({
-          ...g,
-          assigned_officer: "Rajesh Kumar",
-          officer_id: "officer_001",
-          department: "Public Works Department",
-          assigned_at: new Date(Date.now() - Math.random() * 86400000).toISOString()
-        }))
-      };
-    });
+  // GET /grievances/assigned - Get grievances assigned to current officer's department
+  getOfficerGrievances: async (limit: number = 50, offset: number = 0) => {
+    return apiClient.get(`/grievances/assigned?limit=${limit}&offset=${offset}`);
   },
 
   // POST /grievances/{id}/opt-out - Citizen opts out grievance

@@ -22,7 +22,6 @@ import {
   Activity,
   Wrench,
   Gavel,
-  Volume2,
   Clock,
   GitCompare,
   History,
@@ -69,7 +68,6 @@ const menuItems = [
   { icon: Gavel, label: "Contestation Audit", href: "/admin/contestation-audit", roles: ["ADMIN"] },
   
   // NEW: Voice & Similar Cases (P2 Priority)
-  { icon: Volume2, label: "Voice Results", href: "/admin/voice-results", roles: ["ADMIN"] },
   { icon: GitCompare, label: "Similar Cases", href: "/admin/similar-cases", roles: ["ADMIN"] },
   
   // NEW: SLA & Escalation Management (P2 Priority)
@@ -86,8 +84,8 @@ const menuItems = [
   { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["OFFICER"] },
 
   // Crew and auditor role-specific dashboards
-  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["ADMIN", "CREW"] },
-  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["ADMIN", "AUDITOR"] },
+  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["CREW"] },
+  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["AUDITOR"] },
   { icon: User, label: "My Profile", href: "/profile", roles: ["CITIZEN", "ADMIN", "OFFICER"] },
 ];
 

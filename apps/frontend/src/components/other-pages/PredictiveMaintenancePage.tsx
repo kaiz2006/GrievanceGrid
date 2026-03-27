@@ -75,16 +75,25 @@ const PredictiveMaintenancePage = () => {
   const [loading, setLoading] = useState(true);
   const [highRiskOnly, setHighRiskOnly] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<InfrastructureAsset | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const result = await infrastructureService.getAssets(highRiskOnly);
-      setAssets(result);
-      setLoading(false);
+      setLoadError(null);
+      try {
+        const result = await infrastructureService.getAssets(highRiskOnly);
+        setAssets(result);
+      } catch (error) {
+        setAssets([]);
+        setLoadError(error instanceof Error ? error.message : "Failed to load infrastructure assets");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
-  }, [highRiskOnly]);
+  }, [highRiskOnly, reloadTick]);
 
   const getRiskColor = (score: number) => {
     if (score >= 0.8) return "text-red-500 bg-red-500/10 border-red-500/20";
@@ -111,6 +120,21 @@ const PredictiveMaintenancePage = () => {
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-muted-foreground font-mono uppercase tracking-widest text-xs">Loading Infrastructure Data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-lg w-full p-8 rounded-3xl bg-white/[0.02] border border-red-500/20 text-center space-y-4">
+          <AlertTriangle className="w-8 h-8 text-red-500 mx-auto" />
+          <h2 className="text-xl font-bold">Unable to load infrastructure data</h2>
+          <p className="text-sm text-muted-foreground">{loadError}</p>
+          <Button variant="outline" onClick={() => setReloadTick((prev) => prev + 1)}>
+            Retry
+          </Button>
         </div>
       </div>
     );

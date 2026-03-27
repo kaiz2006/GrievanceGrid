@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import settings
 from src.core.database import get_db_session
+from src.core.dependencies import optional_auth
 from src.services.analytics_service import AnalyticsService
 
 router = APIRouter()
@@ -196,10 +197,17 @@ async def generate_daily_snapshot(
 @router.get("/infrastructure/assets", response_model=list[InfrastructureAssetResponse])
 async def list_infrastructure_assets(
 	x_internal_token: str | None = Header(default=None, alias="X-Internal-Token"),
+	current_user: dict[str, Any] | None = Depends(optional_auth),
 	db: AsyncSession = Depends(get_db_session),
 ) -> list[InfrastructureAssetResponse]:
-	if x_internal_token != settings.internal_worker_token:
-		raise HTTPException(status_code=401, detail="Invalid internal worker token")
+	is_internal_request = x_internal_token == settings.internal_worker_token
+	is_authenticated_user = current_user is not None
+
+	if not is_internal_request and not is_authenticated_user:
+		raise HTTPException(
+			status_code=401,
+			detail="Authentication required. Provide Bearer token or valid X-Internal-Token",
+		)
 
 	service = AnalyticsService(db)
 	assets = await service.list_infrastructure_assets()
