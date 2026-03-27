@@ -159,7 +159,10 @@ const MyGrievancesPage = () => {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
             <main className="flex-grow pt-8 lg:pt-32 pb-12 px-6 relative overflow-hidden">
-
+                {/* Background Grid & Glows */}
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[160px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-300/5 rounded-full blur-[140px] pointer-events-none" />
 
                 <div className="container mx-auto max-w-6xl relative z-10">
                     {/* Header */}
@@ -174,8 +177,8 @@ const MyGrievancesPage = () => {
                                 </div>
                                 <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">Citizen Command Center</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-4">
-                                Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 italic">Citizen</span>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-4">
+                                Hello, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200 italic pr-2">Citizen</span>
                             </h1>
                             <p className="text-muted-foreground text-lg max-w-md leading-relaxed">
                                 You have <span className="text-white font-bold">{stats.active} active reports</span> ensuring the integrity of our city grid.
@@ -183,6 +186,21 @@ const MyGrievancesPage = () => {
                         </motion.div>
 
                         <div className="flex flex-col gap-4">
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 glow-citizen px-8"
+                            >
+                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-[0.2em] mb-1">Community Impact</p>
+                                <div className="flex items-baseline gap-3">
+                                    <span className="text-4xl font-black text-blue-400 font-mono tracking-tighter">
+                                        +{stats.resolved * 12}
+                                    </span>
+                                    <span className="text-[12px] uppercase opacity-60 font-mono tracking-[0.1em] whitespace-nowrap">
+                                        Citizen Credits
+                                    </span>
+                                </div>
+                            </motion.div>
                             <Button className="h-14 px-8 bg-blue-600 hover:bg-blue-500 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all hover:scale-105 active:scale-95" asChild>
                                 <Link to="/submit">
                                     <Plus className="w-5 h-5 mr-2" />
@@ -334,7 +352,7 @@ const MyGrievancesPage = () => {
                                 <span className="opacity-80 tracking-wide">{grievance.location}</span>
                               </div>
                               <div className="flex items-center gap-2.5 text-xs font-bold text-foreground">
-                                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500">
+                                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400">
                                   <Badge variant="outline" className="p-0 border-0 text-[10px] font-black uppercase tracking-widest leading-none bg-transparent">{grievance.category}</Badge>
                                 </div>
                               </div>

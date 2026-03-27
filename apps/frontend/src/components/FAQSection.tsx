@@ -33,7 +33,7 @@ const FAQSection = () => {
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background Video */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 translate-y-30">
         <video
           autoPlay
           muted

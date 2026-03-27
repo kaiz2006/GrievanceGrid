@@ -30,6 +30,7 @@ import {
   MapPin,
   Route,
   Lightbulb,
+  Mic,
   // Citizen page icons
   List,
   User,
@@ -44,6 +45,12 @@ import Shuffle from "./Shuffle";
 import { authService } from "@/services/auth.service";
 
 const menuItems = [
+  // Citizen-specific items moved to top per user request
+  { icon: LayoutDashboard, label: "Dashboard", href: "/citizen/dashboard", roles: ["CITIZEN"] },
+  { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
+  { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
+  { icon: Mic, label: "Voice Submit", href: "/submit-voice", roles: ["CITIZEN"] },
+  
   // Admin prioritized items
   { icon: ShieldCheck, label: "Admin Center", href: "/admin/dashboard", roles: ["ADMIN"] },
   { icon: TrendingUp, label: "SLA Monitoring", href: "/sla-monitoring", roles: ["ADMIN"] },
@@ -79,13 +86,8 @@ const menuItems = [
   { icon: RefreshCw, label: "Update Status", href: "/officer/workflow", roles: ["OFFICER"] },
 
   // Crew and auditor role-specific dashboards
-  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["CREW"] },
-  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["AUDITOR"] },
-  
-  // Common/Citizen items
-  { icon: LayoutDashboard, label: "Dashboard", href: "/citizen/dashboard", roles: ["CITIZEN"] },
-  { icon: Bot, label: "AI Assistant", href: "/ai-assistant", roles: ["CITIZEN"] },
-  { icon: Send, label: "Submit Grievance", href: "/submit", roles: ["CITIZEN"] },
+  { icon: Users, label: "Crew Dashboard", href: "/crew/dashboard", roles: ["ADMIN", "CREW"] },
+  { icon: Clock, label: "Auditor Dashboard", href: "/auditor/dashboard", roles: ["ADMIN", "AUDITOR"] },
   { icon: User, label: "My Profile", href: "/profile", roles: ["CITIZEN", "ADMIN", "OFFICER"] },
 ];
 
@@ -119,8 +121,8 @@ const Sidebar = () => {
       <div className="w-full h-full flex flex-col overflow-hidden">
         <div className="h-24 flex items-center px-6 mb-4">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center shrink-0 overflow-hidden">
-              <img src="/logo.jpeg" className="w-full h-full object-contain" alt="Logo" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="/logo.jpeg" className="w-full h-full object-cover" alt="Logo" />
             </div>
             <motion.div 
               animate={{ 

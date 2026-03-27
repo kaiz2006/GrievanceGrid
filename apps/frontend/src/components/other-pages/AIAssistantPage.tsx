@@ -82,6 +82,14 @@ const AIAssistantPage = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Guided Flow State
+  const [guidedStep, setGuidedStep] = useState<"NONE" | "LOCATION" | "IMAGE" | "DESCRIPTION">("NONE");
+  const [guidedData, setGuidedData] = useState<{
+    location?: string;
+    imageBase64?: string;
+    description?: string;
+  }>({});
 
   // Save to LocalStorage whenever sessions change
   useEffect(() => {
@@ -214,14 +222,15 @@ const AIAssistantPage = () => {
     
     // Auto-generate title for the session on first user message
     if (messages.length === 1 && currentSession?.title === "New Chat") {
-      newTitle = inputText.slice(0, 30) + (inputText.length > 30 ? "..." : "") || "Image Upload";
+      newTitle = inputText.slice(0, 30) + (inputText.length > 30 ? "..." : "") || "Complaint Flow";
     }
 
     updateSession(newMessages, newTitle);
     
     // Keep local consts for AI call
-    const promptToSend = inputText || "Please analyze this attached image/location for my grievance report.";
-    const imageToSend = selectedImage || undefined;
+    const currentInput = inputText.trim().toLowerCase();
+    const currentImage = selectedImage || undefined;
+    const currentHasLocation = hasLocation;
 
     setInputText("");
     setSelectedImage(null);
@@ -229,7 +238,113 @@ const AIAssistantPage = () => {
     setIsTyping(true);
 
     try {
-      // Add loading message
+      // HANDLE GUIDED FLOW LOGIC
+      
+      // Step 0: Detect Intent
+      if (guidedStep === "NONE" && (currentInput.includes("complaint") || currentInput.includes("report")) && (currentInput.includes("want") || currentInput.includes("write") || currentInput.includes("file"))) {
+        setGuidedStep("LOCATION");
+        setIsTyping(false);
+        updateSession([...newMessages, {
+          id: Date.now().toString(),
+          sender: "ai",
+          text: "I can help you file that complaint! Let's do it step-by-step to ensure we have everything needed. \n\nFirst, **what is the location** of the issue? (You can type the address or click the Pin icon below to share your coordinates)."
+        }], newTitle);
+        return;
+      }
+
+      // Step 1: Location Received
+      if (guidedStep === "LOCATION") {
+        const locationStr = currentHasLocation ? "Current Pin Location" : currentInput;
+        setGuidedData(prev => ({ ...prev, location: locationStr }));
+        setGuidedStep("IMAGE");
+        setIsTyping(false);
+        updateSession([...newMessages, {
+          id: Date.now().toString(),
+          sender: "ai",
+          text: `Got it: "${locationStr}". \n\nNext, do you have an **image or photo** of the issue? Please upload it or paste it here now to provide visual evidence.`
+        }], newTitle);
+        return;
+      }
+
+      // Step 2: Image Received
+      if (guidedStep === "IMAGE") {
+        if (!currentImage) {
+           setIsTyping(false);
+           updateSession([...newMessages, {
+             id: Date.now().toString(),
+             sender: "ai",
+             text: "I really need an image to proceed with the formal report. Could you please upload a photo or screenshot of the issue?"
+           }], newTitle);
+           return;
+        }
+        setGuidedData(prev => ({ ...prev, imageBase64: currentImage }));
+        setGuidedStep("DESCRIPTION");
+        setIsTyping(false);
+        updateSession([...newMessages, {
+          id: Date.now().toString(),
+          sender: "ai",
+          text: "Excellent, image received. \n\nFinally, please provide a **detailed description** of what's happening. The more detail you provide, the faster our engineering crew can handle it."
+        }], newTitle);
+        return;
+      }
+
+      // Step 3: Description Received & Final Submit
+      if (guidedStep === "DESCRIPTION") {
+        const finalDescription = currentInput;
+        const finalData = { ...guidedData, description: finalDescription };
+        
+        // Show another temporary progress message
+        const submitMsgId = Date.now().toString() + "_submitting";
+        const finalMessages = [...newMessages, {
+          id: submitMsgId,
+          sender: "ai",
+          text: "Everything looks perfect. I'm compiling your formal report and submitting it to the GrievanceGrid network now...",
+          isSubmitting: true
+        } as Message];
+        updateSession(finalMessages, newTitle);
+
+        try {
+          const payload = {
+            title: `AI Reported: ${finalDescription.slice(0, 30)}...`,
+            description: finalDescription,
+            category: "OTHER", // AI can refine this if wanted
+            latitude: 28.6139,
+            longitude: 77.2090, 
+            location_address: finalData.location || "AI Extracted Context",
+            before_photo_url: "" // Usually uploaded to S3 first
+          };
+
+          const backendRes = await grievanceService.submit(payload);
+          setGuidedStep("NONE");
+          setGuidedData({});
+
+          finalMessages.pop(); // Remove the compiling message
+          
+          finalMessages.push({
+            id: Date.now().toString() + "_doc",
+            sender: "ai",
+            text: "Success! Your grievance has been officially registered. \n\nIt is now live in the city's tracking grid. You can monitor its progress directly from your dashboard.",
+            successData: {
+              gridId: backendRes.grid_id,
+              category: "OTHER"
+            }
+          } as Message);
+          
+          updateSession([...finalMessages], newTitle);
+        } catch(submitErr) {
+          finalMessages.pop();
+          finalMessages.push({
+            id: Date.now().toString() + "_err",
+            sender: "ai",
+            text: "I encountered an error submitting the case directly to the server. Please try again later."
+          } as Message);
+          updateSession([...finalMessages], newTitle);
+        }
+        setIsTyping(false);
+        return;
+      }
+
+      // FALLBACK TO NORMAL AI CHAT if not in guided flow
       const loadingMsgId = "loading-" + Date.now();
       updateSession([...newMessages, {
         id: loadingMsgId,
@@ -238,7 +353,7 @@ const AIAssistantPage = () => {
         isSubmitting: true
       }], newTitle);
 
-      const aiResult = await aiService.processGrievanceContext(promptToSend, imageToSend);
+      const aiResult = await aiService.processGrievanceContext(inputText, currentImage);
       
       const updatedMessages = [...newMessages];
       
@@ -266,15 +381,15 @@ const AIAssistantPage = () => {
              title: aiResult.report.title,
              description: aiResult.report.description,
              category: aiResult.report.category,
-             latitude: 28.6139, // Mock Coordinates for now
+             latitude: 28.6139,
              longitude: 77.2090, 
              location_address: "AI Extracted Context",
-             before_photo_url: "" // Usually uploaded to S3 first
+             before_photo_url: ""
            };
 
            const backendRes = await grievanceService.submit(payload);
 
-           finalMessages.pop(); // Remove the compiling message
+           finalMessages.pop();
            
            finalMessages.push({
              id: Date.now().toString() + "_doc",
