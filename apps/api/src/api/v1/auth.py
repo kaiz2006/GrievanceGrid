@@ -58,6 +58,17 @@ def _infer_fallback_role(email: str | None) -> str:
     return mapping.get(normalized, "CITIZEN")
 
 
+def _to_iso8601(value: object) -> str:
+    """Return ISO8601 when possible, while handling mock/string payloads safely."""
+    if value is None:
+        return ""
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, str):
+        return value
+    return str(value)
+
+
 async def _issue_tokens(user: dict, auth_type: str) -> dict:
     user_id = str(user["id"])
     normalized_role = _normalize_role(user.get("role"))
@@ -89,7 +100,7 @@ async def _issue_tokens(user: dict, auth_type: str) -> dict:
             "role": normalized_role,
             "is_active": user["is_active"],
 
-            "created_at": user["created_at"].isoformat() if user["created_at"] else "",
+            "created_at": _to_iso8601(user.get("created_at")),
         },
     }
 
@@ -350,9 +361,7 @@ async def get_current_user_info(
         "role": str(current_user["role"]),
         "department_id": str(current_user["department_id"]) if current_user.get("department_id") else None,
         "is_active": current_user["is_active"],
-        "created_at": current_user["created_at"].isoformat()
-        if current_user.get("created_at")
-        else "",
+        "created_at": _to_iso8601(current_user.get("created_at")),
     }
 
 

@@ -43,7 +43,6 @@ const adminSubmenuItems = [
   { icon: AlertOctagon, label: "SLA Breaches", href: "/admin/sla-breaches" },
   { icon: Activity, label: "Escalations", href: "/admin/escalations" },
   { icon: History, label: "Audit History", href: "/admin/audit-history" },
-  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits" },
 ];
 
 const officerSubmenuItems = [

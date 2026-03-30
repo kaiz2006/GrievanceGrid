@@ -23,6 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const ContestationAuditPage = () => {
   const { audit_id } = useParams();
+  const [audits, setAudits] = useState<AuditResult[]>([]);
   const [audit, setAudit] = useState<AuditResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [reviewNotes, setReviewNotes] = useState("");
@@ -30,23 +31,55 @@ const ContestationAuditPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      // DEMO MODE: Using hardcoded audit result
+      // DEMO MODE: Using hardcoded audit queue
       await new Promise(resolve => setTimeout(resolve, 600));
-      
-      const demoAudit: AuditResult = {
-        audit_id: audit_id || "audit_1092",
-        grievance_id: "GRI-2026-000844",
-        grid_id: "GRI-2026-000844",
-        status: "UNDER_REVIEW",
-        risk_score: 0.84,
-        reason: "Citizen contests the 'Resolved' status claiming the water leakage in Sector 4 persists despite the official report stating completion. Attached photo shows active flooding as of 2 hours ago.",
-        evidence_photo: "https://images.unsplash.com/photo-1585914641050-fa9883c4e21c?auto=format&fit=crop&q=80&w=1200",
-        evidence_severity: 0.92,
-        recommendation: "AI Analysis confirms high probability of valid contestation. Visual evidence shows ongoing water discharge. Immediate field re-verification and crew dispatch recommended. Escalating to Senior Engineering Lead.",
-        processed_at: new Date(Date.now() - 3600000 * 4).toISOString()
-      };
-      
-      setAudit(demoAudit);
+
+      const demoAudits: AuditResult[] = [
+        {
+          audit_id: "audit_1092",
+          grievance_id: "GRI-2026-000844",
+          grid_id: "GRI-2026-000844",
+          status: "UNDER_REVIEW",
+          risk_score: 0.84,
+          reason: "Citizen contests the 'Resolved' status claiming the water leakage in Sector 4 persists despite the official report stating completion. Attached photo shows active flooding as of 2 hours ago.",
+          evidence_photo: "https://images.unsplash.com/photo-1585914641050-fa9883c4e21c?auto=format&fit=crop&q=80&w=1200",
+          evidence_severity: 0.92,
+          recommendation: "AI Analysis confirms high probability of valid contestation. Visual evidence shows ongoing water discharge. Immediate field re-verification and crew dispatch recommended. Escalating to Senior Engineering Lead.",
+          processed_at: new Date(Date.now() - 3600000 * 4).toISOString()
+        },
+        {
+          audit_id: "audit_1118",
+          grievance_id: "GRI-2026-000901",
+          grid_id: "GRI-2026-000901",
+          status: "AUDIT_QUEUED",
+          risk_score: 0.63,
+          reason: "Citizen claims garbage overflow still exists near municipal school despite closure update. Photo indicates partial cleanup only.",
+          evidence_photo: "https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&q=80&w=1200",
+          evidence_severity: 0.67,
+          recommendation: "Assign sanitation field team for geotagged verification within 4 hours. Hold closure until site validation is complete.",
+          processed_at: new Date(Date.now() - 3600000 * 2).toISOString()
+        },
+        {
+          audit_id: "audit_1134",
+          grievance_id: "GRI-2026-000955",
+          grid_id: "GRI-2026-000955",
+          status: "SUBMITTED",
+          risk_score: 0.41,
+          reason: "Citizen disputes pothole repair quality, reporting reappearance after rainfall in less than 24 hours.",
+          evidence_photo: "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&q=80&w=1200",
+          evidence_severity: 0.48,
+          recommendation: "Queue for routine verification. Compare before/after maintenance records and contractor logs.",
+          processed_at: new Date(Date.now() - 3600000).toISOString()
+        }
+      ];
+
+      setAudits(demoAudits);
+      if (audit_id) {
+        const preselected = demoAudits.find((item) => item.audit_id === audit_id) || null;
+        setAudit(preselected);
+      } else {
+        setAudit(null);
+      }
       setLoading(false);
     };
     fetchData();
@@ -79,18 +112,7 @@ const ContestationAuditPage = () => {
     );
   }
 
-  if (!audit) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <XCircle className="w-12 h-12 text-red-500 mx-auto" />
-          <p className="text-muted-foreground">Audit not found</p>
-        </div>
-      </div>
-    );
-  }
-
-  const riskLevel = getRiskLevel(audit.risk_score);
+  const riskLevel = audit ? getRiskLevel(audit.risk_score) : null;
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -109,12 +131,59 @@ const ContestationAuditPage = () => {
               </div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Contestation Review</h1>
             </div>
-            <Badge className={`${getStatusColor(audit.status)} px-4 py-2 text-xs font-bold uppercase tracking-widest`}>
-              {audit.status.replace(/_/g, " ")}
-            </Badge>
+            {audit && (
+              <Badge className={`${getStatusColor(audit.status)} px-4 py-2 text-xs font-bold uppercase tracking-widest`}>
+                {audit.status.replace(/_/g, " ")}
+              </Badge>
+            )}
           </div>
 
+          {/* Contestation Queue */}
+          <Card className="glass-card border-white/5 bg-white/[0.02] mb-8">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-bold flex items-center gap-3">
+                <Gavel className="w-5 h-5 text-amber-500" />
+                Open Contestations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {audits.length === 0 ? (
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-sm text-muted-foreground">
+                  No contestations available for review.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {audits.map((item) => (
+                    <button
+                      key={item.audit_id}
+                      onClick={() => setAudit(item)}
+                      className={`text-left p-4 rounded-2xl border transition-all ${
+                        audit?.audit_id === item.audit_id
+                          ? "bg-blue-500/10 border-blue-500/20"
+                          : "bg-white/5 border-white/10 hover:bg-white/10"
+                      }`}
+                    >
+                      <p className="font-mono text-xs text-blue-500">{item.audit_id}</p>
+                      <p className="text-sm font-bold mt-1">{item.grievance_id}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                          {item.status.replace(/_/g, " ")}
+                        </span>
+                        <span className="text-xs font-bold text-amber-500">{(item.risk_score * 100).toFixed(0)}%</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Main Content */}
+          {!audit ? (
+            <div className="p-8 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] text-center text-muted-foreground">
+              Select a contestation from the queue above to start review.
+            </div>
+          ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Column - Details */}
             <div className="lg:col-span-8 space-y-8">
@@ -184,8 +253,8 @@ const ContestationAuditPage = () => {
                   <div className="p-6 rounded-2xl bg-white/5">
                     <div className="flex items-center justify-between mb-4">
                       <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Risk Assessment Score</p>
-                      <span className={`text-lg font-bold ${riskLevel.color}`}>
-                        {(audit.risk_score * 100).toFixed(0)}% - {riskLevel.label}
+                      <span className={`text-lg font-bold ${riskLevel?.color || "text-muted-foreground"}`}>
+                        {(audit.risk_score * 100).toFixed(0)}% - {riskLevel?.label || "Unknown"}
                       </span>
                     </div>
                     <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
@@ -301,6 +370,7 @@ const ContestationAuditPage = () => {
               </div>
             </div>
           </div>
+          )}
         </div>
       </main>
     </div>

@@ -68,11 +68,16 @@ const SimilarCasesComponent: React.FC = () => {
     // DEMO MODE: Hardcoded list for instant loading
     await new Promise(resolve => setTimeout(resolve, 500));
     const demoGrievances: GrievanceItem[] = [
-      { id: "g_1", grid_id: "GRI-2026-0045", title: "Frequent Power Surges in Block B", category: "Electricity", priority: "HIGH", status: "IN_PROGRESS", created_at: new Date().toISOString() },
-      { id: "g_2", grid_id: "GRI-2026-0089", title: "Uncollected Garbage - Main Road", category: "Sanitation", priority: "MEDIUM", status: "CREATED", created_at: new Date().toISOString() },
-      { id: "g_3", grid_id: "GRI-2026-0122", title: "Unauthorized Construction on Footpath", category: "Revenue", priority: "HIGH", status: "PENDING_VERIFICATION", created_at: new Date().toISOString() },
-      { id: "g_4", grid_id: "GRI-2026-0156", title: "Street Light Pole Damage", category: "Lighting", priority: "LOW", status: "ASSIGNED", created_at: new Date().toISOString() },
-      { id: "g_5", grid_id: "GRI-2026-0210", title: "Contaminated Water Supply", category: "Water", priority: "CRITICAL", status: "ESCALATED", created_at: new Date().toISOString() }
+      { id: "g_1", grid_id: "GRI-2026-0045", title: "Frequent Power Surges in Block B Residential Area", category: "Electricity", priority: "HIGH", status: "IN_PROGRESS", created_at: "2026-03-20T09:15:00Z" },
+      { id: "g_2", grid_id: "GRI-2026-0089", title: "Uncollected Garbage - Main Road Near Market", category: "Sanitation", priority: "MEDIUM", status: "CREATED", created_at: "2026-03-22T14:30:00Z" },
+      { id: "g_3", grid_id: "GRI-2026-0122", title: "Unauthorized Construction on Footpath - Sector 7", category: "Revenue", priority: "HIGH", status: "PENDING_VERIFICATION", created_at: "2026-03-18T11:45:00Z" },
+      { id: "g_4", grid_id: "GRI-2026-0156", title: "Street Light Pole Damage - Junction Road", category: "Lighting", priority: "LOW", status: "ASSIGNED", created_at: "2026-03-21T16:20:00Z" },
+      { id: "g_5", grid_id: "GRI-2026-0210", title: "Contaminated Water Supply - Colony B", category: "Water", priority: "CRITICAL", status: "ESCALATED", created_at: "2026-03-23T08:00:00Z" },
+      { id: "g_6", grid_id: "GRI-2026-0267", title: "Pothole Network - NH-5 Stretch", category: "Roads", priority: "HIGH", status: "IN_PROGRESS", created_at: "2026-03-19T10:30:00Z" },
+      { id: "g_7", grid_id: "GRI-2026-0298", title: "Illegal Dumping Site - Industrial Area", category: "Environment", priority: "MEDIUM", status: "ASSIGNED", created_at: "2026-03-17T13:15:00Z" },
+      { id: "g_8", grid_id: "GRI-2026-0334", title: "Property Tax Bill Discrepancy - Plot 456", category: "Revenue", priority: "MEDIUM", status: "CREATED", created_at: "2026-03-23T15:45:00Z" },
+      { id: "g_9", grid_id: "GRI-2026-0371", title: "Broken Water Pipeline - Ring Road", category: "Water", priority: "HIGH", status: "PENDING_VERIFICATION", created_at: "2026-03-22T09:20:00Z" },
+      { id: "g_10", grid_id: "GRI-2026-0408", title: "Public Park Lights Not Functional", category: "Lighting", priority: "LOW", status: "ASSIGNED", created_at: "2026-03-20T17:30:00Z" }
     ];
     setGrievances(demoGrievances);
     setLoadingGrievances(false);
@@ -93,25 +98,49 @@ const SimilarCasesComponent: React.FC = () => {
         grid_id: "HIST-2025-0922",
         title: "Fluctuating Voltage in Block A Substation",
         similarity_score: 0.94,
-        resolution_summary: "Replaced 400kVA transformer primary fuse and updated load balancing software.",
+        resolution_summary: "Replaced 400kVA transformer primary fuse and updated load balancing software. Installed SVR (Static Voltage Regulator) to maintain stable output.",
         resolution_time_hours: 14,
         department: "Electricity Dept"
       },
       {
         grid_id: "HIST-2025-1104",
         title: "Transformer Leakage Near Industrial Area",
-        similarity_score: 0.81,
-        resolution_summary: "Cleaned insulator bushings and topped up dielectric oil. Sealed gasket leaks.",
+        similarity_score: 0.87,
+        resolution_summary: "Cleaned insulator bushings and topped up dielectric oil. Sealed gasket leaks with specialized epoxy. Conducted thermal imaging to confirm stability.",
         resolution_time_hours: 22,
         department: "Engineering Division"
       },
       {
         grid_id: "HIST-2024-0615",
-        title: "Underground Cable Fault - Phase 1",
-        similarity_score: 0.76,
-        resolution_summary: "Located insulation breach using TDR. Splice and joint repair completed.",
+        title: "Underground Cable Fault - Phase 1 Distribution",
+        similarity_score: 0.81,
+        resolution_summary: "Located insulation breach using TDR (Time Domain Reflectometer). Splice and joint repair completed using heat-shrink terminals. Full cable insulation testing passed.",
         resolution_time_hours: 48,
         department: "Electricity Dept"
+      },
+      {
+        grid_id: "HIST-2025-1452",
+        title: "Intermittent Power Supply - Residential Complex",
+        similarity_score: 0.79,
+        resolution_summary: "Identified loose feeder connection at transformer secondary. Tightened all terminations and replaced corroded copper terminals. Installed monitoring device.",
+        resolution_time_hours: 8,
+        department: "Field Operations"
+      },
+      {
+        grid_id: "HIST-2024-0834",
+        title: "Voltage Fluctuation After Monsoon Season",
+        similarity_score: 0.74,
+        resolution_summary: "Inspected and cleaned all distribution lines affected by water ingress. Replaced damaged phase insulation on three poles. Installed moisture barriers.",
+        resolution_time_hours: 36,
+        department: "Electricity Dept"
+      },
+      {
+        grid_id: "HIST-2025-0789",
+        title: "Power Outage During Peak Hours",
+        similarity_score: 0.71,
+        resolution_summary: "Upgraded substation capacity by adding second transformer. Reconfigured feeder distribution to balance load across circuits. System resilience improved by 40%.",
+        resolution_time_hours: 72,
+        department: "Infrastructure Team"
       }
     ];
     

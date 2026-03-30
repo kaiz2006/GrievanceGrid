@@ -13,6 +13,28 @@ from src.repositories.grievances import GrievanceRepository
 router = APIRouter()
 
 
+async def _get_user_team_id(repo: GrievanceRepository, user_id: str | None) -> str | None:
+	"""Return one team id for a user from team_members mapping."""
+	if not user_id:
+		return None
+
+	team_info = await repo.fetch_one(
+		"""
+		SELECT tm.team_id
+		FROM team_members tm
+		WHERE tm.user_id = :user_id
+		LIMIT 1
+		""",
+		{"user_id": user_id},
+	)
+
+	if not team_info:
+		return None
+
+	team_id = team_info.get("team_id")
+	return str(team_id) if team_id else None
+
+
 # =============================================================================
 # MODELS
 # =============================================================================
@@ -94,8 +116,10 @@ async def get_my_profile(
 			t.name AS team_name,
 			u.role
 		FROM users u
-		LEFT JOIN teams t ON u.team_id = t.id
+		LEFT JOIN team_members tm ON tm.user_id = u.id
+		LEFT JOIN teams t ON t.id = tm.team_id
 		WHERE u.id = :user_id
+		LIMIT 1
 		""",
 		{"user_id": current_user.get("id")},
 	)
@@ -146,16 +170,10 @@ async def get_team_assignments(
 	"""Get all grievances assigned to the current crew member's team."""
 	repo = GrievanceRepository(db)
 	
-	# Get user's team
-	team_info = await repo.fetch_one(
-		"SELECT team_id FROM users WHERE id = :user_id",
-		{"user_id": current_user.get("id")},
-	)
+	team_id = await _get_user_team_id(repo, current_user.get("id"))
 
-	if not team_info or not team_info.get("team_id"):
+	if not team_id:
 		return CrewAssignmentsResponse(count=0, items=[])
-
-	team_id = team_info.get("team_id")
 
 	# Build query
 	where_clause = "WHERE g.assigned_team_id = :team_id"
@@ -241,10 +259,7 @@ async def update_assignment_status(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	# Verify crew is assigned to this grievance
-	user_team = await repo.fetch_scalar(
-		"SELECT team_id FROM users WHERE id = :user_id",
-		{"user_id": current_user.get("id")},
-	)
+	user_team = await _get_user_team_id(repo, current_user.get("id"))
 
 	if str(grievance.get("assigned_team_id")) != str(user_team):
 		raise HTTPException(status_code=403, detail="You are not assigned to this grievance")
@@ -286,10 +301,7 @@ async def get_assignment_detail(
 		raise HTTPException(status_code=404, detail="Grievance not found")
 
 	# Verify crew member is assigned to this grievance
-	user_team = await repo.fetch_scalar(
-		"SELECT team_id FROM users WHERE id = :user_id",
-		{"user_id": current_user.get("id")},
-	)
+	user_team = await _get_user_team_id(repo, current_user.get("id"))
 
 	if str(grievance.get("assigned_team_id")) != str(user_team):
 		raise HTTPException(status_code=403, detail="You are not assigned to this grievance")

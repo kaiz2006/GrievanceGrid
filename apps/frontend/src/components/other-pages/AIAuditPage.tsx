@@ -104,26 +104,20 @@ const AIAuditPage = () => {
   const [auditStats, setAuditStats] = useState<AuditStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch real audit statistics
+  // Load mock audit statistics (DEMO MODE)
   useEffect(() => {
     const fetchAuditStats = async () => {
-      try {
-        const stats = await auditService.getAuditStats();
-        setAuditStats(stats);
-      } catch (error) {
-        console.error("Failed to fetch audit stats:", error);
-        // Fallback to mock data if API fails
-        setAuditStats({
-          total_contested: 59,
-          pending_review: 12,
-          approved: 38,
-          rejected: 9,
-          approval_rate: 80.9,
-          avg_risk_score: 6.2
-        });
-      } finally {
-        setLoading(false);
-      }
+      // DEMO MODE: Using hardcoded mock data
+      await new Promise(resolve => setTimeout(resolve, 300));
+      setAuditStats({
+        total_contested: 59,
+        pending_review: 12,
+        approved: 38,
+        rejected: 9,
+        approval_rate: 80.9,
+        avg_risk_score: 6.2
+      });
+      setLoading(false);
     };
 
     fetchAuditStats();

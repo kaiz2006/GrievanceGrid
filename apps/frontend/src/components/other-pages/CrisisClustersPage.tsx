@@ -16,7 +16,7 @@ import {
   Tag,
   Target
 } from "lucide-react";
-import { clusterService, ClusterItem } from "@/services/cluster.service";
+import { ClusterItem } from "@/services/cluster.service";
 import MapComponent from "../map/MapComponent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,48 @@ const topicIcons: Record<string, typeof Flame> = {
   sanitation: Trash2
 };
 
+const DUMMY_CLUSTERS: ClusterItem[] = [
+  {
+    cluster_id: "cluster_001",
+    cluster_type: "DBSCAN_GEO",
+    centroid_lat: 28.615,
+    centroid_lng: 77.21,
+    member_count: 23,
+    crisis_score: 0.85,
+    is_active: true,
+    topics: ["water_leak", "drainage", "road_damage"],
+    metadata: { radius_meters: 500, avg_severity: 0.72 },
+    radius_meters: 500,
+    recommended_action: "URGENT: Infrastructure inspection needed"
+  },
+  {
+    cluster_id: "cluster_002",
+    cluster_type: "DBSCAN_GEO",
+    centroid_lat: 28.632,
+    centroid_lng: 77.218,
+    member_count: 15,
+    crisis_score: 0.62,
+    is_active: true,
+    topics: ["power_outage", "transformer"],
+    metadata: { radius_meters: 350, avg_severity: 0.58 },
+    radius_meters: 350,
+    recommended_action: "Schedule maintenance check"
+  },
+  {
+    cluster_id: "cluster_003",
+    cluster_type: "DBSCAN_GEO",
+    centroid_lat: 28.601,
+    centroid_lng: 77.195,
+    member_count: 8,
+    crisis_score: 0.41,
+    is_active: true,
+    topics: ["garbage", "sanitation"],
+    metadata: { radius_meters: 200, avg_severity: 0.35 },
+    radius_meters: 200,
+    recommended_action: "Routine cleanup scheduled"
+  }
+];
+
 const CrisisClustersPage = () => {
   const [clusters, setClusters] = useState<ClusterItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,22 +80,18 @@ const CrisisClustersPage = () => {
   const [reclustering, setReclustering] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const result = await clusterService.getClusters({ active: true });
-      setClusters(result.clusters);
-      if (result.clusters.length > 0 && !selectedCluster) {
-        setSelectedCluster(result.clusters[0]);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    setLoading(true);
+    setClusters(DUMMY_CLUSTERS);
+    setSelectedCluster((current) => current ?? DUMMY_CLUSTERS[0] ?? null);
+    setLoading(false);
   }, []);
 
   const handleRecluster = async () => {
     setReclustering(true);
-    await clusterService.triggerRecluster();
-    setTimeout(() => setReclustering(false), 2000);
+    setTimeout(() => {
+      setClusters((current) => [...current]);
+      setReclustering(false);
+    }, 1200);
   };
 
   const getCrisisColor = (score: number) => {
@@ -75,6 +113,9 @@ const CrisisClustersPage = () => {
 
   const criticalClusters = clusters.filter(c => (c.crisis_score || 0) >= 0.8);
   const totalGrievances = clusters.reduce((a, b) => a + b.member_count, 0);
+  const avgCrisisScore = clusters.length
+    ? (clusters.reduce((a, b) => a + (b.crisis_score || 0), 0) / clusters.length).toFixed(2)
+    : "0.00";
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -114,7 +155,7 @@ const CrisisClustersPage = () => {
               { label: "Active Clusters", value: clusters.length.toString(), icon: Layers, color: "text-blue-500" },
               { label: "Critical Zones", value: criticalClusters.length.toString(), icon: AlertTriangle, color: "text-red-500" },
               { label: "Total Grievances", value: totalGrievances.toString(), icon: Activity, color: "text-amber-500" },
-              { label: "Avg Crisis Score", value: (clusters.reduce((a, b) => a + (b.crisis_score || 0), 0) / clusters.length).toFixed(2), icon: TrendingUp, color: "text-purple-500" },
+              { label: "Avg Crisis Score", value: avgCrisisScore, icon: TrendingUp, color: "text-purple-500" },
             ].map((metric, i) => (
               <motion.div
                 key={metric.label}

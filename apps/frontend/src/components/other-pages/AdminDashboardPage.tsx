@@ -138,18 +138,14 @@ const AdminDashboardPage = () => {
     listTotalGrievances > 0 ? (listResolvedGrievances / listTotalGrievances) * 100 : null;
 
   const apiResolutionCompliance = normalizePercent(data?.sla_compliance?.resolution_sla_met);
-  const resolutionCompliance =
+  const _computedResolutionCompliance =
     apiResolutionCompliance ?? fallbackResolutionCompliance ?? listResolutionCompliance;
 
-  const resolutionBreaches =
-    resolutionCompliance === null || !Number.isFinite(resolutionCompliance) 
-      ? null 
-      : Math.max(0, 100 - resolutionCompliance);
+  // Demo override requested: force SLA split to 33% compliance and 67% breaches.
+  const resolutionCompliance = 33;
+  const resolutionBreaches = 67;
 
-  const slaChartData =
-    resolutionCompliance === null
-      ? [{ name: "Unavailable", value: 100, fill: "rgba(148,163,184,0.35)" }]
-      : getSLAPercentageData({ resolution_sla_met: resolutionCompliance });
+  const slaChartData = getSLAPercentageData({ resolution_sla_met: resolutionCompliance });
 
   const actionQueue = [
     { id: "GRV-1102", type: "Escalated", time: "12m ago", priority: "High", office: "Public Works" },

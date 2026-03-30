@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 from redis.asyncio import Redis
 
 from src.core.config import settings
@@ -22,5 +24,9 @@ def get_pubsub_redis_client() -> Redis:
 async def close_redis_client() -> None:
     global _redis_client
     if _redis_client is not None:
-        await _redis_client.aclose()
+        close_fn = getattr(_redis_client, "aclose", None) or getattr(_redis_client, "close", None)
+        if close_fn is not None:
+            result = close_fn()
+            if asyncio.iscoroutine(result):
+                await result
         _redis_client = None

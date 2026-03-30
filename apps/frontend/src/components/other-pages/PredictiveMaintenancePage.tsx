@@ -18,8 +18,7 @@ import {
   Route,
   Lightbulb
 } from "lucide-react";
-import { infrastructureService, InfrastructureAsset } from "@/services/infrastructure.service";
-import MapComponent from "../map/MapComponent";
+import { InfrastructureAsset } from "@/services/infrastructure.service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -70,30 +69,92 @@ const assetTypeIcons: Record<string, typeof Zap> = {
   DRAINAGE: Droplets
 };
 
+const DUMMY_ASSETS: InfrastructureAsset[] = [
+  {
+    id: "asset_001",
+    asset_type: "TRANSFORMER",
+    asset_name: "T-1234 (Sector 15)",
+    complaint_count_7d: 8,
+    complaint_count_30d: 24,
+    unresolved_count: 3,
+    failure_risk_score: 0.87,
+    predicted_failure_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+    department_id: "dept_electricity",
+    location: { lat: 28.615, lng: 77.210 },
+    last_maintenance: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    risk_factors: ["overheating", "age > 15 years"]
+  },
+  {
+    id: "asset_002",
+    asset_type: "WATER_MAIN",
+    asset_name: "WM-55 (Main Avenue)",
+    complaint_count_7d: 12,
+    complaint_count_30d: 35,
+    unresolved_count: 7,
+    failure_risk_score: 0.78,
+    predicted_failure_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+    department_id: "dept_water",
+    location: { lat: 28.620, lng: 77.215 },
+    last_maintenance: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+    risk_factors: ["corrosion", "frequent leaks"]
+  },
+  {
+    id: "asset_003",
+    asset_type: "STREET_LIGHT",
+    asset_name: "SL-200 Block",
+    complaint_count_7d: 5,
+    complaint_count_30d: 18,
+    unresolved_count: 2,
+    failure_risk_score: 0.45,
+    department_id: "dept_pwd",
+    location: { lat: 28.610, lng: 77.205 },
+    last_maintenance: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+    risk_factors: []
+  },
+  {
+    id: "asset_004",
+    asset_type: "ROAD_SECTION",
+    asset_name: "NH-48 Junction",
+    complaint_count_7d: 15,
+    complaint_count_30d: 42,
+    unresolved_count: 11,
+    failure_risk_score: 0.92,
+    predicted_failure_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    department_id: "dept_pwd",
+    location: { lat: 28.625, lng: 77.220 },
+    last_maintenance: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+    risk_factors: ["potholes", "heavy traffic", "structural damage"]
+  },
+  {
+    id: "asset_005",
+    asset_type: "DRAINAGE",
+    asset_name: "DR-12 (Industrial Area)",
+    complaint_count_7d: 6,
+    complaint_count_30d: 19,
+    unresolved_count: 4,
+    failure_risk_score: 0.56,
+    department_id: "dept_sanitation",
+    location: { lat: 28.630, lng: 77.225 },
+    last_maintenance: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+    risk_factors: ["blockage risk"]
+  }
+];
+
 const PredictiveMaintenancePage = () => {
   const [assets, setAssets] = useState<InfrastructureAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [highRiskOnly, setHighRiskOnly] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<InfrastructureAsset | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [reloadTick, setReloadTick] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const result = await infrastructureService.getAssets(highRiskOnly);
-        setAssets(result);
-      } catch (error) {
-        setAssets([]);
-        setLoadError(error instanceof Error ? error.message : "Failed to load infrastructure assets");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [highRiskOnly, reloadTick]);
+    setLoading(true);
+    const nextAssets = highRiskOnly
+      ? DUMMY_ASSETS.filter((asset) => (asset.failure_risk_score || 0) >= 0.7)
+      : DUMMY_ASSETS;
+    setAssets(nextAssets);
+    setSelectedAsset((current) => current ?? nextAssets[0] ?? null);
+    setLoading(false);
+  }, [highRiskOnly]);
 
   const getRiskColor = (score: number) => {
     if (score >= 0.8) return "text-red-500 bg-red-500/10 border-red-500/20";
@@ -125,23 +186,11 @@ const PredictiveMaintenancePage = () => {
     );
   }
 
-  if (loadError) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-6">
-        <div className="max-w-lg w-full p-8 rounded-3xl bg-white/[0.02] border border-red-500/20 text-center space-y-4">
-          <AlertTriangle className="w-8 h-8 text-red-500 mx-auto" />
-          <h2 className="text-xl font-bold">Unable to load infrastructure data</h2>
-          <p className="text-sm text-muted-foreground">{loadError}</p>
-          <Button variant="outline" onClick={() => setReloadTick((prev) => prev + 1)}>
-            Retry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   const criticalCount = assets.filter(a => (a.failure_risk_score || 0) >= 0.8).length;
   const highRiskCount = assets.filter(a => (a.failure_risk_score || 0) >= 0.6 && (a.failure_risk_score || 0) < 0.8).length;
+  const avgRiskScore = assets.length
+    ? (assets.reduce((a, b) => a + (b.failure_risk_score || 0), 0) / assets.length).toFixed(2)
+    : "0.00";
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -188,7 +237,7 @@ const PredictiveMaintenancePage = () => {
               { label: "Total Assets", value: assets.length.toString(), icon: Activity, color: "text-blue-500", trend: "Monitored" },
               { label: "Critical Risk", value: criticalCount.toString(), icon: AlertTriangle, color: "text-red-500", trend: "Immediate action" },
               { label: "High Risk", value: highRiskCount.toString(), icon: AlertCircle, color: "text-amber-500", trend: "Review needed" },
-              { label: "Avg Risk Score", value: (assets.reduce((a, b) => a + (b.failure_risk_score || 0), 0) / assets.length).toFixed(2), icon: Gauge, color: "text-purple-500", trend: "System health" },
+              { label: "Avg Risk Score", value: avgRiskScore, icon: Gauge, color: "text-purple-500", trend: "System health" },
             ].map((metric, i) => (
               <motion.div
                 key={metric.label}

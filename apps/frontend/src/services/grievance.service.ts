@@ -10,7 +10,7 @@ const generateGridId = () => `GRI-2026-${Math.floor(Math.random() * 1000000).toS
 export const grievanceService = {
   // POST /grievances - Submit new grievance
   submit: async (data: any) => {
-    return apiClient.post("/grievances", data, async () => {
+    const submitOnce = () => apiClient.post("/grievances", data, async () => {
       await mockDelay(500);
       const newGrievance: GrievanceDetail = {
         id: `m_${Date.now()}`,
@@ -33,6 +33,21 @@ export const grievanceService = {
       saveMockGrievance(newGrievance);
       return newGrievance;
     });
+
+    try {
+      return await submitOnce();
+    } catch (error: any) {
+      const message = String(error?.message || "").toLowerCase();
+      const isTransientNetworkError = message.includes("failed to fetch") || message.includes("networkerror");
+
+      // Hot-reload or brief backend restarts can interrupt the first request in dev.
+      if (!isTransientNetworkError) {
+        throw error;
+      }
+
+      await mockDelay(800);
+      return submitOnce();
+    }
   },
 
   // GET /track/{grid_id} - Live package-style tracking

@@ -5,7 +5,6 @@ import {
   Search, 
   TrendingUp, 
   ShieldCheck, 
-  Layers, 
   Settings, 
   LogOut,
   ChevronLeft,
@@ -60,9 +59,7 @@ const menuItems = [
   { icon: Search, label: "Forensic", href: "/admin/forensic", roles: ["ADMIN"] },
   { icon: Zap, label: "Crisis Inbox", href: "/admin/crisis-inbox", roles: ["ADMIN"] },
   { icon: ShieldCheck, label: "Fraud Detection", href: "/admin/fraud-detection", roles: ["ADMIN"] },
-  { icon: Users, label: "Crew Dispatch", href: "/admin/dispatch", roles: ["ADMIN"] },
   { icon: Settings, label: "Engineering", href: "/admin/engineering", roles: ["ADMIN"] },
-  { icon: Layers, label: "Industrial Hub", href: "/admin/industrial", roles: ["ADMIN"] },
   
   // NEW: Predictive Governance & Analytics (P1 Priority)
   { icon: Wrench, label: "Predictive Maintenance", href: "/admin/predictive-maintenance", roles: ["ADMIN"] },
@@ -78,7 +75,6 @@ const menuItems = [
   
   // NEW: Audit Management (P3 Priority)
   { icon: History, label: "Audit History", href: "/admin/audit-history", roles: ["ADMIN"] },
-  { icon: Clock, label: "Pending Audits", href: "/admin/pending-audits", roles: ["ADMIN"] },
   
   // NEW: Officer Workflow Pages
   { icon: CheckCircle, label: "Officer Dashboard", href: "/officer/dashboard", roles: ["OFFICER"] },

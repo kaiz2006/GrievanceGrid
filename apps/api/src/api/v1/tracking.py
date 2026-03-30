@@ -55,6 +55,16 @@ def _safe_float(value: Any) -> float | None:
 		return None
 
 
+async def _close_resource(resource: Any) -> None:
+	"""Close async/sync Redis resources across redis-py versions."""
+	close_fn = getattr(resource, "aclose", None) or getattr(resource, "close", None)
+	if close_fn is None:
+		return
+	result = close_fn()
+	if asyncio.iscoroutine(result):
+		await result
+
+
 def _haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
 	radius_km = 6371.0
 	phi1, phi2 = math.radians(lat1), math.radians(lat2)
@@ -193,10 +203,21 @@ async def tracking_ws_handler(
 	grid_id: str,
 	db: AsyncSession = Depends(get_db_session),
 ) -> None:
+	"""
+	WebSocket handler for real-time grievance tracking.
+	Safely handles disconnections and exceptions to prevent backend crashes.
+	"""
 	await websocket.accept()
 
 	repo = GrievanceRepository(db)
-	grievance = await repo.get_by_grid_id(grid_id)
+	try:
+		grievance = await repo.get_by_grid_id(grid_id)
+	except Exception as exc:
+		logger.error(f"Failed to fetch grievance: {exc}", extra={"grid_id": grid_id})
+		await websocket.send_json({"error": "Failed to load grievance"})
+		await websocket.close(code=1011)
+		return
+
 	if grievance is None:
 		await websocket.send_json({"error": "Grid ID not found"})
 		await websocket.close(code=1008)
@@ -204,42 +225,85 @@ async def tracking_ws_handler(
 
 	grievance_id = str(grievance["id"])
 	channel = f"grievance:{grievance_id}:updates"
-	redis = get_pubsub_redis_client()
-	pubsub = redis.pubsub()
-	await pubsub.subscribe(channel)
+	redis = None
+	pubsub = None
 
 	try:
-		await websocket.send_json(
-			{
-				"type": "subscription",
-				"status": "connected",
-				"grid_id": grid_id,
-				"channel": channel,
-			}
-		)
-		while True:
-			message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=5.0)
-			if message and message.get("type") == "message":
-				payload = message.get("data")
-				if isinstance(payload, bytes):
-					payload = payload.decode("utf-8")
-				if isinstance(payload, str):
-					try:
-						payload = json.loads(payload)
-					except json.JSONDecodeError:
-						payload = {"message": payload}
+		redis = get_pubsub_redis_client()
+		pubsub = redis.pubsub()
+		await pubsub.subscribe(channel)
 
-				await websocket.send_json(payload)
-
-			await asyncio.sleep(0.2)
-	except WebSocketDisconnect:
-		logger.info("Tracking websocket disconnected", extra={"grid_id": grid_id})
-	finally:
 		try:
-			await pubsub.unsubscribe(channel)
-			await pubsub.aclose()
-		finally:
-			await redis.aclose()
+			await websocket.send_json(
+				{
+					"type": "subscription",
+					"status": "connected",
+					"grid_id": grid_id,
+					"channel": channel,
+				}
+			)
+		except Exception as exc:
+			logger.warning(f"Failed to send subscription confirmation: {exc}", extra={"grid_id": grid_id})
+
+		# Main message loop - catch all exceptions to prevent crashes
+		while True:
+			try:
+				message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=3.0)
+				if message and message.get("type") == "message":
+					payload = message.get("data")
+					if isinstance(payload, bytes):
+						payload = payload.decode("utf-8")
+					if isinstance(payload, str):
+						try:
+							payload = json.loads(payload)
+						except json.JSONDecodeError:
+							payload = {"message": payload}
+
+					try:
+						await websocket.send_json(payload)
+					except Exception as send_exc:
+						# Handle send failures gracefully - likely client disconnected
+						exc_name = send_exc.__class__.__name__
+						if "ConnectionClosed" in exc_name or "Disconnected" in exc_name:
+							logger.info("Client disconnected during send", extra={"grid_id": grid_id})
+						else:
+							logger.warning(f"Send failed: {send_exc}", extra={"grid_id": grid_id})
+						break  # Exit loop, cleanup will handle resource deallocation
+
+				await asyncio.sleep(0.1)  # Reduced sleep for responsiveness
+
+			except asyncio.CancelledError:
+				logger.info("WebSocket cancelled", extra={"grid_id": grid_id})
+				break
+			except Exception as loop_exc:
+				logger.error(f"Error in message loop: {loop_exc}", extra={"grid_id": grid_id})
+				break
+
+	except WebSocketDisconnect:
+		logger.info("WebSocket disconnected", extra={"grid_id": grid_id})
+	except Exception as handler_exc:  # noqa: BLE001
+		exc_name = handler_exc.__class__.__name__
+		if "ConnectionClosed" in exc_name or "Disconnected" in exc_name:
+			logger.info("WebSocket connection closed", extra={"grid_id": grid_id, "error": exc_name})
+		else:
+			logger.error(f"Unexpected error in handler: {handler_exc}", extra={"grid_id": grid_id})
+	finally:
+		# Cleanup resources - NEVER raise exceptions here
+		if pubsub is not None:
+			try:
+				await pubsub.unsubscribe(channel)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("PubSub unsubscribe failed", extra={"grid_id": grid_id, "error": str(exc)})
+			try:
+				await _close_resource(pubsub)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("PubSub close failed", extra={"grid_id": grid_id, "error": str(exc)})
+
+		if redis is not None:
+			try:
+				await _close_resource(redis)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("Redis close failed", extra={"grid_id": grid_id, "error": str(exc)})
 
 
 @router.websocket("/ws/{grid_id}")
@@ -248,4 +312,109 @@ async def track_grievance_ws(
 	grid_id: str,
 	db: AsyncSession = Depends(get_db_session),
 ) -> None:
-	await tracking_ws_handler(websocket, grid_id, db)
+	"""
+	WebSocket endpoint for tracking grievances.
+	DB session is released after initial validation to prevent connection pool exhaustion.
+	"""
+	# Validate grievance exists and get ID - then release DB connection
+	repo = GrievanceRepository(db)
+	try:
+		grievance = await repo.get_by_grid_id(grid_id)
+	except Exception as exc:
+		logger.error(f"DB validation failed: {exc}", extra={"grid_id": grid_id})
+		await websocket.accept()
+		await websocket.send_json({"error": "Service unavailable"})
+		await websocket.close(code=1011)
+		return
+
+	if grievance is None:
+		await websocket.accept()
+		await websocket.send_json({"error": "Grid ID not found"})
+		await websocket.close(code=1008)
+		return
+
+	# DB connection released here; websocket handler uses Redis only
+	grievance_id = str(grievance["id"])
+	
+	# Now proceed with WebSocket connection (DB dependency can be garbage collected)
+	await websocket.accept()
+	redis = None
+	pubsub = None
+	channel = f"grievance:{grievance_id}:updates"
+
+	try:
+		redis = get_pubsub_redis_client()
+		pubsub = redis.pubsub()
+		await pubsub.subscribe(channel)
+
+		try:
+			await websocket.send_json(
+				{
+					"type": "subscription",
+					"status": "connected",
+					"grid_id": grid_id,
+					"channel": channel,
+				}
+			)
+		except Exception as exc:
+			logger.warning(f"Failed to send subscription confirmation: {exc}", extra={"grid_id": grid_id})
+
+		# Main message loop - catch all exceptions to prevent crashes
+		while True:
+			try:
+				message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=3.0)
+				if message and message.get("type") == "message":
+					payload = message.get("data")
+					if isinstance(payload, bytes):
+						payload = payload.decode("utf-8")
+					if isinstance(payload, str):
+						try:
+							payload = json.loads(payload)
+						except json.JSONDecodeError:
+							payload = {"message": payload}
+
+					try:
+						await websocket.send_json(payload)
+					except Exception as send_exc:
+						# Handle send failures gracefully - likely client disconnected
+						exc_name = send_exc.__class__.__name__
+						if "ConnectionClosed" in exc_name or "Disconnected" in exc_name:
+							logger.info("Client disconnected during send", extra={"grid_id": grid_id})
+						else:
+							logger.warning(f"Send failed: {send_exc}", extra={"grid_id": grid_id})
+						break  # Exit loop
+
+				await asyncio.sleep(0.1)
+
+			except asyncio.CancelledError:
+				logger.info("WebSocket cancelled", extra={"grid_id": grid_id})
+				break
+			except Exception as loop_exc:
+				logger.error(f"Error in message loop: {loop_exc}", extra={"grid_id": grid_id})
+				break
+
+	except WebSocketDisconnect:
+		logger.info("WebSocket disconnected", extra={"grid_id": grid_id})
+	except Exception as handler_exc:  # noqa: BLE001
+		exc_name = handler_exc.__class__.__name__
+		if "ConnectionClosed" in exc_name or "Disconnected" in exc_name:
+			logger.info("WebSocket connection closed", extra={"grid_id": grid_id, "error": exc_name})
+		else:
+			logger.error(f"Unexpected error: {handler_exc}", extra={"grid_id": grid_id})
+	finally:
+		# Cleanup resources - NEVER raise exceptions here
+		if pubsub is not None:
+			try:
+				await pubsub.unsubscribe(channel)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("PubSub unsubscribe failed", extra={"grid_id": grid_id, "error": str(exc)})
+			try:
+				await _close_resource(pubsub)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("PubSub close failed", extra={"grid_id": grid_id, "error": str(exc)})
+
+		if redis is not None:
+			try:
+				await _close_resource(redis)
+			except Exception as exc:  # noqa: BLE001
+				logger.debug("Redis close failed", extra={"grid_id": grid_id, "error": str(exc)})
