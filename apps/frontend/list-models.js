@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 async function run() {
-  const apiKey = "AIzaSyBNFOB2vhW2Z1IwEnuwiWvGi0kw0xKm3AI";
+  const apiKey = process.env.VITE_GEMINI_API_KEY || "";
   if (!apiKey) {
     console.error("No API key");
     return;
